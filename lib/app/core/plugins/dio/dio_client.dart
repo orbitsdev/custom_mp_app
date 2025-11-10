@@ -10,7 +10,7 @@ class DioClient {
   /// Public API instance (no auth header)
   static final Dio public = Dio(
     BaseOptions(
-      baseUrl: 'https://your-api-domain.com/api/web/',
+      baseUrl: 'https://dev.avantefoods.com/api/',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ class DioClient {
 
     return Dio(
       BaseOptions(
-        baseUrl: 'https://your-api-domain.com/api/web/',
+        baseUrl: 'https://dev.avantefoods.com/api/',
         headers: {
           'Authorization': 'Bearer $token',
           'Accept': 'application/json',

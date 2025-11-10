@@ -16,7 +16,7 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    autoLogin();
+    // autoLogin();
   }
 
   Future<void> autoLogin() async {
