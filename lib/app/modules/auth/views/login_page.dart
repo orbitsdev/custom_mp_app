@@ -138,16 +138,19 @@ class LoginPage extends StatelessWidget {
                                   width: 16,
                                   child: IconButton(
                                     icon: Icon(
-                                      controller.obscureText
-                                          ? Icons.visibility
-                                          : Icons.visibility_off,
+                                      Icons.visibility,
+                                      // controller.obscureText
+                                      //     ? Icons.visibility
+                                      //     : Icons.visibility_off,
                                     ),
-                                    onPressed: () =>
-                                        controller.togggleShowPassword(),
+                                    onPressed: (){
+                                      
+                                    },
+                                    // onPressed: () => controller.togggleShowPassword(),
                                   ),
                                 ),
                               ),
-                              obscureText: controller.obscureText,
+                              obscureText: true,
                               validator: FormBuilderValidators.compose([
                                 FormBuilderValidators.required(),
                                 FormBuilderValidators.minLength(6),

@@ -49,6 +49,9 @@ dependencies:
   gradient_elevated_button: ^1.1.0
   heroicons: ^0.11.0
   fluttertoast: ^9.0.0
+  fpdart: ^1.2.0
+  flutter_secure_storage: ^9.2.4
+  get_storage: ^2.1.1
 
 dev_dependencies:
   flutter_test:
