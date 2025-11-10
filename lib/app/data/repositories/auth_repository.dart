@@ -15,38 +15,46 @@ class AuthRepository {
   final _getStorage = LocalStorageService();
 
   /// Register a new user
-  EitherModel<UserModel> register({
+ EitherModel<UserModel> register({
     required String name,
     required String email,
     required String password,
     required String passwordConfirmation,
   }) async {
     try {
-      final response = await DioClient.public.post('register', data: {
-        'name': name,
-        'email': email,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-      });
+      final response = await DioClient.public.post(
+        'register', 
+        data: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        },
+      );
 
       final data = response.data['data'];
       final user = UserModel.fromMap(data['user']);
       final token = data['token'] as String;
 
-      // Store token securely
+      // 🔒 Save token securely
       await SecureStorageService.saveToken(token);
 
-      // Cache user locally
-      _getStorage.saveUser(user.toMap());
+      // 💾 Cache user locally (optional)
+  
+
+      print('✅ Registration success for ${user.email}');
 
       return right(user);
     } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Registration failed';
+      final message = e.response?.data?['message'] ?? 'Registration failed';
+      print('❌ Registration error: $message');
       return left(message);
     } catch (e) {
+      print('❌ Unexpected registration error: $e');
       return left('Unexpected error occurred');
     }
   }
+
 
   /// Login existing user
   Future<Either<String, UserModel>> login({

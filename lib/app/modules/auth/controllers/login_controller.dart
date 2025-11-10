@@ -57,18 +57,11 @@ class LoginController extends GetxController {
     },
     (user) {
 
-      print(user.toString());
-    
-      // AppModal.success(
-      //   title: "Welcome Back!",
-      //   message: "Hello ${user.name}, you’re logged in successfully!",
-      //   onConfirm: () {
-         
-      //     AuthController.instance.user.value = user;
-      //     AuthController.instance.isAuthenticated.value = true;
-      //     Get.offAllNamed('/home'); // ✅ replace with your home route
-      //   },
-      // );
+      // print(user.toString());
+        AuthController.instance.user.value = user;
+          AuthController.instance.isAuthenticated.value = true;
+          Get.offAllNamed('/home'); // ✅ replace with your home route
+      // 
     },
   );
 }

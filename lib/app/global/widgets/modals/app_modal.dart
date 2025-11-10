@@ -230,7 +230,10 @@ class AppModal {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  AppLottie(asset: AppLotties.loading, width: 100, height: 100),
+                  // 
+                  CircularProgressIndicator(
+                    color: AppColors.brand,
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     title,

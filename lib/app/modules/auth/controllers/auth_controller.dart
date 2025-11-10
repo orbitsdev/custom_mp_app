@@ -1,17 +1,17 @@
+import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:get/get.dart';
-import 'package:custom_mp_app/app/data/models/user/user_model.dart';
 import 'package:custom_mp_app/app/data/repositories/auth_repository.dart';
+import 'package:custom_mp_app/app/data/models/user/user_model.dart';
 import 'package:custom_mp_app/app/core/plugins/storage/secure_storage_service.dart';
-import 'package:custom_mp_app/app/core/routes/routes.dart';
 
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
 
   final AuthRepository _authRepo = AuthRepository();
-  final user = Rxn<UserModel>();
 
   final isAuthenticated = false.obs;
   final isLoading = false.obs;
+  final user = Rxn<UserModel>();
 
   @override
   void onInit() {
@@ -19,38 +19,55 @@ class AuthController extends GetxController {
     // autoLogin();
   }
 
-  Future<void> autoLogin() async {
-    isLoading.value = true;
 
-    final token = await SecureStorageService.getToken();
-    if (token == null) {
-      isAuthenticated.value = false;
-      isLoading.value = false;
-      return;
-    }
+ Future<void> autoLogin() async {
+  print('🔍 [AuthController] Starting autoLogin()');
+  isLoading.value = true;
 
-    final result = await _authRepo.getAuthenticatedUser();
-    result.fold(
-      (failure) {
-        print('❌ Auto-login failed: $failure');
-        isAuthenticated.value = false;
-      },
-      (userData) {
-        user.value = userData;
-        isAuthenticated.value = true;
-        print('✅ Auto-login success: ${userData.email}');
-      },
-    );
+  final token = await SecureStorageService.getToken();
+  print('🔑 [AuthController] Retrieved token: $token');
 
-    isLoading.value = false;
-  }
-
-  Future<void> logout() async {
-    isLoading.value = true;
-    await _authRepo.logout();
-    user.value = null;
+  if (token == null || token.isEmpty) {
+    print('🚫 No saved token found');
     isAuthenticated.value = false;
     isLoading.value = false;
-    Get.offAllNamed(Routes.loginPage);
+    return;
+  }
+
+  final result = await _authRepo.getAuthenticatedUser();
+  result.fold(
+    (failure) async {
+      print('❌ Auto-login failed: $failure');
+
+      // 🧹 If failure means token invalid or expired — clear it
+      if (failure.contains('Unauthenticated') ||
+          failure.contains('expired') ||
+          failure.contains('invalid')) {
+        await SecureStorageService.deleteToken();
+        print('🧹 Deleted expired/invalid token');
+      }
+
+      isAuthenticated.value = false;
+      user.value = null;
+      AppToast.error('Something went wrong. Please login again.');
+    },
+    (userData) {
+      print('✅ Auto-login success: ${userData.email}');
+      user.value = userData;
+      isAuthenticated.value = true;
+    },
+  );
+
+  isLoading.value = false;
+}
+
+
+
+  Future<void> logout() async {
+    await _authRepo.logout();
+    await SecureStorageService.deleteToken();
+    user.value = null;
+    isAuthenticated.value = false;
+    Get.offAllNamed('/login');
   }
 }
