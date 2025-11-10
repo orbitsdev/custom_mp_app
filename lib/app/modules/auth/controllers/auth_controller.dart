@@ -49,7 +49,7 @@ class AuthController extends GetxController {
 
       isAuthenticated.value = false;
       user.value = null;
-      AppToast.error('Something went wrong. Please login again.');
+      AppToast.error(failure);
     },
     (userData) {
       print('✅ Auto-login success: ${userData.email}');
