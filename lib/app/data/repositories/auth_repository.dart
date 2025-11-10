@@ -49,31 +49,33 @@ class AuthRepository {
   }
 
   /// Login existing user
-  EitherModel<UserModel> login({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final response = await DioClient.public.post('login', data: {
-        'email': email,
-        'password': password,
-      });
+  Future<Either<String, UserModel>> login({
+  required String email,
+  required String password,
+}) async {
+  try {
+    final response = await DioClient.public.post(
+      'login',
+      data: {'email': email, 'password': password},
+    );
 
-      final data = response.data['data'];
-      final user = UserModel.fromMap(data['user']);
-      final token = data['token'] as String;
+    final data = response.data;
+    final token = data['data']['token'];
+    await SecureStorageService.saveToken(token);
 
-      await SecureStorageService.saveToken(token);
-      _getStorage.saveUser(user.toMap());
+    // ✅ FIXED: use fromMap instead of fromJson
+    final user = UserModel.fromMap(data['data']['user']);
 
-      return right(user);
-    } on DioException catch (e) {
-      final message = e.response?.data['message'] ?? 'Login failed';
-      return left(message);
-    } catch (e) {
-      return left('Unexpected error occurred');
-    }
+    return Right(user);
+  } on DioException catch (e) {
+    final error = e.response?.data?['message'] ?? e.message;
+    print('❌ Login error: $error');
+    return Left(error ?? 'Login failed');
+  } catch (e) {
+    return Left('Unexpected error: $e');
   }
+}
+
 
   /// Fetch authenticated user using stored token
   EitherModel<UserModel> getAuthenticatedUser() async {

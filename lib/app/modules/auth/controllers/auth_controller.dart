@@ -8,10 +8,10 @@ class AuthController extends GetxController {
   static AuthController get instance => Get.find();
 
   final AuthRepository _authRepo = AuthRepository();
+  final user = Rxn<UserModel>();
 
   final isAuthenticated = false.obs;
   final isLoading = false.obs;
-  final user = Rxn<UserModel>();
 
   @override
   void onInit() {
@@ -23,28 +23,22 @@ class AuthController extends GetxController {
     isLoading.value = true;
 
     final token = await SecureStorageService.getToken();
-
     if (token == null) {
-      // No token stored
       isAuthenticated.value = false;
       isLoading.value = false;
-      Get.offAllNamed(Routes.loginPage);
       return;
     }
 
-    // Validate token by fetching /user
     final result = await _authRepo.getAuthenticatedUser();
     result.fold(
-      (error) {
-        // Token invalid or expired
+      (failure) {
+        print('❌ Auto-login failed: $failure');
         isAuthenticated.value = false;
-        SecureStorageService.deleteToken();
-        Get.offAllNamed(Routes.loginPage);
       },
       (userData) {
         user.value = userData;
         isAuthenticated.value = true;
-        Get.offAllNamed(Routes.homePage); // Go to main/home
+        print('✅ Auto-login success: ${userData.email}');
       },
     );
 

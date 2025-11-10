@@ -21,7 +21,7 @@ class CustomMPAPP extends StatelessWidget {
       title: 'Custom MP',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.AVANTE_THEME,
-      initialRoute: Routes.modalPage, // ⬅️ Temporary splash
+      initialRoute: Routes.loginPage, // ⬅️ Temporary splash
       getPages: Routes.pages,
     );
   }

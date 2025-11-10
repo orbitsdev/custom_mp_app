@@ -6,10 +6,10 @@ import 'package:custom_mp_app/app/modules/auth/views/signup_page.dart';
 
 import 'package:custom_mp_app/app/modules/auth/widgets/label.dart';
 import 'package:custom_mp_app/app/modules/auth/widgets/logo.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -63,8 +63,10 @@ class LoginPage extends StatelessWidget {
                             const Label(text: 'Email'),
                             const Gap(6),
                             FormBuilderTextField(
-                              autocorrect: true,
-                              initialValue: '',
+                              autocorrect: false,
+                              enableSuggestions:true,
+                              autofillHints: const [AutofillHints.email],
+                              initialValue: 'orbinobrian0506@gmail.com',
                               style: Get.textTheme.bodyMedium!
                                   .copyWith(color: AppColors.textDark),
                               name: 'email',
@@ -106,7 +108,7 @@ class LoginPage extends StatelessWidget {
                             const Label(text: 'Password'),
                             const Gap(6),
                             FormBuilderTextField(
-                              initialValue: '',
+                              initialValue: '@Password2!!',
                               style: Get.textTheme.bodyMedium!
                                   .copyWith(color: AppColors.textDark),
                               name: 'password',
@@ -138,19 +140,16 @@ class LoginPage extends StatelessWidget {
                                   width: 16,
                                   child: IconButton(
                                     icon: Icon(
-                                      Icons.visibility,
-                                      // controller.obscureText
-                                      //     ? Icons.visibility
-                                      //     : Icons.visibility_off,
+                                     
+                                      controller.obscureText.value
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                     ),
-                                    onPressed: (){
-                                      
-                                    },
-                                    // onPressed: () => controller.togggleShowPassword(),
+                                   onPressed: controller.togglePasswordVisibility, 
                                   ),
                                 ),
                               ),
-                              obscureText: true,
+                              obscureText: controller.obscureText.value,
                               validator: FormBuilderValidators.compose([
                                 FormBuilderValidators.required(),
                                 FormBuilderValidators.minLength(6),
@@ -181,20 +180,27 @@ class LoginPage extends StatelessWidget {
                             ),
                             const Gap(24),
 
-                            SizedBox(
-                              height: 50,
-                              width: Get.size.width,
-                              child: GradientElevatedButton(
-                                  onPressed: () {
-                                
-                                  },
-                                  style: GRADIENT_ELEVATED_BUTTON_STYLE,
-                                  child: Text(
-                                    'Login',
-                                    style: Get.textTheme.bodyLarge
-                                        ?.copyWith(color: Colors.white),
-                                  )),
-                            ),
+                           SizedBox(
+  height: 50,
+  width: Get.size.width,
+  child: GradientElevatedButton(
+    onPressed: controller.isLoading.value
+        ? null
+        : () => controller.submitLogin(),
+    style: GRADIENT_ELEVATED_BUTTON_STYLE,
+    child: Obx(() => controller.isLoading.value
+        ? const SizedBox(
+            height: 20,
+            width: 20,
+            child: CircularProgressIndicator(color: Colors.white),
+          )
+        : Text(
+            'Login',
+            style: Get.textTheme.bodyLarge?.copyWith(color: Colors.white),
+          )),
+  ),
+),
+
                            
                           ],
                         ),
