@@ -1,4 +1,4 @@
-import 'package:custom_mp_app/app/data/models/products/category_model.dart';
+import 'package:custom_mp_app/app/data/models/category/category_model.dart';
 import 'variant_model.dart';
 
 class ProductModel {
@@ -13,8 +13,8 @@ class ProductModel {
   final bool isFeatured;
   final bool isBestSeller;
   final String? newArrivalEndsAt;
-  final int views;
-  final int sold;
+  final int? views;
+  final int? sold;
   final int? minPrepTime;
   final String? minPrepTimeUnit;
   final int? maxPrepTime;
@@ -36,8 +36,8 @@ class ProductModel {
     required this.isFeatured,
     required this.isBestSeller,
     this.newArrivalEndsAt,
-    required this.views,
-    required this.sold,
+    this.views,
+    this.sold,
     this.minPrepTime,
     this.minPrepTimeUnit,
     this.maxPrepTime,
@@ -61,23 +61,21 @@ class ProductModel {
       isFeatured: map['is_featured'] ?? false,
       isBestSeller: map['is_best_seller'] ?? false,
       newArrivalEndsAt: map['new_arrival_ends_at'],
-      views: map['views'] ?? 0,
-      sold: map['sold'] ?? 0,
+      views: map['views'],
+      sold: map['sold'],
       minPrepTime: map['min_prep_time'],
       minPrepTimeUnit: map['min_prep_time_unit'],
       maxPrepTime: map['max_prep_time'],
       maxPrepTimeUnit: map['max_prep_time_unit'],
       thumbnail: map['thumbnail'] ?? '',
-      gallery: map['gallery'] != null
-          ? List<String>.from(map['gallery'])
-          : const [],
+      gallery: List<String>.from(map['gallery'] ?? const []),
       categories: map['categories'] != null
           ? List<CategoryModel>.from(
-              map['categories'].map((x) => CategoryModel.fromMap(x)))
+              (map['categories'] as List).map((x) => CategoryModel.fromMap(x)))
           : const [],
       variants: map['variants'] != null
           ? List<VariantModel>.from(
-              map['variants'].map((x) => VariantModel.fromMap(x)))
+              (map['variants'] as List).map((x) => VariantModel.fromMap(x)))
           : const [],
     );
   }

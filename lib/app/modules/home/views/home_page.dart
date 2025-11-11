@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart' as hero;
@@ -14,7 +15,7 @@ class HomePage extends GetView<HomeController> {
   const HomePage({Key? key}) : super(key: key);
 
   final List<Widget> _pages = const [
-    Center(child: Text('🏠 Home Page')),
+    ProductPage(),
     FavoritePage(),
     MyOrderPage(),
     NotificationPage(),

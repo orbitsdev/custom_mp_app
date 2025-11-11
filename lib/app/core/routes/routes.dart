@@ -7,9 +7,11 @@ import 'package:custom_mp_app/app/modules/auth/views/signup_page.dart';
 import 'package:custom_mp_app/app/modules/auth/views/splash_page.dart';
 import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
+import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
 import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/testing/modal_page.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/route_manager.dart';
 
 class Routes {
@@ -18,8 +20,8 @@ class Routes {
   static const String signupPage = '/signup';
   static const String forgotPasswordPage = '/home';
   static const String splashPage = '/splash';
-
   static const String homePage = '/home';
+
 
   //
   static const String modalPage = '/modal';
@@ -45,5 +47,7 @@ class Routes {
       page: () => HomePage(),
       binding: HomeBinding()
     ),
+  
+
   ];
 }

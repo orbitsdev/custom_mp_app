@@ -1,5 +1,4 @@
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:custom_mp_app/app/data/repositories/auth_repository.dart';
 import 'package:custom_mp_app/app/data/models/user/user_model.dart';
@@ -14,30 +13,10 @@ class AuthController extends GetxController {
   final isLoading = false.obs;
   final user = Rxn<UserModel>();
 
-    // --- 🧭 Route & Action Tracking ---
-  String? _pendingRoute;
-  VoidCallback? _pendingAction;
-
- void setPendingAction(VoidCallback action) {
-    _pendingAction = action;
-  }
-
-  /// Clear pending data
-  void _clearPending() {
-    _pendingRoute = null;
-    _pendingAction = null;
-  }
-
-  /// Execute last action or redirect
-  void resumeAfterLogin() {
-    if (_pendingAction != null) {
-      _pendingAction!(); // Execute stored callback
-    } else if (_pendingRoute != null) {
-      Get.offAllNamed(_pendingRoute!);
-    } else {
-      Get.offAllNamed('/home');
-    }
-    _clearPending();
+  @override
+  void onInit() {
+    super.onInit();
+   
   }
 
 
@@ -94,5 +73,6 @@ class AuthController extends GetxController {
     user.value = null;
     isAuthenticated.value = false;
     Get.offAllNamed('/login');
+   
   }
 }
