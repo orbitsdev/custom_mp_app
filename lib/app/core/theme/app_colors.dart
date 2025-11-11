@@ -54,4 +54,11 @@ class AppColors {
 
   static const Color darkGray = Color(0xFF272625);
   static const Color primaryOrange = Color(0xffECAD32);
+  static const Color lightGray = Color(0xffADADAD);
+
+
+    static const Color whisper = Color(0xFFF7F7F7);
+  static const Color fog = Color(0xFFEFEFEF);
+
+
 }

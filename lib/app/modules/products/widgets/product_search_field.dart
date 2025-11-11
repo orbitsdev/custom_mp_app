@@ -6,12 +6,12 @@ import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart' as h;
 
 
-class SearchContainer extends StatelessWidget {
+class ProductSearchField extends StatelessWidget {
   final Function? onSearchTap;
   final Function? onFilterTap;
   final GlobalKey<ScaffoldState> scaffoldKey;
 
-  SearchContainer({
+  ProductSearchField({
     Key? key,
     this.onSearchTap,
     this.onFilterTap,
@@ -64,7 +64,7 @@ class SearchContainer extends StatelessWidget {
                     child: h.HeroIcon(
                       h.HeroIcons.magnifyingGlass,
                       size: 24,
-                      color: AVANTE_PRIMARI_SEMI_DARK,
+                      color: AppColors.primaryOrange,
                     ),
                   ),
                   Gap(8),
@@ -72,7 +72,7 @@ class SearchContainer extends StatelessWidget {
                     child: Text(
                       'Search Items ...',
                       style: Get.textTheme.bodyMedium!.copyWith(
-                        color: AVANTE_LIGHT_TEXT_COLOR,
+                        color: AppColors.lightGray,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

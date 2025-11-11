@@ -6,34 +6,41 @@ import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 class ProductController extends GetxController {
   final ProductRepository _repo = ProductRepository();
 
-  final isLoading = false.obs;
-  final products = <ProductModel>[].obs;
+  bool isLoading = false;
+  List<ProductModel> products = [];
 
   @override
   void onReady() {
     super.onReady();
-
     fetchProducts();
     print('ONREADY______CALLED');
   }
 
   Future<void> fetchProducts() async {
-    isLoading.value = true;
+    try {
+      isLoading = true;
+      update(); // 🔹 trigger UI rebuild (shows loading state)
 
-    final result = await _repo.fetchProducts();
+      final result = await _repo.fetchProducts();
 
-    result.fold(
-      (failure) {
-        print('❌ Product fetch failed: ${failure.message}');
-        AppToast.error('Failed: ${failure.message}');
-        products.clear();
-      },
-      (data) {
-        products.assignAll(data);
-        print('✅ Loaded ${data.length} products');
-      },
-    );
+      result.fold(
+        (failure) {
+          print('❌ ${failure.message}');
+          AppToast.error('Product fetch failed: ${failure.message}');
+          products.clear();
+        },
+        (data) {
+          products = data;
+          print('✅ Loaded ${data.length} products');
+        },
+      );
 
-    isLoading.value = false;
+      isLoading = false;
+      update(); // 🔹 rebuild again after success/failure
+    } catch (e) {
+      isLoading = false;
+      update();
+      print('❌ Unexpected error: $e');
+    }
   }
 }

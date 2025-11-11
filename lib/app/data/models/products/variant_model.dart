@@ -28,21 +28,43 @@ class VariantModel {
   });
 
   factory VariantModel.fromMap(Map<String, dynamic> map) {
+    int _asInt(dynamic v) {
+      if (v is num) return v.toInt();
+      if (v is String) return int.tryParse(v) ?? 0;
+      return 0;
+    }
+
+    double? _asDouble(dynamic v) {
+      if (v == null) return null;
+      if (v is num) return v.toDouble();
+      if (v is String) return double.tryParse(v);
+      return null;
+    }
+
+    List<int> _asListOfInt(dynamic v) {
+      if (v is List) {
+        return v.map((e) {
+          if (e is int) return e;
+          if (e is String) return int.tryParse(e) ?? 0;
+          return 0;
+        }).toList();
+      }
+      return [];
+    }
+
     return VariantModel(
-      id: map['id'] ?? 0,
-      name: map['name'] ?? '',
-      sku: map['sku'] ?? '',
-      price: (map['price'] as num?)?.toDouble(),
-      compareAtPrice: (map['compare_at_price'] as num?)?.toDouble(),
-      availableStock: map['available_stock'],
-      weightKg: (map['weight_kg'] as num?)?.toDouble(),
-      lengthCm: (map['length_cm'] as num?)?.toDouble(),
-      widthCm: (map['width_cm'] as num?)?.toDouble(),
-      heightCm: (map['height_cm'] as num?)?.toDouble(),
-      media: map['media'] ?? '',
-      optionIds: map['option_ids'] != null
-          ? List<int>.from(map['option_ids'])
-          : null,
+      id: _asInt(map['id']),
+      name: map['name']?.toString() ?? '',
+      sku: map['sku']?.toString() ?? '',
+      price: _asDouble(map['price']),
+      compareAtPrice: _asDouble(map['compare_at_price']),
+      availableStock: _asInt(map['available_stock']),
+      weightKg: _asDouble(map['weight_kg']),
+      lengthCm: _asDouble(map['length_cm']),
+      widthCm: _asDouble(map['width_cm']),
+      heightCm: _asDouble(map['height_cm']),
+      media: map['media']?.toString() ?? '',
+      optionIds: _asListOfInt(map['option_ids']),
     );
   }
 
