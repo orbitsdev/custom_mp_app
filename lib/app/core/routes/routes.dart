@@ -10,6 +10,7 @@ import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
 import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
 import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
+import 'package:custom_mp_app/app/modules/products/views/product_search_page.dart';
 import 'package:custom_mp_app/app/modules/testing/modal_page.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/route_manager.dart';
@@ -23,7 +24,12 @@ class Routes {
   static const String homePage = '/home';
 
 
-  //
+
+  //PRODUCTS
+  static const String productSearchPage = '/product-search-page';
+
+
+  //TEST IGN
   static const String modalPage = '/modal';
 
   static List<GetPage> pages = [
@@ -46,6 +52,12 @@ class Routes {
       middlewares: [AuthMiddleware()],
       page: () => HomePage(),
       binding: HomeBinding()
+    ),
+    GetPage(
+      name: Routes.productSearchPage,
+      middlewares: [AuthMiddleware()],
+      page: () => ProductSearchPage(),
+      // binding: HomeBinding()
     ),
   
 
