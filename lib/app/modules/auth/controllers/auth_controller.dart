@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:custom_mp_app/app/data/repositories/auth_repository.dart';
 import 'package:custom_mp_app/app/data/models/user/user_model.dart';
@@ -13,10 +14,30 @@ class AuthController extends GetxController {
   final isLoading = false.obs;
   final user = Rxn<UserModel>();
 
-  @override
-  void onInit() {
-    super.onInit();
-    // autoLogin();
+    // --- 🧭 Route & Action Tracking ---
+  String? _pendingRoute;
+  VoidCallback? _pendingAction;
+
+ void setPendingAction(VoidCallback action) {
+    _pendingAction = action;
+  }
+
+  /// Clear pending data
+  void _clearPending() {
+    _pendingRoute = null;
+    _pendingAction = null;
+  }
+
+  /// Execute last action or redirect
+  void resumeAfterLogin() {
+    if (_pendingAction != null) {
+      _pendingAction!(); // Execute stored callback
+    } else if (_pendingRoute != null) {
+      Get.offAllNamed(_pendingRoute!);
+    } else {
+      Get.offAllNamed('/home');
+    }
+    _clearPending();
   }
 
 
@@ -35,21 +56,24 @@ class AuthController extends GetxController {
   }
 
   final result = await _authRepo.getAuthenticatedUser();
+
   result.fold(
     (failure) async {
-      print('❌ Auto-login failed: $failure');
+      print('❌ Auto-login failed: ${failure.message}');
 
-      // 🧹 If failure means token invalid or expired — clear it
-      if (failure.contains('Unauthenticated') ||
-          failure.contains('expired') ||
-          failure.contains('invalid')) {
+      // 🧹 If failure message suggests token invalid/expired, clear it
+      final msg = failure.message.toLowerCase();
+
+      if (msg.contains('unauthenticated') ||
+          msg.contains('expired') ||
+          msg.contains('invalid')) {
         await SecureStorageService.deleteToken();
         print('🧹 Deleted expired/invalid token');
       }
 
       isAuthenticated.value = false;
       user.value = null;
-      AppToast.error(failure);
+      AppToast.error(failure.message);
     },
     (userData) {
       print('✅ Auto-login success: ${userData.email}');
@@ -60,6 +84,7 @@ class AuthController extends GetxController {
 
   isLoading.value = false;
 }
+
 
 
 

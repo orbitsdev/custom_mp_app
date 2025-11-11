@@ -56,7 +56,7 @@ class SignupController extends GetxController {
 
     result.fold(
       (failure) {
-        AppModal.error(title: "Signup Failed", message: failure);
+        AppModal.error(title: "Signup Failed", message: failure.message);
       },
       (user) {
         AuthController.instance.user.value = user;

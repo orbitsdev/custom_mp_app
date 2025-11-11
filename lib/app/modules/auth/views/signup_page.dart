@@ -273,7 +273,7 @@ class SignupPage extends StatelessWidget {
       height: 50,
       width: Get.size.width,
       child: GradientElevatedButton(
-        onPressed: controller.submitSignup,
+        onPressed: controller.isLoading.value ? null : controller.submitSignup,
         style: GRADIENT_ELEVATED_BUTTON_STYLE,
         child: controller.isLoading.value
             ? const CircularProgressIndicator(color: Colors.white)

@@ -52,7 +52,7 @@ class LoginController extends GetxController {
      
       AppModal.error(
         title: "Login Failed",
-        message: failure,
+        message: failure.message,
       );
     },
     (user) {

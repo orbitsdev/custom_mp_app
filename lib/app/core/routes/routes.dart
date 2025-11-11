@@ -5,7 +5,10 @@ import 'package:custom_mp_app/app/modules/auth/middleware/guest_middleware.dart'
 import 'package:custom_mp_app/app/modules/auth/views/login_page.dart';
 import 'package:custom_mp_app/app/modules/auth/views/signup_page.dart';
 import 'package:custom_mp_app/app/modules/auth/views/splash_page.dart';
-import 'package:custom_mp_app/app/modules/home/home_page.dart';
+import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
+import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
+import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart';
+import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/testing/modal_page.dart';
 import 'package:get/route_manager.dart';
 
@@ -40,6 +43,7 @@ class Routes {
       name: Routes.homePage,
       middlewares: [AuthMiddleware()],
       page: () => HomePage(),
+      binding: HomeBinding()
     ),
   ];
 }

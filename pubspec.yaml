@@ -53,6 +53,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
   get_storage: ^2.1.1
   pretty_dio_logger: ^1.4.0
+  fluentui_system_icons: ^1.1.273
 
 dev_dependencies:
   flutter_test:
