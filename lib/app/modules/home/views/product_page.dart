@@ -77,9 +77,7 @@ class _ProductPageState extends State<ProductPage> {
             GetBuilder<ProductController>(
               builder: (_) => const ProductList(),
             ),
-            GetBuilder<ProductController>(
-              builder: (c) => ToSliver(child: Text(c.products.length.toString())),
-            ),
+            
 
              SliverVGap(24),
           ],

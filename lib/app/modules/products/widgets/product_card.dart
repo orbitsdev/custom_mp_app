@@ -43,21 +43,20 @@ class ProductCard extends StatelessWidget {
           // 🖼 Product Image
           Stack(
             children: [
-               SizedBox(height: 160,),
-               Text(product.thumbnail),
-              // ClipRRect(
-              //   borderRadius: BorderRadius.only(
-              //     topLeft: Radius.circular(br),
-              //     topRight: Radius.circular(br),
-              //   ),
-              //   child: SizedBox(
-              //     width: double.infinity,
-              //     height: 160,
-              //     child: OnlineImage(imageUrl: product.thumbnail),
-              //   ),
-              // ),
+              //  SizedBox(height: 160,),
+              //  Text(product.thumbnail),
+              ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(br),
+                  topRight: Radius.circular(br),
+                ),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 160,
+                  child: OnlineImage(imageUrl: product.thumbnail),
+                ),
+              ),
 
-              // 🌟 Featured Badge
               if (product.isFeatured)
                 const Positioned(
                   top: 8,
