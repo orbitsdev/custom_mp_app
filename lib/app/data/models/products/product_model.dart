@@ -48,34 +48,58 @@ class ProductModel {
     required this.variants,
   });
 
+  /// ✅ Safe, type-flexible factory that avoids any runtime cast errors.
   factory ProductModel.fromMap(Map<String, dynamic> map) {
+    int _asInt(dynamic v) {
+      if (v is num) return v.toInt();
+      if (v is String) return int.tryParse(v) ?? 0;
+      return 0;
+    }
+
+    double? _asDouble(dynamic v) {
+      if (v == null) return null;
+      if (v is num) return v.toDouble();
+      if (v is String) return double.tryParse(v);
+      return null;
+    }
+
+    List<T> _asListOf<T>(dynamic v) {
+      if (v is List) return v.cast<T>();
+      return const [];
+    }
+
+    final rawCats = map['categories'];
+    final rawVars = map['variants'];
+
     return ProductModel(
-      id: map['id'] ?? 0,
+      id: _asInt(map['id']),
       name: map['name'] ?? '',
       slug: map['slug'] ?? '',
       shortDescription: map['short_description'],
       description: map['description'],
       nutritionFacts: map['nutrition_facts'],
-      price: (map['price'] as num?)?.toDouble(),
-      compareAtPrice: (map['compare_at_price'] as num?)?.toDouble(),
-      isFeatured: map['is_featured'] ?? false,
-      isBestSeller: map['is_best_seller'] ?? false,
-      newArrivalEndsAt: map['new_arrival_ends_at'],
-      views: map['views'],
-      sold: map['sold'],
-      minPrepTime: map['min_prep_time'],
-      minPrepTimeUnit: map['min_prep_time_unit'],
-      maxPrepTime: map['max_prep_time'],
-      maxPrepTimeUnit: map['max_prep_time_unit'],
-      thumbnail: map['thumbnail'] ?? '',
-      gallery: List<String>.from(map['gallery'] ?? const []),
-      categories: map['categories'] != null
-          ? List<CategoryModel>.from(
-              (map['categories'] as List).map((x) => CategoryModel.fromMap(x)))
+      price: _asDouble(map['price']),
+      compareAtPrice: _asDouble(map['compare_at_price']),
+      isFeatured: (map['is_featured'] ?? false) == true,
+      isBestSeller: (map['is_best_seller'] ?? false) == true,
+      newArrivalEndsAt: map['new_arrival_ends_at']?.toString(),
+      views: (map['views'] as num?)?.toInt(),
+      sold: (map['sold'] as num?)?.toInt(),
+      minPrepTime: (map['min_prep_time'] as num?)?.toInt(),
+      minPrepTimeUnit: map['min_prep_time_unit']?.toString(),
+      maxPrepTime: (map['max_prep_time'] as num?)?.toInt(),
+      maxPrepTimeUnit: map['max_prep_time_unit']?.toString(),
+      thumbnail: map['thumbnail']?.toString() ?? '',
+      gallery: _asListOf<String>(map['gallery']),
+      categories: (rawCats is List)
+          ? rawCats
+              .map((e) => CategoryModel.fromMap(e as Map<String, dynamic>))
+              .toList()
           : const [],
-      variants: map['variants'] != null
-          ? List<VariantModel>.from(
-              (map['variants'] as List).map((x) => VariantModel.fromMap(x)))
+      variants: (rawVars is List)
+          ? rawVars
+              .map((e) => VariantModel.fromMap(e as Map<String, dynamic>))
+              .toList()
           : const [],
     );
   }

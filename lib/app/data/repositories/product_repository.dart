@@ -1,5 +1,4 @@
 import 'package:custom_mp_app/app/core/utils/typedefs.dart';
-
 import 'package:custom_mp_app/app/data/models/errror/failure_model.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:dio/dio.dart';
@@ -9,13 +8,13 @@ import 'package:custom_mp_app/app/core/plugins/dio/dio_client.dart';
 class ProductRepository {
   EitherModel<List<ProductModel>> fetchProducts({
     int page = 1,
-    bool includeMedia = true,
+    bool includeRelations = true,
   }) async {
     try {
       final dio = await DioClient.auth;
       final query = {
         'page': page.toString(),
-        if (includeMedia) 'include': 'media',
+        if (includeRelations) 'include': 'media,categories,variants',
       };
 
       final response = await dio.get('products', queryParameters: query);
@@ -37,7 +36,9 @@ class ProductRepository {
   EitherModel<ProductModel> fetchProductBySlug(String slug) async {
     try {
       final dio = await DioClient.auth;
-      final response = await dio.get('products/$slug');
+      final response = await dio.get('products/$slug', queryParameters: {
+        'include': 'media,categories,variants',
+      });
 
       final product = ProductModel.fromMap(response.data['data']);
       return right(product);

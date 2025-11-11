@@ -20,15 +20,26 @@ class CategoryModel {
   });
 
   factory CategoryModel.fromMap(Map<String, dynamic> map) {
+    int _asInt(dynamic v) {
+      if (v is num) return v.toInt();
+      if (v is String) return int.tryParse(v) ?? 0;
+      return 0;
+    }
+
+    String? _asString(dynamic v) {
+      if (v == null) return null;
+      return v.toString();
+    }
+
     return CategoryModel(
-      id: map['id'] ?? 0,
-      name: map['name'] ?? '',
-      slug: map['slug'] ?? '',
-      description: map['description'],
-      bgColor: map['bg_color'],
-      thumbnail: map['thumbnail'],
-      orderStartsAt: map['order_starts_at'],
-      orderEndsAt: map['order_ends_at'],
+      id: _asInt(map['id']),
+      name: map['name']?.toString() ?? '',
+      slug: map['slug']?.toString() ?? '',
+      description: _asString(map['description']),
+      bgColor: _asString(map['bg_color']),
+      thumbnail: _asString(map['thumbnail']),
+      orderStartsAt: _asString(map['order_starts_at']),
+      orderEndsAt: _asString(map['order_ends_at']),
     );
   }
 
@@ -42,7 +53,4 @@ class CategoryModel {
         'order_starts_at': orderStartsAt,
         'order_ends_at': orderEndsAt,
       };
-
-  @override
-  String toString() => 'CategoryModel(id: $id, name: $name, slug: $slug)';
 }
