@@ -13,9 +13,11 @@ class ProductRepository {
     try {
       final dio = await DioClient.auth;
       final query = {
-        'page': page.toString(),
-        if (includeRelations) 'include': 'media,categories,variants',
-      };
+      'page': page.toString(),
+      if (includeRelations)
+        'include':
+            'media,categories,variants.media,variants.options.attribute',
+    };
 
       final response = await dio.get('products', queryParameters: query);
       final data = response.data['data'];
@@ -37,7 +39,7 @@ class ProductRepository {
     try {
       final dio = await DioClient.auth;
       final response = await dio.get('products/$slug', queryParameters: {
-        'include': 'media,categories,variants',
+         'include': 'variants.media,variants.options.attribute,categories',
       });
 
       final product = ProductModel.fromMap(response.data['data']);
