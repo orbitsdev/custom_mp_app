@@ -37,7 +37,7 @@ class AuthController extends GetxController {
   final result = await _authRepo.getAuthenticatedUser();
 
   result.fold(
-    (failure) async {
+  (failure) async {
       print('❌ Auto-login failed: ${failure.message}');
 
       // 🧹 If failure message suggests token invalid/expired, clear it

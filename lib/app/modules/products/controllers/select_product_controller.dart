@@ -1,52 +1,100 @@
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
+import 'package:custom_mp_app/app/data/repositories/product_repository.dart';
+import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
+import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SelectProductController extends GetxController {
-
   static SelectProductController get to => Get.find();
+  final ProductRepository _productRepository = ProductRepository();
   final selectedProduct = Rxn<ProductModel>();
   final isLoading = false.obs;
-
-
-  // for tbas 
-    ScrollController scrollController = ScrollController();
+  final selectedImage = ''.obs;
+  // for tbas
+  ScrollController scrollController = ScrollController();
   var tabIndex = 0.obs;
+
+  void selecTab(int index) {
+    tabIndex.value = index;
+    scrollController.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
 
   @override
   void onInit() {
-
     super.onInit();
 
-     if (Get.arguments != null && Get.arguments is ProductModel) {
+    if (Get.arguments != null && Get.arguments is ProductModel) {
       selectedProduct.value = Get.arguments as ProductModel;
     }
   }
+
+  List<String> get fullGallery {
+    final product = selectedProduct.value;
+    if (product == null) return [];
+    final allImages = <String>[];
+
+    // Always include thumbnail first (if not already in gallery)
+    if (product.thumbnail.isNotEmpty) {
+      allImages.add(product.thumbnail);
+    }
+
+    if (product.gallery.isNotEmpty) {
+      for (final img in product.gallery) {
+        if (!allImages.contains(img)) allImages.add(img);
+      }
+    }
+
+    return allImages;
+  }
+
   void setProduct(ProductModel product) {
     selectedProduct.value = product;
   }
 
   Future<void> refreshProductDetails() async {
+    ProductModel product = selectedProduct.value as ProductModel;
     isLoading.value = true;
-    await Future.delayed(const Duration(milliseconds: 500));
+    final result = await _productRepository.fetchProductBySlug(product.slug);
+    result.fold(
+      (failure) {
+        print('❌ Product fetch failed: ${failure.message}');
+        AppModal.error(title: 'Error', message: failure.message);
+        isLoading.value = false;
+      },
+      (productData) {
+        selectedProduct.value = productData;
+      },
+    );
+    isLoading.value = true;
+  }
+
+  void selectImage(String imageUrl) {
+    selectedImage.value = imageUrl;
+  }
+
+  Future<void> refreshProduct() async {
+    final product = selectedProduct.value;
+    if (product == null || product.slug == null) {
+      return;
+    }
+
+    isLoading.value = true;
+    final result = await _productRepository.fetchProductBySlug(product.slug);
     isLoading.value = false;
-  }
 
-  void selecTab(int index) {
-    tabIndex(index);
-
-    scrollToTab(index);
-    update();
-  }
-
-  void scrollToTab(int index) {
-    double position = index * 100.0;
-    scrollController.animateTo(
-      position,
-      duration: Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+    result.fold(
+      (failure) {
+        print('❌ Product fetch failed: ${failure.message}');
+        AppToast.error('Product fetch failed: ${failure.message}');
+      },
+      (product) {
+        selectedProduct.value = product;
+      },
     );
   }
-
-
 }
