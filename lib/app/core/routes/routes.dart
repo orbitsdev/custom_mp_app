@@ -5,11 +5,13 @@ import 'package:custom_mp_app/app/modules/auth/middleware/guest_middleware.dart'
 import 'package:custom_mp_app/app/modules/auth/views/login_page.dart';
 import 'package:custom_mp_app/app/modules/auth/views/signup_page.dart';
 import 'package:custom_mp_app/app/modules/auth/views/splash_page.dart';
+import 'package:custom_mp_app/app/modules/cart/views/cart_page.dart';
 import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
 import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
 import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
+import 'package:custom_mp_app/app/modules/products/views/product_details_page.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_search_page.dart';
 import 'package:custom_mp_app/app/modules/testing/modal_page.dart';
 import 'package:flutter/widgets.dart';
@@ -26,7 +28,12 @@ class Routes {
 
 
   //PRODUCTS
-  static const String productSearchPage = '/product-search-page';
+  static const String productSearchPage = '/product-search';
+  static const String productDetailsPage = '/product-details';
+
+
+  //CARTS
+  static const String cartPage = '/cart';
 
 
   //TEST IGN
@@ -53,12 +60,32 @@ class Routes {
       page: () => HomePage(),
       binding: HomeBinding()
     ),
+    
+    GetPage(
+      name: Routes.productDetailsPage,
+      middlewares: [AuthMiddleware()],
+      page: () => ProductDetailsPage(),
+      binding: ProductBinding()
+  
+    ),
+
     GetPage(
       name: Routes.productSearchPage,
       middlewares: [AuthMiddleware()],
       page: () => ProductSearchPage(),
       // binding: HomeBinding()
     ),
+
+
+    //carts
+    GetPage(
+      name: Routes.cartPage,
+      middlewares: [AuthMiddleware()],
+      page: () => CartPage(),
+      // binding: HomeBinding()
+    ),
+
+
   
 
   ];

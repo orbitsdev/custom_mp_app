@@ -22,9 +22,6 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final br = borderRadius ?? 10.0;
 
-    print('keke');
-    print(product.thumbnail);
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -43,8 +40,6 @@ class ProductCard extends StatelessWidget {
           // 🖼 Product Image
           Stack(
             children: [
-              //  SizedBox(height: 160,),
-              //  Text(product.thumbnail),
               ClipRRect(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(br),
@@ -84,7 +79,7 @@ class ProductCard extends StatelessWidget {
                   ),
                 const Gap(4),
 
-                // Product name
+                // 🛍 Product name
                 Text(
                   product.name,
                   maxLines: 2,
@@ -96,6 +91,30 @@ class ProductCard extends StatelessWidget {
                       fontWeight: FontWeight.w700,
                     ),
                   ),
+                ),
+                const Gap(6),
+
+                // 💰 Price section
+                Row(
+                  children: [
+                    Text(
+                      '₱${product.price ?? 0}',
+                      style: Get.textTheme.bodyLarge!.copyWith(
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    if (product.compareAtPrice != null &&
+                        product.compareAtPrice! > (product.price ?? 0))
+                      Text(
+                        '₱${product.compareAtPrice}',
+                        style: Get.textTheme.bodySmall!.copyWith(
+                          color: AppColors.textLight,
+                          decoration: TextDecoration.lineThrough,
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),

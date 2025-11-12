@@ -25,6 +25,7 @@ class AppColors {
   static const Color goldSoft = Color(0xFFFBEB80);
   static const Color goldMuted = Color(0xFFBB8821);
   static const Color goldBright = Color(0xFFFFB500); // new color added
+  static const Color goldAccent = Color(0xffFDC040); 
 
   // =============================
   // 🎥 VIDEO COLORS
@@ -59,6 +60,9 @@ class AppColors {
 
     static const Color whisper = Color(0xFFF7F7F7);
   static const Color fog = Color(0xFFEFEFEF);
+  static const Color  charcoal = Color(0xff333333);
+  static const Color  gainsboro = Color(0xffF3F3F3);
+
 
 
 }

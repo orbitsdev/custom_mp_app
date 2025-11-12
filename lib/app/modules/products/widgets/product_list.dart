@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/core/utils/path_helpers.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
@@ -16,42 +17,45 @@ class ProductList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   return GetBuilder<ProductController>(builder: (controller) {
-  if (controller.isLoading) {
-    return const ProductLoadingCard();
-  }
+    return GetBuilder<ProductController>(
+      builder: (controller) {
+        if (controller.isLoading) {
+          return const ProductLoadingCard();
+        }
 
-  if (controller.products.isEmpty) {
-    return SliverToBoxAdapter(
-      child: Container(
-        margin: const EdgeInsets.only(top: 24),
-        child: LocalLottieImage(
-          imagePath: PathHelpers.lottiesPath('empty.json'),
-        ),
-      ),
-    );
-  }
+        if (controller.products.isEmpty) {
+          return SliverToBoxAdapter(
+            child: Container(
+              margin: const EdgeInsets.only(top: 24),
+              child: LocalLottieImage(
+                imagePath: PathHelpers.lottiesPath('empty.json'),
+              ),
+            ),
+          );
+        }
 
-  return SliverPadding(
-    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-    sliver: SliverAlignedGrid.count(
-      crossAxisSpacing: 8,
-      mainAxisSpacing: 8,
-      crossAxisCount: 2,
-      itemCount: controller.products.length,
-      itemBuilder: (context, index) {
-        final product = controller.products[index];
-        return RippleContainer(
-          onTap: () {},
-          child: ProductCard(
-            product: product,
-            borderRadius: 3,
+        return SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          sliver: SliverAlignedGrid.count(
+            crossAxisSpacing: 8,
+            mainAxisSpacing: 8,
+            crossAxisCount: 2,
+            itemCount: controller.products.length,
+            itemBuilder: (context, index) {
+              final product = controller.products[index];
+              return RippleContainer(
+                onTap: () {
+                  Get.toNamed(
+                    Routes.productDetailsPage,
+                    arguments: product, // send the selected product
+                  );
+                },
+                child: ProductCard(product: product, borderRadius: 3),
+              );
+            },
           ),
         );
       },
-    ),
-  );
-});
-
+    );
   }
 }
