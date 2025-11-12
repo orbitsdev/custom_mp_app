@@ -165,13 +165,54 @@ class ProductDetailsPage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      const Gap(8),
 
-                      const Gap(12),
+                      if (product.variants.isNotEmpty)
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: product.variants.first.options.map((
+                              option,
+                            ) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: RichText(
+                                  text: TextSpan(
+                                    style: Get.textTheme.bodyMedium!.copyWith(
+                                      color: AppColors.textDark,
+                                      height: 1.4,
+                                    ),
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            '${option.attributeName ?? 'Option'}: ',
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: option.name,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+
+                      const Gap(8),
 
                       ProductCategoryList(categories: product.categories),
 
                       const Gap(16),
-        
 
                       // 📷 Gallery
                       if (controller.fullGallery.isNotEmpty)
@@ -217,33 +258,32 @@ class ProductDetailsPage extends StatelessWidget {
               // =============================
               // 🧩 Tabs
               // =============================
-             ToSliver(
-  child: Container(
-    color: Colors.white,
-    padding: const EdgeInsets.only(top: 4, bottom: 2),
-    child: Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ProductDetailsTab(
-            product: product,
-            title: 'Description',
-            isSelected: controller.tabIndex.value == 0,
-            function: () => controller.selecTab(0),
-          ),
-          const SizedBox(width: 24),
-          ProductDetailsTab(
-            product: product,
-            title: 'Nutrition Facts',
-            isSelected: controller.tabIndex.value == 1,
-            function: () => controller.selecTab(1),
-          ),
-        ],
-      ),
-    ),
-  ),
-),
-
+              ToSliver(
+                child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.only(top: 4, bottom: 2),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ProductDetailsTab(
+                          product: product,
+                          title: 'Description',
+                          isSelected: controller.tabIndex.value == 0,
+                          function: () => controller.selecTab(0),
+                        ),
+                        const SizedBox(width: 24),
+                        ProductDetailsTab(
+                          product: product,
+                          title: 'Nutrition Facts',
+                          isSelected: controller.tabIndex.value == 1,
+                          function: () => controller.selecTab(1),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
 
               // =============================
               // 📄 Tab Content

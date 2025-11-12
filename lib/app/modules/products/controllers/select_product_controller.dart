@@ -17,11 +17,11 @@ class SelectProductController extends GetxController {
 
   void selecTab(int index) {
     tabIndex.value = index;
-    scrollController.animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
+    // scrollController.animateTo(
+    //   0,
+    //   duration: const Duration(milliseconds: 300),
+    //   curve: Curves.easeOut,
+    // );
   }
 
   @override
@@ -56,32 +56,9 @@ class SelectProductController extends GetxController {
     selectedProduct.value = product;
   }
 
-  Future<void> refreshProductDetails() async {
-    ProductModel product = selectedProduct.value as ProductModel;
-    isLoading.value = true;
-    final result = await _productRepository.fetchProductBySlug(product.slug);
-    result.fold(
-      (failure) {
-        print('❌ Product fetch failed: ${failure.message}');
-        AppModal.error(title: 'Error', message: failure.message);
-        isLoading.value = false;
-      },
-      (productData) {
-        selectedProduct.value = productData;
-      },
-    );
-    isLoading.value = true;
-  }
-
-  void selectImage(String imageUrl) {
-    selectedImage.value = imageUrl;
-  }
-
-  Future<void> refreshProduct() async {
+   Future<void> refreshProduct() async {
     final product = selectedProduct.value;
-    if (product == null || product.slug == null) {
-      return;
-    }
+    if (product == null || product.slug.isEmpty) return;
 
     isLoading.value = true;
     final result = await _productRepository.fetchProductBySlug(product.slug);
@@ -89,12 +66,19 @@ class SelectProductController extends GetxController {
 
     result.fold(
       (failure) {
-        print('❌ Product fetch failed: ${failure.message}');
-        AppToast.error('Product fetch failed: ${failure.message}');
+        print('❌ Product refresh failed: ${failure.message}');
+        AppToast.error('Failed to refresh product: ${failure.message}');
       },
-      (product) {
-        selectedProduct.value = product;
+      (updatedProduct) {
+        selectedProduct.value = updatedProduct;
+        print('🔄 Product updated: ${updatedProduct.name}');
       },
     );
   }
+
+  void selectImage(String imageUrl) {
+    selectedImage.value = imageUrl;
+  }
+
+ 
 }

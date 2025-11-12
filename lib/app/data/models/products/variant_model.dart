@@ -1,3 +1,5 @@
+import 'package:custom_mp_app/app/data/models/products/option_model.dart';
+
 class VariantModel {
   final int id;
   final String name;
@@ -11,6 +13,7 @@ class VariantModel {
   final double? heightCm;
   final String media;
   final List<int>? optionIds;
+   final List<OptionModel> options; 
 
   const VariantModel({
     required this.id,
@@ -25,6 +28,7 @@ class VariantModel {
     this.heightCm,
     required this.media,
     this.optionIds,
+     this.options = const [],
   });
 
   factory VariantModel.fromMap(Map<String, dynamic> map) {
@@ -65,6 +69,10 @@ class VariantModel {
       heightCm: _asDouble(map['height_cm']),
       media: map['media']?.toString() ?? '',
       optionIds: _asListOfInt(map['option_ids']),
+       options: (map['options'] as List?)
+              ?.map((e) => OptionModel.fromMap(e))
+              .toList() ??
+          [],
     );
   }
 
@@ -81,5 +89,6 @@ class VariantModel {
         'height_cm': heightCm,
         'media': media,
         'option_ids': optionIds,
+         'options': options.map((e) => e.toMap()).toList(),
       };
 }
