@@ -1,7 +1,10 @@
+import 'package:custom_mp_app/app/data/models/products/attrvm.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
+import 'package:custom_mp_app/app/data/models/products/variant_model.dart';
 import 'package:custom_mp_app/app/data/repositories/product_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+import 'package:custom_mp_app/app/modules/products/views/product_options_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +14,11 @@ class SelectProductController extends GetxController {
   final selectedProduct = Rxn<ProductModel>();
   final isLoading = false.obs;
   final selectedImage = ''.obs;
+
+  final selectedOptions = <int, int>{}.obs; // attributeId -> optionId
+  final selectedVariant = Rxn<VariantModel>();
+  final qty = 1.obs;
+
   // for tbas
   ScrollController scrollController = ScrollController();
   var tabIndex = 0.obs;
@@ -56,7 +64,7 @@ class SelectProductController extends GetxController {
     selectedProduct.value = product;
   }
 
-   Future<void> refreshProduct() async {
+  Future<void> refreshProduct() async {
     final product = selectedProduct.value;
     if (product == null || product.slug.isEmpty) return;
 
@@ -80,5 +88,74 @@ class SelectProductController extends GetxController {
     selectedImage.value = imageUrl;
   }
 
- 
+  Map<int, AttrVM> get attributesVM {
+  final map = <int, AttrVM>{};
+  final p = selectedProduct.value;
+  if (p == null) return map;
+
+  for (final v in p.variants) {
+    for (final opt in v.options ?? const []) {
+      final attr = opt.attribute;
+      if (attr == null) continue;
+      map.putIfAbsent(attr.id, () => AttrVM(attrId: attr.id, attrName: attr.name, options: {}));
+      map[attr.id]!.options[opt.id] = opt.name;
+    }
+  }
+  // sort options per attribute (optional)
+  return map;
+}
+
+// When user selects an option
+void pickOption(int attributeId, int optionId) {
+  selectedOptions[attributeId] = optionId;
+  _resolveVariant();
+}
+
+// Find matching variant for currently selected option set
+void _resolveVariant() {
+  final p = selectedProduct.value;
+  if (p == null) return;
+
+  // All selected optionIds
+  final chosen = selectedOptions.values.toSet();
+
+  VariantModel? match;
+  for (final v in p.variants) {
+    final ids = (v.optionIds ?? const []).toSet();
+    if (chosen.length == ids.length && chosen.containsAll(ids)) {
+      match = v;
+      break;
+    }
+  }
+  selectedVariant.value = match;
+  if (match?.media.isNotEmpty == true) {
+    // show variant image if present
+    selectImage(match!.media);
+  }
+}
+
+// Helpers
+bool get isSelectionComplete {
+  final need = attributesVM.length;
+  final have = selectedOptions.length;
+  return need > 0 && have == need && selectedVariant.value != null;
+}
+
+void resetPicker() {
+  selectedOptions.clear();
+  selectedVariant.value = null;
+  qty.value = 1;
+}
+
+void showProductOptionsSheet() {
+  Get.bottomSheet(
+    const ProductOptionsSheet(),
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+  );
+}
+
 }

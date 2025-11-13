@@ -1,3 +1,4 @@
+
 import 'package:custom_mp_app/app/modules/products/widgets/product_category_list.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_details_tab.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/tab_content_card.dart';
@@ -7,7 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:flutter/services.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:gradient_elevated_button/gradient_elevated_button.dart';
-import 'package:sliver_tools/sliver_tools.dart';
+
 import 'package:flutter_html/flutter_html.dart';
 
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
@@ -39,8 +40,8 @@ class ProductDetailsPage extends StatelessWidget {
           child: product?.id == null
               ? const SizedBox.shrink()
               : GradientElevatedButton.icon(
-                  style: GRADIENT_ELEVATED_BUTTON_STYLE_NO_RADIUS,
-                  onPressed: () => debugPrint('🛒 Add to Cart pressed'),
+                  style: GRADIENT_ELEVATED_BUTTON_STYLE,
+                  onPressed:controller.showProductOptionsSheet,
                   icon: const Icon(
                     FluentIcons.cart_16_regular,
                     color: Colors.white,
