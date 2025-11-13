@@ -2,11 +2,11 @@ import 'package:custom_mp_app/app/global/widgets/progress/content_loader.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
 import 'package:flutter/material.dart';
 
-class TabContentCard extends StatelessWidget {
+class ProductTabContentCard extends StatelessWidget {
   final Widget child;
   final bool? isLoading;
 
-  const TabContentCard({
+  const ProductTabContentCard({
     Key? key,
     required this.child,
     this.isLoading,

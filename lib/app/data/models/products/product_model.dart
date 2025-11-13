@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:custom_mp_app/app/data/models/category/category_model.dart';
-import 'package:custom_mp_app/app/data/models/products/attribute_model.dart';
+
 
 import 'variant_model.dart';
 
@@ -26,7 +26,7 @@ class ProductModel {
   final List<String> gallery;
   final List<CategoryModel> categories;
   final List<VariantModel> variants;
-  final List<AttributeModel> attributes;
+
 
   const ProductModel({
     required this.id,
@@ -50,7 +50,7 @@ class ProductModel {
     required this.gallery,
     required this.categories,
     required this.variants,
-     required this.attributes,            
+     
   });
 
   /// ✅ Safe, type-flexible factory that avoids any runtime cast errors.
@@ -108,13 +108,10 @@ class ProductModel {
               .toList()
           : const [],
           
-      attributes: (rawAttrs is List)           // <-- NEW
-          ? rawAttrs
-              .map((e) => AttributeModel.fromMap(e))
-              .toList()
-          : const [],
+     
           
     );
+    
   }
 
   Map<String, dynamic> toMap() => {
@@ -139,11 +136,11 @@ class ProductModel {
         'gallery': gallery,
         'categories': categories.map((e) => e.toMap()).toList(),
         'variants': variants.map((e) => e.toMap()).toList(),
-        'attributes': attributes.map((e) => e.toMap()).toList(),
+      
       };
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, name: $name, slug: $slug, shortDescription: $shortDescription, description: $description, nutritionFacts: $nutritionFacts, price: $price, compareAtPrice: $compareAtPrice, isFeatured: $isFeatured, isBestSeller: $isBestSeller, newArrivalEndsAt: $newArrivalEndsAt, views: $views, sold: $sold, minPrepTime: $minPrepTime, minPrepTimeUnit: $minPrepTimeUnit, maxPrepTime: $maxPrepTime, maxPrepTimeUnit: $maxPrepTimeUnit, thumbnail: $thumbnail, gallery: $gallery, categories: $categories, variants: $variants attributes: $attributes)';
+    return 'ProductModel(id: $id, name: $name, slug: $slug, shortDescription: $shortDescription, description: $description, nutritionFacts: $nutritionFacts, price: $price, compareAtPrice: $compareAtPrice, isFeatured: $isFeatured, isBestSeller: $isBestSeller, newArrivalEndsAt: $newArrivalEndsAt, views: $views, sold: $sold, minPrepTime: $minPrepTime, minPrepTimeUnit: $minPrepTimeUnit, maxPrepTime: $maxPrepTime, maxPrepTimeUnit: $maxPrepTimeUnit, thumbnail: $thumbnail, gallery: $gallery, categories: $categories, variants: $variants )';
   }
 }

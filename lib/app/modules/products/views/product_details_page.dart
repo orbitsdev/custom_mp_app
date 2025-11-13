@@ -1,7 +1,7 @@
 
 import 'package:custom_mp_app/app/modules/products/widgets/product_category_list.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_details_tab.dart';
-import 'package:custom_mp_app/app/modules/products/widgets/tab_content_card.dart';
+import 'package:custom_mp_app/app/modules/products/widgets/product_tab_content_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gap/gap.dart';
@@ -63,6 +63,7 @@ class ProductDetailsPage extends StatelessWidget {
         if (product == null) {
           return const Center(child: CircularProgressIndicator());
         }
+     
 
         return RefreshIndicator(
           onRefresh: controller.refreshProduct,
@@ -137,121 +138,142 @@ class ProductDetailsPage extends StatelessWidget {
                   ),
                 ],
               ),
+ToSliver(
+  child: Container(
+    color: Colors.white,
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+    child: Obx(() {
+      if (controller.fullGallery.isEmpty) return const SizedBox.shrink();
+
+      return SizedBox(
+        height: 70,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: controller.fullGallery.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 8),
+          itemBuilder: (context, index) {
+            final img = controller.fullGallery[index];
+            final isSelected = controller.selectedImage.value == img;
+
+            return GestureDetector(
+              onTap: () => controller.selectImage(img),
+              child: Container(
+                width: Get.size.width / 4.5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isSelected ? AppColors.brand : Colors.transparent,
+                    width: 2,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: OnlineImage(imageUrl: img),
+                ),
+              ),
+            );
+          },
+        ),
+      );
+    }),
+  ),
+),
 
               // =============================
               // 🧾 Product Info
               // =============================
-              ToSliver(
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // 🏷️ Name
-                      Text(
-                        product.name,
-                        style: Get.textTheme.titleLarge!.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textDark,
-                        ),
-                      ),
-                      const Gap(8),
+             ToSliver(
+  child: Container(
+    color: Colors.white,
+    padding: const EdgeInsets.all(20),
+    child: Builder(
+      builder: (_) {
+        final grouped = controller.getGroupedOptions();
 
-                      // 💰 Price
-                      Text(
-                        '₱${product.price?.toStringAsFixed(2) ?? '0.00'}',
-                        style: Get.textTheme.headlineSmall!.copyWith(
-                          color: Colors.green.shade700,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Gap(8),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🏷️ Name
+            Text(
+              product.name,
+              style: Get.textTheme.titleLarge!.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.textDark,
+              ),
+            ),
+            const Gap(8),
 
-                      if (product.variants.isNotEmpty)
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: product.variants.first.options.map((
-                              option,
-                            ) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: Get.textTheme.bodyMedium!.copyWith(
-                                      color: AppColors.textDark,
-                                      height: 1.4,
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text:
-                                            '${option.attributeName ?? 'Option'}: ',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: option.name,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
+            // 💰 Price
+            Text(
+              '₱${product.price?.toStringAsFixed(2) ?? '0.00'}',
+              style: Get.textTheme.headlineSmall!.copyWith(
+                color: Colors.green.shade700,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (product.shortDescription != null && product.shortDescription!.isNotEmpty)
+  Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: Text(
+      product.shortDescription!,
+      style: Get.textTheme.bodyMedium!.copyWith(
+        color: AppColors.textLight,
+        height: 1.4,
+      ),
+    ),
+  ),
 
-                      const Gap(8),
+            const Gap(8),
 
-                      ProductCategoryList(categories: product.categories),
+            // ✅ Grouped Variant Display
+           if (grouped.isNotEmpty)
+  Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: grouped.entries.map((entry) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Attribute Name
+              Text(
+                entry.key,
+                style: Get.textTheme.bodyLarge!.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 4),
 
-                      const Gap(16),
+              // ⭐ Comma-separated options
+              Text(
+                entry.value.join(", "),
+                style: Get.textTheme.bodyMedium!.copyWith(
+                  color: AppColors.textDark,
+                  fontWeight: FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    ),
+  ),
 
-                      // 📷 Gallery
-                      if (controller.fullGallery.isNotEmpty)
-                        SizedBox(
-                          height: 70,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: controller.fullGallery.length,
-                            itemBuilder: (context, index) {
-                              final img = controller.fullGallery[index];
-                              return Obx(() {
-                                final isSelected =
-                                    controller.selectedImage.value == img;
-                                return GestureDetector(
-                                  onTap: () => controller.selectImage(img),
-                                  child: Container(
-                                    margin: const EdgeInsets.only(right: 8),
-                                    width: Get.size.width / 4.5,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? AppColors.brand
-                                            : Colors.transparent,
-                                        width: 2,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(6),
-                                      child: OnlineImage(imageUrl: img),
-                                    ),
-                                  ),
-                                );
-                              });
-                            },
-                          ),
-                        ),
-                    ],
+
+            const Gap(8),
+            ProductCategoryList(categories: product.categories),
+
+
+                      
+                          
+                        ],
+                      );
+                    }
                   ),
                 ),
               ),
@@ -299,7 +321,7 @@ class ProductDetailsPage extends StatelessWidget {
 
                 switch (tabIndex) {
                   case 0:
-                    return TabContentCard(
+                    return ProductTabContentCard(
                       isLoading: controller.isLoading.value,
                       child: Container(
                         color: Colors.white,
@@ -316,7 +338,7 @@ class ProductDetailsPage extends StatelessWidget {
                       ),
                     );
                   case 1:
-                    return TabContentCard(
+                    return ProductTabContentCard(
                       isLoading: controller.isLoading.value,
                       child: Container(
                         color: Colors.white,

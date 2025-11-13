@@ -1,6 +1,6 @@
 class SelectedAttributeOption {
   final int attributeId;
-  String optionId;
+  int optionId;   // ✔ FIXED
 
   SelectedAttributeOption({
     required this.attributeId,

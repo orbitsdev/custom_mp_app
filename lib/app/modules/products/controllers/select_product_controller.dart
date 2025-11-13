@@ -2,8 +2,8 @@ import 'package:custom_mp_app/app/data/models/products/attrvm.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/data/models/products/variant_model.dart';
 import 'package:custom_mp_app/app/data/repositories/product_repository.dart';
-import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+import 'package:custom_mp_app/app/modules/products/controllers/select_variant_controller.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_options_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,17 +19,12 @@ class SelectProductController extends GetxController {
   final selectedVariant = Rxn<VariantModel>();
   final qty = 1.obs;
 
-  // for tbas
   ScrollController scrollController = ScrollController();
   var tabIndex = 0.obs;
 
   void selecTab(int index) {
     tabIndex.value = index;
-    // scrollController.animateTo(
-    //   0,
-    //   duration: const Duration(milliseconds: 300),
-    //   curve: Curves.easeOut,
-    // );
+   
   }
 
   @override
@@ -46,7 +41,7 @@ class SelectProductController extends GetxController {
     if (product == null) return [];
     final allImages = <String>[];
 
-    // Always include thumbnail first (if not already in gallery)
+
     if (product.thumbnail.isNotEmpty) {
       allImages.add(product.thumbnail);
     }
@@ -59,6 +54,25 @@ class SelectProductController extends GetxController {
 
     return allImages;
   }
+
+  Map<String, List<String>> getGroupedOptions() {
+  final product = selectedProduct.value;
+  if (product == null) return {};
+
+  final Map<String, Set<String>> grouped = {};
+
+  for (final variant in product.variants) {
+    for (final option in variant.options) {
+      final attr = option.attributeName ?? "Option";
+
+      grouped.putIfAbsent(attr, () => <String>{});
+      grouped[attr]!.add(option.name);
+    }
+  }
+
+  return grouped.map((key, value) => MapEntry(key, value.toList()));
+}
+
 
   void setProduct(ProductModel product) {
     selectedProduct.value = product;
@@ -94,7 +108,7 @@ class SelectProductController extends GetxController {
   if (p == null) return map;
 
   for (final v in p.variants) {
-    for (final opt in v.options ?? const []) {
+    for (final opt in v.options ?? []) {
       final attr = opt.attribute;
       if (attr == null) continue;
       map.putIfAbsent(attr.id, () => AttrVM(attrId: attr.id, attrName: attr.name, options: {}));
@@ -148,14 +162,7 @@ void resetPicker() {
 }
 
 void showProductOptionsSheet() {
-  Get.bottomSheet(
-    const ProductOptionsSheet(),
-    isScrollControlled: true,
-    backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
-  );
+ 
 }
 
 }

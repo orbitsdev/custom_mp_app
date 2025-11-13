@@ -1,7 +1,7 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/global/widgets/image/online_image.dart';
-import 'package:custom_mp_app/app/modules/products/widgets/featured_badge.dart';
+import 'package:custom_mp_app/app/modules/products/widgets/product_featured_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:gap/gap.dart';
@@ -56,7 +56,7 @@ class ProductCard extends StatelessWidget {
                 const Positioned(
                   top: 8,
                   left: 8,
-                  child: FeaturedBadge(),
+                  child: ProductFeaturedBadge(),
                 ),
             ],
           ),

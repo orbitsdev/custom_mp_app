@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
-class FeaturedBadge extends StatelessWidget {
-  const FeaturedBadge({Key? key}) : super(key: key);
+class ProductFeaturedBadge extends StatelessWidget {
+  const ProductFeaturedBadge({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

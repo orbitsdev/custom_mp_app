@@ -12,8 +12,11 @@ class VariantModel {
   final double? widthCm;
   final double? heightCm;
   final String media;
-  final List<int>? optionIds;
-   final List<OptionModel> options; 
+
+  /// IMPORTANT: This MUST be int
+  final List<int> optionIds;
+
+  final List<OptionModel> options;
 
   const VariantModel({
     required this.id,
@@ -27,8 +30,8 @@ class VariantModel {
     this.widthCm,
     this.heightCm,
     required this.media,
-    this.optionIds,
-     this.options = const [],
+    required this.optionIds,
+    this.options = const [],
   });
 
   factory VariantModel.fromMap(Map<String, dynamic> map) {
@@ -58,8 +61,8 @@ class VariantModel {
 
     return VariantModel(
       id: _asInt(map['id']),
-      name: map['name']?.toString() ?? '',
-      sku: map['sku']?.toString() ?? '',
+      name: map['name'] ?? '',
+      sku: map['sku'] ?? '',
       price: _asDouble(map['price']),
       compareAtPrice: _asDouble(map['compare_at_price']),
       availableStock: _asInt(map['available_stock']),
@@ -69,7 +72,7 @@ class VariantModel {
       heightCm: _asDouble(map['height_cm']),
       media: map['media']?.toString() ?? '',
       optionIds: _asListOfInt(map['option_ids']),
-       options: (map['options'] as List?)
+      options: (map['options'] as List?)
               ?.map((e) => OptionModel.fromMap(e))
               .toList() ??
           [],
@@ -89,6 +92,6 @@ class VariantModel {
         'height_cm': heightCm,
         'media': media,
         'option_ids': optionIds,
-         'options': options.map((e) => e.toMap()).toList(),
+        'options': options.map((e) => e.toMap()).toList(),
       };
 }
