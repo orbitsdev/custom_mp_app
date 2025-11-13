@@ -13,15 +13,13 @@ class OptionModel {
     return OptionModel(
       id: map['id'] ?? 0,
       name: map['name'] ?? '',
-      attributeName: map['attribute_name'], // from backend resource
+      attributeName: map['attribute_name'],
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'attribute_name': attributeName,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        'id': id,
+        'name': name,
+        'attribute_name': attributeName,
+      };
 }

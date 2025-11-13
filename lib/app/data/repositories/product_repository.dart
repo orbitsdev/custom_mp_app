@@ -12,12 +12,13 @@ class ProductRepository {
   }) async {
     try {
       final dio = await DioClient.auth;
+
       final query = {
-      'page': page.toString(),
-      if (includeRelations)
-        'include':
-            'media,categories,variants.media,variants.options.attribute',
-    };
+        'page': page.toString(),
+        if (includeRelations)
+          'include':
+              'media,categories,variants.media,variants.options.attribute,attributes.options',
+      };
 
       final response = await dio.get('products', queryParameters: query);
       final data = response.data['data'];
@@ -38,9 +39,14 @@ class ProductRepository {
   EitherModel<ProductModel> fetchProductBySlug(String slug) async {
     try {
       final dio = await DioClient.auth;
-      final response = await dio.get('products/$slug', queryParameters: {
-         'include': 'variants.media,variants.options.attribute,categories',
-      });
+
+      final response = await dio.get(
+        'products/$slug',
+        queryParameters: {
+          'include':
+              'variants.media,variants.options.attribute,categories,attributes.options,media',
+        },
+      );
 
       final product = ProductModel.fromMap(response.data['data']);
       return right(product);
