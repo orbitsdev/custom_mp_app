@@ -40,12 +40,9 @@ List<CategoryModel> categories;
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.brandBackground,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.brand.withOpacity(0.35),
-                  width: 1,
-                ),
+          
+              
+             
               ),
               child: Text(
                 cat.name,

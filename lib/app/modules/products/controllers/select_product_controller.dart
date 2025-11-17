@@ -4,7 +4,7 @@ import 'package:custom_mp_app/app/data/models/products/variant_model.dart';
 import 'package:custom_mp_app/app/data/repositories/product_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/select_variant_controller.dart';
-import 'package:custom_mp_app/app/modules/products/views/product_options_sheet.dart';
+import 'package:custom_mp_app/app/modules/products/views/product_options_sheet.dart' hide SelectVariantController;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -160,9 +160,24 @@ void resetPicker() {
   selectedVariant.value = null;
   qty.value = 1;
 }
-
 void showProductOptionsSheet() {
- 
+  final variantCtrl = Get.put(SelectVariantController());
+
+  // send product
+  variantCtrl.init(selectedProduct.value!);
+
+  Get.bottomSheet(
+    const ProductOptionsSheet(),
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+    ),
+  );
 }
+
+
+
+
 
 }

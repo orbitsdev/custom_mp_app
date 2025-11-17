@@ -75,7 +75,7 @@ class _ProductPageState extends State<ProductPage> {
 
             // 🔹 Product grid
             GetBuilder<ProductController>(
-              builder: (_) => const ProductList(),
+              builder: (_) => const ProductList(), 
             ),
             
 
