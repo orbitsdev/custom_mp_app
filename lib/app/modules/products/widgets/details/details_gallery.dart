@@ -35,12 +35,12 @@ class DetailsGallery extends StatelessWidget {
             );
           }
 
-          // --- ❌ No gallery ---
+          // ---  No gallery ---
           if (controller.fullGallery.isEmpty) {
             return const SizedBox.shrink();
           }
 
-          // --- 🖼️ Real images ---
+          // ---  Real images ---
           return SizedBox(
             height: 70,
             child: ListView.separated(

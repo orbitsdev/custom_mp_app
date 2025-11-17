@@ -42,7 +42,7 @@ class _ProductPageState extends State<ProductPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: AppColors.brandBackground,
-      drawer:  HomeDrawer(),
+      drawer: HomeDrawer(),
       body: RefreshIndicator(
         color: AppColors.brand,
         backgroundColor: Colors.white,
@@ -60,7 +60,7 @@ class _ProductPageState extends State<ProductPage> {
               title: ProductSearchField(scaffoldKey: scaffoldKey),
             ),
 
-             SliverVGap(12),
+            SliverVGap(12),
 
             // 🔹 Category carousel
             Obx(() {
@@ -71,15 +71,12 @@ class _ProductPageState extends State<ProductPage> {
               );
             }),
 
-             SliverVGap(12),
+            SliverVGap(12),
 
             // 🔹 Product grid
-            GetBuilder<ProductController>(
-              builder: (_) => const ProductList(), 
-            ),
-            
+            GetBuilder<ProductController>(builder: (_) => const ProductList()),
 
-             SliverVGap(24),
+            SliverVGap(24),
           ],
         ),
       ),
