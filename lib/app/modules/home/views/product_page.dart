@@ -6,6 +6,7 @@ import 'package:custom_mp_app/app/modules/category/widgets/category_horizontal_l
 import 'package:custom_mp_app/app/modules/home/widgets/home_drawer.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_list.dart';
+import 'package:custom_mp_app/app/modules/products/widgets/product_loading_card.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_search_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,6 +30,18 @@ class _ProductPageState extends State<ProductPage> {
       categoryController.fetchCategories(),
       productController.fetchProducts(),
     ]);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 300) {
+        productController.loadMore();
+      }
+    });
   }
 
   @override
@@ -77,6 +90,15 @@ class _ProductPageState extends State<ProductPage> {
             GetBuilder<ProductController>(builder: (_) => const ProductList()),
 
             SliverVGap(24),
+         GetBuilder<ProductController>(
+  builder: (c) {
+    if (c.isLoadingMore) {
+      return const ProductLoadingCard();
+    }
+    return const ToSliver(child: SizedBox.shrink());
+  },
+),
+
           ],
         ),
       ),

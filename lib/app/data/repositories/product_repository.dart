@@ -1,12 +1,13 @@
 import 'package:custom_mp_app/app/core/utils/typedefs.dart';
 import 'package:custom_mp_app/app/data/models/errror/failure_model.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
+import 'package:custom_mp_app/app/data/models/products/product_pagination_response.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:custom_mp_app/app/core/plugins/dio/dio_client.dart';
 
 class ProductRepository {
-  EitherModel<List<ProductModel>> fetchProducts({
+  EitherModel<ProductPaginationResponse> fetchProducts({
     int page = 1,
     bool includeRelations = true,
   }) async {
@@ -14,27 +15,26 @@ class ProductRepository {
       final dio = await DioClient.auth;
 
       final query = {
-        'page': page.toString(),
+        'page': page,
         if (includeRelations)
           'include':
               'media,categories,variants.media,variants.options.attribute,attributes.options',
       };
 
       final response = await dio.get('products', queryParameters: query);
-      final data = response.data['data'];
-      final items = data['items'] as List? ?? [];
 
-      final products =
-          items.map((e) => ProductModel.fromMap(e)).toList(growable: false);
+      final parsed = ProductPaginationResponse.fromJson(response.data);
 
-      print('✅ Loaded ${products.length} products');
-      return right(products);
+      print('📦 Page $page loaded: ${parsed.items.length} products');
+
+      return right(parsed);
     } on DioException catch (e) {
       return left(FailureModel.fromDio(e));
     } catch (e) {
       return left(FailureModel.manual('Unexpected error: $e'));
     }
   }
+  
 
   EitherModel<ProductModel> fetchProductBySlug(String slug) async {
     try {
