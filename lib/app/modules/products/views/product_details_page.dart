@@ -146,6 +146,21 @@ class ProductDetailsPage extends StatelessWidget {
                   child: Obx(() {
                     if (controller.fullGallery.isEmpty)
                       return const SizedBox.shrink();
+                    
+                    if(controller.isLoading.value)
+                    return  SizedBox(
+                      height: 70,
+                      child: ListView.separated(
+                           scrollDirection: Axis.horizontal,
+                        itemCount: controller.fullGallery.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 8),
+                        itemBuilder: (context, index) {
+                          return ShimmerWidget(
+                            
+                            width: Get.size.width / 4.5, height: 70,);
+                        }
+                      ),
+                    );
 
                     return SizedBox(
                       height: 70,
@@ -194,6 +209,19 @@ class ProductDetailsPage extends StatelessWidget {
                   child: Builder(
                     builder: (_) {
                       final grouped = controller.getGroupedOptions();
+
+                      if(controller.isLoading.value)
+                      return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ShimmerWidget(height: 12,
+                          
+                          
+                          
+                          ),
+                             const Gap(8),
+                        ],
+                      );
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

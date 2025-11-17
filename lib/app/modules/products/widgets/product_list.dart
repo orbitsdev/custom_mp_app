@@ -15,7 +15,7 @@ import 'package:get/get.dart';
 class ProductList extends StatelessWidget {
   const ProductList({Key? key}) : super(key: key);
 
-  @override
+@override
   Widget build(BuildContext context) {
     return GetBuilder<ProductController>(
       builder: (controller) {
