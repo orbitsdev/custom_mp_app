@@ -22,6 +22,8 @@ class ProductDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<SelectProductController>();
+  
+    
 
     return Scaffold(
       backgroundColor: Colors.white,
