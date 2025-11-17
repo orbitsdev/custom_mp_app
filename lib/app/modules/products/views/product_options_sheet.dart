@@ -75,30 +75,21 @@ class ProductOptionsSheet extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.orange,
+                                  color: AppColors.brand,
                                 ),
                               ),
 
-                              const SizedBox(height: 6),
-                             if (v != null)
-  Text(
-    "Stock: ${v.availableStock}",
-    style: const TextStyle(color: Colors.grey),
-  ),
+                              //                             const SizedBox(height: 6),
+                              //                        Text(
+                              //   "Stock: ${v?.availableStock ?? 0}",
+                              //   style: const TextStyle(color: Colors.grey),
+                              // ),
 
-                              const SizedBox(height: 6),
-
-                              Text(
-                                v != null ? "Selected: ${v.name}" : "Please select variant",
-                                style: TextStyle(
-                                  color: v != null ? Colors.green : Colors.redAccent,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                              //                             const SizedBox(height: 6),
                             ],
                           );
                         }),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -131,8 +122,11 @@ class ProductOptionsSheet extends StatelessWidget {
                               spacing: 10,
                               runSpacing: 10,
                               children: options.map((opt) {
-                                final disabled = c.disabledOptions.contains(opt.id);
-                                final isSelected = c.selectedOptions[attrIndex] == opt.id;
+                                final disabled = c.disabledOptions.contains(
+                                  opt.id,
+                                );
+                                final isSelected =
+                                    c.selectedOptions[attrIndex] == opt.id;
 
                                 return GestureDetector(
                                   onTap: disabled
@@ -140,20 +134,22 @@ class ProductOptionsSheet extends StatelessWidget {
                                       : () => c.pickOption(attr, opt.id),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 12),
+                                      vertical: 8,
+                                      horizontal: 12,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: disabled
                                           ? Colors.grey.shade200
                                           : isSelected
-                                              ? Colors.orange.withOpacity(0.15)
-                                              : Colors.grey.shade100,
+                                          ? AppColors.brand
+                                          : Colors.grey.shade100,
                                       borderRadius: BorderRadius.circular(6),
                                       border: Border.all(
                                         color: disabled
                                             ? Colors.grey.shade300
                                             : isSelected
-                                                ? Colors.orange
-                                                : Colors.grey.shade400,
+                                            ? AppColors.brand
+                                            : Colors.grey.shade400,
                                       ),
                                     ),
                                     child: Text(
@@ -162,8 +158,8 @@ class ProductOptionsSheet extends StatelessWidget {
                                         color: disabled
                                             ? Colors.grey
                                             : isSelected
-                                                ? Colors.orange
-                                                : Colors.black87,
+                                            ? Colors.white
+                                            : Colors.black87,
                                       ),
                                     ),
                                   ),
@@ -182,60 +178,102 @@ class ProductOptionsSheet extends StatelessWidget {
                 // ===========================
                 // FIXED FOOTER (Shopee Style)
                 // ===========================
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 8,
-                        offset: Offset(0, -2),
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      // quantity
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: c.qty.value > 1
-                                ? () => c.qty.value--
-                                : null,
-                            icon: const Icon(Icons.remove),
-                          ),
-                          Obx(() => Text(
-                                c.qty.value.toString(),
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                          IconButton(
-                            onPressed: () => c.qty.value++,
-                            icon: const Icon(Icons.add),
-                          ),
-                        ],
-                      ),
+             Container(
+  width: Get.size.width,
+  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+  decoration: BoxDecoration(
+    color: Colors.white,
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black12,
+        blurRadius: 8,
+        offset: const Offset(0, -2),
+      )
+    ],
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      // ===========================
+      // QUANTITY (Centered)
+      // ===========================
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: c.qty.value > 1 ? () => c.qty.value-- : null,
+            icon: Icon(
+              Icons.remove_circle_outline,
+              color: c.qty.value > 1 ? AppColors.textDark : Colors.grey,
+            ),
+          ),
 
-                      const SizedBox(height: 10),
+          Obx(() => Text(
+                c.qty.value.toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textDark,
+                ),
+              )),
 
-                      Obx(() {
-                        final disabled = !c.isSelectionComplete;
+          IconButton(
+            onPressed: () => c.qty.value++,
+            icon: const Icon(
+              Icons.add_circle_outline,
+              color: AppColors.textDark,
+            ),
+          ),
+        ],
+      ),
 
-                        return GradientElevatedButton(
-                          style: GRADIENT_ELEVATED_BUTTON_STYLE,
-                          onPressed: disabled ? null : () => print("ADD TO CART"),
-                          child: const Text(
-                            "Add to Cart",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                )
+      const SizedBox(height: 18),
+
+      // ===========================
+      // ADD TO CART BUTTON
+      // ===========================
+      Obx(() {
+        final disabled = !c.isSelectionComplete;
+
+        return GestureDetector(
+          onTap: disabled ? null : () => print("ADD TO CART CLICKED"),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              gradient: disabled
+                  ? LinearGradient(
+                      colors: [
+                        Colors.grey.shade300,
+                        Colors.grey.shade400,
+                      ],
+                    )
+                  : const LinearGradient(
+                      colors: [
+                        AppColors.brand,
+                        AppColors.brandDark,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+            ),
+            child: const Text(
+              "Add to Cart",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        );
+      }),
+    ],
+  ),
+)
+
               ],
             ),
           );
