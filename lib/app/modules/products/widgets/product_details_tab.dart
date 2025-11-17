@@ -1,5 +1,6 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
+import 'package:custom_mp_app/app/global/widgets/wrapper/ripple_cotainer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -19,8 +20,8 @@ class ProductDetailsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: function,
+    return RippleContainer(
+         onTap: function,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
@@ -40,8 +41,7 @@ class ProductDetailsTab extends StatelessWidget {
             const SizedBox(height: 6),
             // 🔶 Animated underline indicator
             AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOut,
+              duration:  Duration.zero,
               height: 3,
               width: isSelected ? 40 : 0,
               decoration: BoxDecoration(
