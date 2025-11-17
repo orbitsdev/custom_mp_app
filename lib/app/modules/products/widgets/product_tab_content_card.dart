@@ -26,7 +26,7 @@ class ProductTabContentCard extends StatelessWidget {
       child: SingleChildScrollView(
         physics: const NeverScrollableScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.only(bottom: bottomPadding),
+          padding: EdgeInsets.only(bottom: bottomPadding, left: 16, right: 16),
           child: child,
         ),
       ),

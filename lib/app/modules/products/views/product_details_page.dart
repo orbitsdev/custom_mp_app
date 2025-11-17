@@ -84,12 +84,19 @@ class ProductDetailsPage extends StatelessWidget {
                     fit: StackFit.expand,
                     children: [
                       Obx(() {
+                        if (controller.isLoading.value) {
+                          return ShimmerWidget(
+                            width: double.infinity,
+                            height: double.infinity,
+                            borderRadius: BorderRadius.zero,
+                          );
+                        }
+
                         final img = controller.selectedImage.value.isNotEmpty
                             ? controller.selectedImage.value
                             : product.thumbnail;
-                        return img.isNotEmpty
-                            ? OnlineImage(imageUrl: img)
-                            : ShimmerWidget();
+
+                        return OnlineImage(imageUrl: img);
                       }),
                     ],
                   ),
@@ -144,23 +151,25 @@ class ProductDetailsPage extends StatelessWidget {
                     horizontal: 16,
                   ),
                   child: Obx(() {
-                    if (controller.fullGallery.isEmpty)
+                    if (controller.isLoading.value) {
+                      return SizedBox(
+                        height: 70,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 4, // << Force shimmer count
+                          separatorBuilder: (_, __) => const SizedBox(width: 8),
+                          itemBuilder: (_, __) => ShimmerWidget(
+                            width: Get.size.width / 4.5,
+                            height: 70,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      );
+                    }
+
+                    if (controller.fullGallery.isEmpty) {
                       return const SizedBox.shrink();
-                    
-                    if(controller.isLoading.value)
-                    return  SizedBox(
-                      height: 70,
-                      child: ListView.separated(
-                           scrollDirection: Axis.horizontal,
-                        itemCount: controller.fullGallery.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
-                        itemBuilder: (context, index) {
-                          return ShimmerWidget(
-                            
-                            width: Get.size.width / 4.5, height: 70,);
-                        }
-                      ),
-                    );
+                    }
 
                     return SizedBox(
                       height: 70,
@@ -202,71 +211,85 @@ class ProductDetailsPage extends StatelessWidget {
               // =============================
               // 🧾 Product Info
               // =============================
-              ToSliver(
+             ToSliver(
                 child: Container(
                   color: Colors.white,
                   padding: const EdgeInsets.all(20),
-                  child: Builder(
-                    builder: (_) {
-                      final grouped = controller.getGroupedOptions();
+                  child: Obx(() {
+                    if (controller.isLoading.value)
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      ShimmerWidget(height: 26, width: Get.size.width * 0.6),
+      const Gap(12),
 
-                      if(controller.isLoading.value)
-                      return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ShimmerWidget(height: 12,
-                          
-                          
-                          
-                          ),
-                             const Gap(8),
-                        ],
-                      );
+      ShimmerWidget(height: 22, width: Get.size.width * 0.4),
+      const Gap(14),
 
-                      return Column(
+      ShimmerWidget(height: 18, width: Get.size.width * 0.9),
+      const Gap(6),
+      ShimmerWidget(height: 18, width: Get.size.width * 0.7),
+
+      const Gap(20),
+      ShimmerWidget(height: 18, width: 100),
+      const Gap(12),
+
+      ShimmerWidget(height: 22, width: Get.size.width * 0.9),
+      const Gap(6),
+
+      ShimmerWidget(height: 22, width: Get.size.width * 0.8),
+      const Gap(24),
+
+      ShimmerWidget(height: 22, width: 140),
+      const Gap(12),
+      ShimmerWidget(height: 32, width: Get.size.width),
+    ],
+  );
+
+                    return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // 🏷️ Name
                           Text(
-                            product.name,
-                            style: Get.textTheme.titleLarge!.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textDark,
-                            ),
-                          ),
+                                  product.name,
+                                  style: Get.textTheme.titleLarge!.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textDark,
+                                  ),
+                                ),
                           const Gap(8),
 
-                          // 💰 Price
-                          Text(
-                            '₱${product.price?.toStringAsFixed(2) ?? '0.00'}',
-                            style: Get.textTheme.headlineSmall!.copyWith(
-                              color: Colors.green.shade700,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        Text(
+                                  '₱${product.price?.toStringAsFixed(2) ?? '0.00'}',
+                                  style: Get.textTheme.headlineSmall!.copyWith(
+                                    color: Colors.green.shade700,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                           if (product.shortDescription != null &&
                               product.shortDescription!.isNotEmpty)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8),
-                              child: Text(
-                                product.shortDescription!,
-                                style: Get.textTheme.bodyMedium!.copyWith(
-                                  color: AppColors.textLight,
-                                  height: 1.4,
-                                ),
-                              ),
+                              child:Text(
+                                      product.shortDescription!,
+                                      style: Get.textTheme.bodyMedium!.copyWith(
+                                        color: AppColors.textLight,
+                                        height: 1.4,
+                                      ),
+                                    ),
                             ),
 
                           const Gap(8),
 
-                          // ✅ Grouped Variant Display
-                          if (grouped.isNotEmpty)
+                          // ✅ Grouped Variant Displ
+                          
+                          if (controller.getGroupedOptions().isNotEmpty)
                             Container(
                               width: double.infinity,
                               padding: const EdgeInsets.symmetric(vertical: 4),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: grouped.entries.map((entry) {
+                                children: controller.getGroupedOptions().entries.map((entry) {
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 12),
                                     child: Column(
@@ -305,40 +328,43 @@ class ProductDetailsPage extends StatelessWidget {
                           ProductCategoryList(categories: product.categories),
                         ],
                       );
-                    },
-                  ),
+                  }),
                 ),
               ),
 
               // =============================
               // 🧩 Tabs
               // =============================
-              ToSliver(
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.only(top: 4, bottom: 2),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ProductDetailsTab(
-                          product: product,
-                          title: 'Description',
-                          isSelected: controller.tabIndex.value == 0,
-                          function: () => controller.selecTab(0),
-                        ),
-                        const SizedBox(width: 24),
-                        ProductDetailsTab(
-                          product: product,
-                          title: 'Nutrition Facts',
-                          isSelected: controller.tabIndex.value == 1,
-                          function: () => controller.selecTab(1),
-                        ),
-                      ],
+              Obx((){
+                  
+
+                   return ToSliver(
+                  child: Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.only(top: 4, bottom: 2),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          controller.isLoading.value ?  ShimmerWidget( height: 26, width: 100) :  ProductDetailsTab(
+                            product: product,
+                            title: 'Description',
+                            isSelected: controller.tabIndex.value == 0,
+                            function: () => controller.selecTab(0),
+                          ),
+                          const SizedBox(width: 24),
+                          controller.isLoading.value ?  ShimmerWidget( height: 26, width: 100) :  ProductDetailsTab(
+                            product: product,
+                            title: 'Nutrition Facts',
+                            isSelected: controller.tabIndex.value == 1,
+                            function: () => controller.selecTab(1),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
+                );
+              }),
 
               // =============================
               // 📄 Tab Content
