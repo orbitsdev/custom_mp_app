@@ -158,7 +158,7 @@ Future<void> addToCart() async {
     (cartItem) {
       AppToast.success("Added to cart");
       qty.value = 1;
-      // Optional: Get.back();
+     Get.back();
     },
   );
 }
