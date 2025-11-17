@@ -178,88 +178,106 @@ class ProductOptionsSheet extends StatelessWidget {
                 // ===========================
                 // FIXED FOOTER (Shopee Style)
                 // ===========================
-             Container(
-  width: Get.size.width,
-  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-  decoration: BoxDecoration(
-    color: Colors.white,
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black12,
-        blurRadius: 8,
-        offset: const Offset(0, -2),
-      )
-    ],
-  ),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      // ===========================
-      // QUANTITY (Centered)
-      // ===========================
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: c.qty.value > 1 ? () => c.qty.value-- : null,
-            icon: Icon(
-              Icons.remove_circle_outline,
-              color: c.qty.value > 1 ? AppColors.textDark : Colors.grey,
-            ),
-          ),
+                Container(
+                  width: Get.size.width,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 16,
+                    horizontal: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: const Offset(0, -2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // ===========================
+                      // QUANTITY (Centered)
+                      // ===========================
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: c.qty.value > 1
+                                ? () => c.qty.value--
+                                : null,
+                            icon: Icon(
+                              Icons.remove_circle_outline,
+                              color: c.qty.value > 1
+                                  ? AppColors.textDark
+                                  : Colors.grey,
+                            ),
+                          ),
 
-          Obx(() => Text(
-                c.qty.value.toString(),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textDark,
-                ),
-              )),
+                          Obx(
+                            () => Text(
+                              c.qty.value.toString(),
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textDark,
+                              ),
+                            ),
+                          ),
 
-          IconButton(
-            onPressed: () => c.qty.value++,
-            icon: const Icon(
-              Icons.add_circle_outline,
-              color: AppColors.textDark,
-            ),
-          ),
-        ],
+                          IconButton(
+                            onPressed: () => c.qty.value++,
+                            icon: const Icon(
+                              Icons.add_circle_outline,
+                              color: AppColors.textDark,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 18),
+
+                      // ===========================
+                      // ADD TO CART BUTTON
+                      // ===========================
+                      Obx(() {
+  final disabled = !c.isSelectionComplete || c.isLoading.value;
+
+  return GestureDetector(
+    onTap: disabled ? null : () => c.addToCart(),
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: disabled
+            ? LinearGradient(
+                colors: [
+                  Colors.grey.shade300,
+                  Colors.grey.shade400,
+                ],
+              )
+            : const LinearGradient(
+                colors: [
+                  AppColors.brand,
+                  AppColors.brandDark,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
       ),
-
-      const SizedBox(height: 18),
-
-      // ===========================
-      // ADD TO CART BUTTON
-      // ===========================
-      Obx(() {
-        final disabled = !c.isSelectionComplete;
-
-        return GestureDetector(
-          onTap: disabled ? null : () => print("ADD TO CART CLICKED"),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              gradient: disabled
-                  ? LinearGradient(
-                      colors: [
-                        Colors.grey.shade300,
-                        Colors.grey.shade400,
-                      ],
-                    )
-                  : const LinearGradient(
-                      colors: [
-                        AppColors.brand,
-                        AppColors.brandDark,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-            ),
-            child: const Text(
+      child: c.isLoading.value
+          ? const SizedBox(
+              height: 24,
+              width: 24,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
+            )
+          : const Text(
               "Add to Cart",
               style: TextStyle(
                 color: Colors.white,
@@ -267,13 +285,13 @@ class ProductOptionsSheet extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-        );
-      }),
-    ],
-  ),
-)
+    ),
+  );
+})
 
+                    ],
+                  ),
+                ),
               ],
             ),
           );
