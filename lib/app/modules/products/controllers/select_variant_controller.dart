@@ -125,25 +125,42 @@ void pickOption(String attributeName, int optionId) {
   }
 
 Future<void> addToCart() async {
-  if (!isSelectionComplete) {
-    AppToast.error("Please complete variant selection.");
-    return;
-  }
-
   final p = product.value;
-  final v = selectedVariant.value;
 
-  if (p == null || v == null) {
-    AppToast.error("Product variant not selected.");
+  if (p == null) {
+    AppToast.error("Product not loaded.");
     return;
   }
+
+  final hasVariants = p.variants.isNotEmpty && p.isDefaultVariant == false;
+
+  // CASE 1: Product with variants → selection required
+  if (hasVariants) {
+    if (!isSelectionComplete) {
+      AppToast.error("Please complete variant selection.");
+      return;
+    }
+
+    if (selectedVariant.value == null) {
+      AppToast.error("Invalid variant selected.");
+      return;
+    }
+  }
+
+  // Determine the variant to use
+  final VariantModel variantToUse = hasVariants
+      ? selectedVariant.value!
+      : p.variants.first;  // ← Default variant
+
+  // Determine option IDs
+  final optionIds = hasVariants
+      ? selectedOptions.values.toList()
+      : <int>[];         // ← Default variant → no options
 
   // Prevent double tap
   if (isLoading.value) return;
 
   isLoading.value = true;
-
-  final optionIds = selectedOptions.values.toList();
 
   final result = await _cartReapo.addToCart(
     productId: p.id,
@@ -155,12 +172,13 @@ Future<void> addToCart() async {
 
   result.match(
     (failure) => AppToast.error(failure.message),
-    (cartItem) {
+    (_) {
       AppToast.success("Added to cart");
       qty.value = 1;
-     Get.back();
+      Get.back();
     },
   );
 }
+
 
 }

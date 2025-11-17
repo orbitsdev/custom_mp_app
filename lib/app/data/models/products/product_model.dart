@@ -10,6 +10,7 @@ class ProductModel {
   final String slug;
   final String? shortDescription;
   final String? description;
+  final bool? isDefaultVariant;
   final String? nutritionFacts;
   final double? price;
   final double? compareAtPrice;
@@ -35,6 +36,7 @@ class ProductModel {
     this.shortDescription,
     this.description,
     this.nutritionFacts,
+    this.isDefaultVariant,
     this.price,
     this.compareAtPrice,
     required this.isFeatured,
@@ -84,6 +86,7 @@ class ProductModel {
       shortDescription: map['short_description'],
       description: map['description'],
       nutritionFacts: map['nutrition_facts'],
+      isDefaultVariant: (map['is_default_variant'] ?? false) == true,
       price: _asDouble(map['price']),
       compareAtPrice: _asDouble(map['compare_at_price']),
       isFeatured: (map['is_featured'] ?? false) == true,
@@ -121,6 +124,7 @@ class ProductModel {
         'short_description': shortDescription,
         'description': description,
         'nutrition_facts': nutritionFacts,
+        'is_default_variant': isDefaultVariant,
         'price': price,
         'compare_at_price': compareAtPrice,
         'is_featured': isFeatured,
@@ -141,6 +145,6 @@ class ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, name: $name, slug: $slug, shortDescription: $shortDescription, description: $description, nutritionFacts: $nutritionFacts, price: $price, compareAtPrice: $compareAtPrice, isFeatured: $isFeatured, isBestSeller: $isBestSeller, newArrivalEndsAt: $newArrivalEndsAt, views: $views, sold: $sold, minPrepTime: $minPrepTime, minPrepTimeUnit: $minPrepTimeUnit, maxPrepTime: $maxPrepTime, maxPrepTimeUnit: $maxPrepTimeUnit, thumbnail: $thumbnail, gallery: $gallery, categories: $categories, variants: $variants )';
+    return 'ProductModel(id: $id, name: $name, slug: $slug, shortDescription: $shortDescription, description: $description, nutritionFacts: $nutritionFacts,  isDefaultVariant: $isDefaultVariant, price: $price, compareAtPrice: $compareAtPrice, isFeatured: $isFeatured, isBestSeller: $isBestSeller, newArrivalEndsAt: $newArrivalEndsAt, views: $views, sold: $sold, minPrepTime: $minPrepTime, minPrepTimeUnit: $minPrepTimeUnit, maxPrepTime: $maxPrepTime, maxPrepTimeUnit: $maxPrepTimeUnit, thumbnail: $thumbnail, gallery: $gallery, categories: $categories, variants: $variants )';
   }
 }
