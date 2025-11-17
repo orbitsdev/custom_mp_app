@@ -7,7 +7,7 @@ import 'package:gradient_elevated_button/gradient_elevated_button.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
 class ProductOptionsSheet extends StatelessWidget {
-  const ProductOptionsSheet({Key? key}) : super(key: key);
+  const ProductOptionsSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,141 +25,217 @@ class ProductOptionsSheet extends StatelessWidget {
           final grouped = c.groupedOptions;
 
           return Container(
-            padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
             ),
-            child: ListView(
-              controller: scrollController,
+
+            child: Column(
               children: [
-                Text(
-                  product.name,
-                  style: Get.textTheme.titleLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
+                // ===========================
+                // HEADER (Shopee Style)
+                // ===========================
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Thumbnail
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          product.thumbnail,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      Expanded(
+                        child: Obx(() {
+                          final v = c.selectedVariant.value;
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                product.name,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+
+                              Text(
+                                "₱${v?.price ?? product.price}",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange,
+                                ),
+                              ),
+
+                              const SizedBox(height: 6),
+                             if (v != null)
+  Text(
+    "Stock: ${v.availableStock}",
+    style: const TextStyle(color: Colors.grey),
+  ),
+
+                              const SizedBox(height: 6),
+
+                              Text(
+                                v != null ? "Selected: ${v.name}" : "Please select variant",
+                                style: TextStyle(
+                                  color: v != null ? Colors.green : Colors.redAccent,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
+                      )
+                    ],
                   ),
                 ),
 
-                Obx(() {
-                  final v = c.selectedVariant.value;
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 4, bottom: 12),
-                    child: Text(
-                      v != null ? "Selected: ${v.name}" : "Select variant",
-                      style: TextStyle(
-                        color: v != null ? Colors.green : AppColors.brand,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  );
-                }),
+                const Divider(height: 1),
 
-                ...grouped.entries.map((entry) {
-                  final attrName = entry.key;
-                  final options = entry.value;
-
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                Expanded(
+                  child: ListView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(16),
                     children: [
-                      Text(
-                        attrName,
-                        style: Get.textTheme.bodyLarge!.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
+                      ...grouped.entries.map((entry) {
+                        final attr = entry.key;
+                        final options = entry.value;
+                        final attrIndex = c.attributeOrder.indexOf(attr);
 
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        children: options.map((opt) {
-                          final disabled = c.disabledOptions.contains(opt.id);
-
-                          final attributeIndex =
-                              c.attributeOrder.indexOf(attrName);
-
-                          final isSelected =
-                              c.selectedOptions[attributeIndex] == opt.id;
-
-                          return GestureDetector(
-                            onTap: disabled
-                                ? null
-                                : () =>
-                                    c.pickOption(attrName, opt.id),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? AppColors.brand.withOpacity(0.15)
-                                    : Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(
-                                  color: disabled
-                                      ? Colors.grey.shade300
-                                      : isSelected
-                                          ? AppColors.brand
-                                          : Colors.grey.shade400,
-                                ),
-                              ),
-                              child: Text(
-                                opt.name,
-                                style: TextStyle(
-                                  color: disabled
-                                      ? Colors.grey
-                                      : isSelected
-                                          ? AppColors.brandDark
-                                          : AppColors.textDark,
-                                ),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              attr,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  );
-                }).toList(),
+                            const SizedBox(height: 10),
 
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: c.qty.value > 1
-                          ? () => c.qty.value--
-                          : null,
-                      icon: const Icon(Icons.remove_circle_outline),
-                    ),
-                    Obx(() => Text(
-                          c.qty.value.toString(),
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        )),
-                    IconButton(
-                      onPressed: () => c.qty.value++,
-                      icon: const Icon(Icons.add_circle_outline),
-                    ),
-                  ],
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: options.map((opt) {
+                                final disabled = c.disabledOptions.contains(opt.id);
+                                final isSelected = c.selectedOptions[attrIndex] == opt.id;
+
+                                return GestureDetector(
+                                  onTap: disabled
+                                      ? null
+                                      : () => c.pickOption(attr, opt.id),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color: disabled
+                                          ? Colors.grey.shade200
+                                          : isSelected
+                                              ? Colors.orange.withOpacity(0.15)
+                                              : Colors.grey.shade100,
+                                      borderRadius: BorderRadius.circular(6),
+                                      border: Border.all(
+                                        color: disabled
+                                            ? Colors.grey.shade300
+                                            : isSelected
+                                                ? Colors.orange
+                                                : Colors.grey.shade400,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      opt.name,
+                                      style: TextStyle(
+                                        color: disabled
+                                            ? Colors.grey
+                                            : isSelected
+                                                ? Colors.orange
+                                                : Colors.black87,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+
+                            const SizedBox(height: 20),
+                          ],
+                        );
+                      }).toList(),
+                    ],
+                  ),
                 ),
 
-                const SizedBox(height: 20),
+                // ===========================
+                // FIXED FOOTER (Shopee Style)
+                // ===========================
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 8,
+                        offset: Offset(0, -2),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      // quantity
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: c.qty.value > 1
+                                ? () => c.qty.value--
+                                : null,
+                            icon: const Icon(Icons.remove),
+                          ),
+                          Obx(() => Text(
+                                c.qty.value.toString(),
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                          IconButton(
+                            onPressed: () => c.qty.value++,
+                            icon: const Icon(Icons.add),
+                          ),
+                        ],
+                      ),
 
-                Obx(() {
-                  final disabled = !c.isSelectionComplete;
+                      const SizedBox(height: 10),
 
-                  return GradientElevatedButton.icon(
-                    style: GRADIENT_ELEVATED_BUTTON_STYLE,
-                    onPressed: disabled ? null : () => print("ADD TO CART"),
-                    icon: const Icon(
-                      FluentIcons.cart_16_regular,
-                      color: Colors.white,
-                    ),
-                    label: const Text(
-                      "Add to Cart",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                }),
+                      Obx(() {
+                        final disabled = !c.isSelectionComplete;
+
+                        return GradientElevatedButton(
+                          style: GRADIENT_ELEVATED_BUTTON_STYLE,
+                          onPressed: disabled ? null : () => print("ADD TO CART"),
+                          child: const Text(
+                            "Add to Cart",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                )
               ],
             ),
           );
