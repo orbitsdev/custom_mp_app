@@ -1,3 +1,5 @@
+import 'package:custom_mp_app/app/core/utils/path_helpers.dart';
+import 'package:custom_mp_app/app/global/widgets/image/local_image_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -67,7 +69,28 @@ class ProductDetailsPage extends StatelessWidget {
         final product = controller.selectedProduct.value;
 
         if (product == null) {
-          return const Center(child: CircularProgressIndicator());
+          return  Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          LocalImageSvg(
+            imageUrl: PathHelpers.imagePath('empty.svg'),
+            width: 180,
+            height: 180,
+            fit: BoxFit.contain,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Product not found',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+          )
+        ],
+      ),
+    );;
         }
 
         return RefreshIndicator(
