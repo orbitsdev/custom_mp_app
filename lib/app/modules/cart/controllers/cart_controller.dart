@@ -9,11 +9,17 @@ class CartController extends GetxController {
   final CartRepository _cartRepo = CartRepository();
   final carts = <CartItemModel>[].obs;
   final isLoading = false.obs;
+  var selectedCartItem = CartItemModel().obs;
+
+  
 
   @override
   void onReady() {
     super.onReady();
     fetchCart();
+    debounce(selectedCartItem, (value){
+      print('${value.toString()} Cart Item was updted');
+    },time: const Duration(milliseconds: 500 ));
   }
 
   Future<void> fetchCart() async {
@@ -29,8 +35,7 @@ class CartController extends GetxController {
   }
 
   /// ✔ Number of selected rows
-  int get selectedRowCount =>
-      carts.where((e) => e.isSelected).length;
+  int get selectedRowCount => carts.where((e) => e.isSelected as bool).length;
 
   /// ✔ Show checkout section?
   bool get hasSelectedItems => selectedRowCount > 0;

@@ -1,30 +1,33 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
 import 'cart_variant_model.dart';
 
 class CartItemModel {
-  final int id;
-  final int quantity;
-  final bool isSelected;
-  final double unitPrice;
-  final double adjustmentAmount;
-  final List<dynamic> adjustmentDetails;
+  final int? id;
+  final int? quantity;
+  final bool? isSelected;
+  final double? unitPrice;
+  final double? adjustmentAmount;
+  final List<dynamic>? adjustmentDetails;
 
-  final double finalPrice;
-  final double subtotal;
+  final double? finalPrice;
+  final double? subtotal;
 
-  final CartVariantModel variant;
-
+  final CartVariantModel? variant;
   CartItemModel({
-    required this.id,
-    required this.quantity,
-    required this.isSelected,
-    required this.unitPrice,
-    required this.adjustmentAmount,
-    required this.adjustmentDetails,
-    required this.finalPrice,
-    required this.subtotal,
-    required this.variant,
+    this.id,
+    this.quantity,
+    this.isSelected,
+    this.unitPrice,
+    this.adjustmentAmount,
+    this.adjustmentDetails,
+    this.finalPrice,
+    this.subtotal,
+    this.variant,
   });
+ 
+ 
 
   // ---------- FACTORY ----------
 
@@ -54,7 +57,7 @@ class CartItemModel {
       'adjustment_details': adjustmentDetails,
       'final_price': finalPrice,
       'subtotal': subtotal,
-      'variant': variant.toMap(),
+      'variant': variant?.toMap() ,
     };
   }
 

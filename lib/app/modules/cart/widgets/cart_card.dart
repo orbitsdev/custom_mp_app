@@ -14,7 +14,7 @@ class CartCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isOutOfStock = cartItem.variant.availableStock == 0;
+    bool isOutOfStock = cartItem.variant?.availableStock == 0;
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -52,7 +52,7 @@ class CartCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: OnlineImage(imageUrl: cartItem.variant.media),
+                      child: OnlineImage(imageUrl: cartItem.variant!.media),
                     ),
                     if (isOutOfStock)
                       Center(
@@ -89,15 +89,15 @@ class CartCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      cartItem.variant.product.name,
+                      '${cartItem.variant?.product.name}',
                       style: Get.textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const Gap(4),
-                    if (!cartItem.variant.isDefault)
+                    if (!cartItem.variant!.isDefault)
                       Text(
-                        cartItem.variant.name,
+                        '${cartItem.variant!.name}',
                         style: Get.textTheme.bodySmall!.copyWith(
                           color: AppColors.textLight,
                         ),
@@ -130,7 +130,7 @@ class CartCard extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      'Stock: ${cartItem.variant.availableStock}',
+                      'Stock: ${cartItem.variant!.availableStock}',
                       style: Get.textTheme.bodySmall!.copyWith(
                         color: isOutOfStock
                             ? AppColors.textLight
