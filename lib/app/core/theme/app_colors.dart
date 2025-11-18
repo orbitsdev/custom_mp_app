@@ -63,6 +63,8 @@ class AppColors {
   static const Color  charcoal = Color(0xff333333);
   static const Color  gainsboro = Color(0xffF3F3F3);
 
+  static const Color coolGray = Color(0xff8B8B8B);
+
 
 
 }

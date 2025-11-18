@@ -5,7 +5,6 @@ class CartItemModel {
   final int id;
   final int quantity;
   final bool isSelected;
-
   final double unitPrice;
   final double adjustmentAmount;
   final List<dynamic> adjustmentDetails;
