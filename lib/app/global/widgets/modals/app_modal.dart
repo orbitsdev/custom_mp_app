@@ -255,4 +255,78 @@ class AppModal {
   static void close() {
     if (Get.isDialogOpen ?? false) Get.back();
   }
+
+static void info({
+  String title = "Information",
+  String message = "Here is something important you should know.",
+  String buttonText = "OK",
+  VoidCallback? onConfirm,
+  bool barrierDismissible = true,
+}) {
+  Get.dialog(
+    Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      backgroundColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 🔵 Info Icon
+            Icon(
+              Icons.info_outline,
+              size: 80,
+              color: AppColors.brand,
+            ),
+            const SizedBox(height: 12),
+
+            // 🏷 Title
+            Text(
+              title,
+              style: Get.textTheme.titleLarge?.copyWith(
+                color: AppColors.brandDark,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            const SizedBox(height: 8),
+
+            // 📄 Message
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Get.textTheme.bodyMedium?.copyWith(
+                color: AppColors.textDark,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // 🔘 OK Button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.brand,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                minimumSize: const Size(double.infinity, 45),
+              ),
+              onPressed: () {
+                Get.back();
+                onConfirm?.call();
+              },
+              child: Text(
+                buttonText,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+    barrierDismissible: barrierDismissible,
+  );
+}
+ 
 }

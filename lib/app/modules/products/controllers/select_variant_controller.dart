@@ -3,6 +3,7 @@ import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/data/models/products/variant_model.dart';
 import 'package:custom_mp_app/app/data/repositories/cart_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+import 'package:custom_mp_app/app/modules/cart/controllers/cart_controller.dart';
 import 'package:get/get.dart';
 
 class SelectVariantController extends GetxController {
@@ -174,6 +175,7 @@ Future<void> addToCart() async {
     (failure) => AppToast.error(failure.message),
     (_) {
       AppToast.success("Added to cart");
+       CartController.instance.fetchCart();
       qty.value = 1;
       Get.back();
     },

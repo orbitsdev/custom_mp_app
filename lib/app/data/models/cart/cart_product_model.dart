@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class CartProductModel {
   final int id;
   final String name;
@@ -14,9 +16,25 @@ class CartProductModel {
   factory CartProductModel.fromMap(Map<String, dynamic> map) {
     return CartProductModel(
       id: map['id'],
-      name: map['name'],
-      slug: map['slug'],
+      name: map['name'] ?? '',
+      slug: map['slug'] ?? '',
       thumbnail: map['thumbnail'] ?? '',
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'slug': slug,
+      'thumbnail': thumbnail,
+    };
+  }
+
+  String toJson() => json.encode(toMap());
+  factory CartProductModel.fromJson(String source) =>
+      CartProductModel.fromMap(json.decode(source));
+
+  @override
+  String toString() => 'Product(id: $id, name: $name, slug: $slug)';
 }

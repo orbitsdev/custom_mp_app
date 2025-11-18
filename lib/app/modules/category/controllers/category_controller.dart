@@ -14,7 +14,7 @@ class CategoryController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    fetchCategories(); // ✅ Load categories automatically when controller is ready
+    fetchCategories(); 
   }
 
   /// Fetch all categories from API

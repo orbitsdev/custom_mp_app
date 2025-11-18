@@ -90,15 +90,14 @@ class _ProductPageState extends State<ProductPage> {
             GetBuilder<ProductController>(builder: (_) => const ProductList()),
 
             SliverVGap(24),
-         GetBuilder<ProductController>(
-  builder: (c) {
-    if (c.isLoadingMore) {
-      return const ProductLoadingCard();
-    }
-    return const ToSliver(child: SizedBox.shrink());
-  },
-),
-
+            GetBuilder<ProductController>(
+              builder: (c) {
+                if (c.isLoadingMore) {
+                  return const ProductLoadingCard();
+                }
+                return const ToSliver(child: SizedBox.shrink());
+              },
+            ),
           ],
         ),
       ),

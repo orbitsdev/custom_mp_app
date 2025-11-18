@@ -100,3 +100,4 @@ class UserModel {
         accountInformation.hashCode;
   }
 }
+

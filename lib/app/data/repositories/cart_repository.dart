@@ -38,4 +38,21 @@ class CartRepository {
       return left(FailureModel.manual('Unexpected error: $e'));
     }
   }
+
+
+  EitherModel<List<CartItemModel>> fetchCart() async {
+    try {
+      final dio = await DioClient.auth;
+      final response = await dio.get('cart');
+
+        final List<dynamic> data = response.data['data'] ?? [];
+        final carts = data.map((e)=> CartItemModel.fromMap(e)).toList();
+        return right(carts);
+
+      } on DioException catch (e) {
+      return left(FailureModel.fromDio(e));
+    } catch (e) {
+      return left(FailureModel.manual('Unexpected error: $e'));
+    }
+  }
 }

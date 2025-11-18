@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/core/routes/routes.dart';
+import 'package:custom_mp_app/app/modules/cart/widgets/cart_badge_circle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -65,27 +66,8 @@ class DetailsSliverImage extends StatelessWidget {
       ),
 
       // --- 🛒 Cart Icon ---
-      actions: [
-        GestureDetector(
-          
-          child: Container(
-            margin: const EdgeInsets.only(right: 12, top: 6),
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.35),
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Icon(
-                FluentIcons.cart_16_regular,
-                color: Colors.white,
-                size: 22,
-              ),
-            ),
-          ),
-        ),
-      ],
+      actions: 
+      [CartBadgeCircle(onTap: () => Get.toNamed(Routes.cartPage))],
     );
   }
 }

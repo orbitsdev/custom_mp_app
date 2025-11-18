@@ -1,5 +1,7 @@
 
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/modules/cart/widgets/cart_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -83,6 +85,8 @@ class ProductSearchField extends StatelessWidget {
             ),
           ),
         ),
+       
+        CartBadge( onTap: () => Get.toNamed(Routes.cartPage),)
       ],
     );
   }

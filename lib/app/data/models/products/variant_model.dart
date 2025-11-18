@@ -8,7 +8,7 @@ class VariantModel {
   final double? compareAtPrice;
   final int? availableStock;
   final double? weightKg;
-  final double? lengthCm;
+  final double? lengthCm; 
   final double? widthCm;
   final double? heightCm;
   final String media;
