@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -66,7 +67,7 @@ class DetailsSliverImage extends StatelessWidget {
       // --- 🛒 Cart Icon ---
       actions: [
         GestureDetector(
-          onTap: () => Get.toNamed('/cart'),
+          
           child: Container(
             margin: const EdgeInsets.only(right: 12, top: 6),
             width: 40,

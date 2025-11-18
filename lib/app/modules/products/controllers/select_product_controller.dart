@@ -160,6 +160,7 @@ void resetPicker() {
   selectedVariant.value = null;
   qty.value = 1;
 }
+
 void showProductOptionsSheet() {
   final variantCtrl = Get.put(SelectVariantController());
 
