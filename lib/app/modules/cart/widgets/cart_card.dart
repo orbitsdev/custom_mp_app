@@ -157,9 +157,7 @@ class CartCard extends StatelessWidget {
     CartQuantityButton(
       disable: isOutOfStock,
       icon: const Icon(Icons.remove, size: 14),
-      onPressed: isOutOfStock
-          ? null
-          : () => controller.uiRemoveQty(cartItem),
+      onPressed: cartItem.isSelected == false ? null:  isOutOfStock ? null: () => controller.uiRemoveQty(cartItem),
     ),
     const Gap(4),
 
@@ -180,7 +178,7 @@ class CartCard extends StatelessWidget {
     CartQuantityButton(
       disable: isOutOfStock,
       icon: const Icon(Icons.add, size: 14),
-      onPressed: isOutOfStock
+      onPressed: cartItem.isSelected == false ? null: isOutOfStock
           ? null
           : () => controller.uiAddQty(cartItem),
     ),

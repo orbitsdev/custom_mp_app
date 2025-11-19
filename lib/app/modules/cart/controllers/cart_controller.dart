@@ -21,6 +21,9 @@ class CartController extends GetxController {
  final selectAllHandler = CartSelectAllHandler().obs;
  final selectAllValue = false.obs;   // <-- REAL checkbox state
 
+  int get selectedRowCount => carts.where((e) => e.isSelected == true).length;
+
+  bool get hasSelectedItems => selectedRowCount > 0;
  @override
 void onInit() {
   super.onInit();
@@ -314,6 +317,8 @@ Future<void> toggleSelectAll(bool value) async {
 
 
 Future<void> fetchCartSummary() async {
+
+  
   final response = await _cartRepo.fetchCartSummary();
 
   response.fold(
@@ -326,7 +331,4 @@ Future<void> fetchCartSummary() async {
 }
 
 
-  int get selectedRowCount => carts.where((e) => e.isSelected == true).length;
-
-  bool get hasSelectedItems => selectedRowCount > 0;
 }
