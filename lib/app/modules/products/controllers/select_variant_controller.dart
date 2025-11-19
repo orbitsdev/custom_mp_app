@@ -173,9 +173,9 @@ Future<void> addToCart() async {
 
   result.match(
     (failure) => AppToast.error(failure.message),
-    (_) {
+    (_) async{
       AppToast.success("Added to cart");
-       CartController.instance.fetchCart();
+      await CartController.instance.fetchCart();
       qty.value = 1;
       Get.back();
     },

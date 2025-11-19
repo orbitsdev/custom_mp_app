@@ -37,7 +37,7 @@ class CartItemList extends StatelessWidget {
                     children: [
                       SlidableAction(
                         onPressed: (context) {
-                          print('delete');
+                           controller.uiDeleteItem(cartItem);
                         },
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white,

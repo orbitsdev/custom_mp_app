@@ -1,6 +1,7 @@
 import 'package:custom_mp_app/app/data/models/cart/cart_debounce_handler.dart';
 import 'package:custom_mp_app/app/data/models/cart/cart_item_model.dart';
 import 'package:custom_mp_app/app/data/repositories/cart_repository.dart';
+import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:get/get.dart';
 
@@ -94,6 +95,33 @@ class CartController extends GetxController {
       action: CartDebounceHandler.toggleSelect,
     );
   }
+
+  // ⭐ UI Delete Action (instant remove + backend sync)
+void uiDeleteItem(CartItemModel item) async {
+  final index = carts.indexWhere((e) => e.id == item.id);
+  if (index == -1) return;
+
+  final oldItem = carts[index];
+
+  // 🔥 Optimistic UI — remove now
+  carts.removeAt(index);
+
+  // 🔥 Call Backend
+  final result = await _cartRepo.removeItem(item.id!);
+
+  result.fold(
+    (failure) {
+      // ❌ API failed → revert UI
+      carts.insert(index, oldItem);
+      AppToast.error(failure.message);
+    },
+    (_) {
+      AppModal.success(message: "Item deleted successfully");
+      print("✔ Cart item deleted successfully");
+    },
+  );
+}
+
 
   // ----------------------------------------------------------------------
   // ⭐ LOCAL UI UPDATES (Optimistic UI)
@@ -200,6 +228,8 @@ class CartController extends GetxController {
     // );
   }
 
+
+  
   // ----------------------------------------------------------------------
   // GETTERS
   // ----------------------------------------------------------------------
