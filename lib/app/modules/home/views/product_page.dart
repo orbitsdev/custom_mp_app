@@ -29,7 +29,7 @@ class _ProductPageState extends State<ProductPage> {
     await Future.wait([
       categoryController.fetchCategories(),
       productController.fetchProducts(),
-      productController.fetchProducts(),
+     
     ]);
   }
 

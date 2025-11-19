@@ -18,6 +18,9 @@ class CartCard extends StatelessWidget {
     bool isOutOfStock = cartItem.variant?.availableStock == 0;
         final controller = CartController.instance;
     return Container(
+      constraints: BoxConstraints(
+        minHeight: 120,
+      ),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: (cartItem.isSelected == true)
@@ -55,7 +58,13 @@ class CartCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: OnlineImage(imageUrl: cartItem.variant!.media),
+                      child: OnlineImage(
+  imageUrl: 
+      (cartItem.variant?.media.isNotEmpty == true)
+          ? cartItem.variant!.media
+          : (cartItem.variant?.product.thumbnail ?? ""),
+)
+ ,
                     ),
                     if (isOutOfStock)
                       Center(
