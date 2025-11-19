@@ -46,6 +46,8 @@ class CartSliverAppBar extends StatelessWidget {
 
         // 🔥 ACTIONS
         actions: [
+
+          
           if (selectedCount > 0)
             Text(
               "($selectedCount)",

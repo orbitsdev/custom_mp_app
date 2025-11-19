@@ -1,5 +1,9 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/core/utils/format.dart';
+import 'package:custom_mp_app/app/global/widgets/emptystate/empty_state.dart';
+import 'package:custom_mp_app/app/modules/cart/controllers/cart_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 class CartCheckoutButton extends StatelessWidget {
@@ -7,86 +11,89 @@ class CartCheckoutButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      height: 65,
-      color: Colors.white,
-      child: Row(
-        children: [
-          // ☐ SELECT ALL (UI only)
-
-        
-          Row(
-            children: [
-              Transform.scale(
-                scale: 1.2,
-                child:  Checkbox(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+    final cartController = Get.find<CartController>();
+    return   Obx(
+      () {
+     
+       return  Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        height: 65,
+        color: Colors.white,
+        child:  Column(
+          children: [
+            cartController.isSummaryUpdating.value ?  LinearProgressIndicator(color: AppColors.brand,) : const Gap(4),
+            Expanded(
+              child: Row(
+                children: [
+                  /// ☐ ALL
+                  Row(
+                    children: [
+                      Transform.scale(
+                        scale: 1.2,
+                        child: Checkbox(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          side: BorderSide(color: AppColors.textLight),
+                          activeColor: cartController.hasSelectedItems ? AppColors.brand : AppColors.textLight,
+                          value:  cartController.selectAllValue.value,
+                          onChanged:  cartController.carts.isEmpty ? null :  (value) =>  cartController.uiToggleSelectAll(value!),
+                        ),
+                      ),
+                      Text("All", style: Get.textTheme.bodyMedium),
+                    ],
                   ),
-                  side: BorderSide(color: AppColors.textLight),
-                  activeColor: AppColors.brand,
-                  value: false,  // UI sample only
-                  onChanged: (value) {
-                    // ❌ NO LOGIC for now
-                    print("Select all tapped (UI only)");
-                  },
-                ),
-              ),
-              Text("All", style: Get.textTheme.bodyMedium),
-            ],
-          ),
 
-          Spacer(),
+                  Spacer(), // ⭐ pushes total + button to the right
+                  /// 💰 TOTAL
+                  Expanded(
+                    flex: 2,
+                    child: FittedBox(
+                      fit: BoxFit
+                          .scaleDown, // ⭐ Shrinks text to fit width safely
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "₱${formatMoney(cartController.cartSummary.value.grandTotal)}",
+                        style: Get.textTheme.titleLarge?.copyWith(
+                          color: cartController.hasSelectedItems
+                              ? AppColors.brandDark
+                              : AppColors.textLight,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
 
-          // 💰 Total Payment (UI only)
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                "Total Payment",
-                style: Get.textTheme.bodySmall?.copyWith(
-                  color: AppColors.textLight,
-                ),
-              ),
-              Text(
-                "₱ 0.00", // Dummy UI value
-                style: Get.textTheme.titleLarge?.copyWith(
-                  color: AppColors.textLight,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+                  SizedBox(width: 12),
 
-          SizedBox(width: 12),
-
-          // 🛒 Checkout Button (UI only)
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.textLight,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 22,
-                vertical: 12,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                  /// CHECKOUT
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: cartController.hasSelectedItems
+                          ? AppColors.brand
+                          : AppColors.textLight,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onPressed: cartController.hasSelectedItems ? () {} : null,
+                    child: Text(
+                      "Checkout",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
             ),
-            onPressed: () {
-              // ❌ No checkout logic yet
-              print("Checkout tapped (UI only)");
-            },
-            child: Text(
-              "Checkout",
-              style: TextStyle(
-                color: Colors.white70,
-              ),
-            ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      );
+      },
     );
   }
 }
+

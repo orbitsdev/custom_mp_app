@@ -7,12 +7,12 @@ class CartSummaryModel {
   final double grandTotal;
 
   CartSummaryModel({
-    required this.totalItems,
-    required this.selectedCount,
-    required this.subtotal,
-    required this.discount,
-    required this.shippingFee,
-    required this.grandTotal,
+    this.totalItems = 0,
+    this.selectedCount = 0,
+    this.subtotal = 0,
+    this.discount = 0,
+    this.shippingFee = 0,
+    this.grandTotal = 0,
   });
 
   factory CartSummaryModel.fromMap(Map<String, dynamic> map) {
@@ -36,4 +36,29 @@ class CartSummaryModel {
       'grand_total': grandTotal,
     };
   }
+
+  CartSummaryModel copyWith({
+    int? totalItems,
+    int? selectedCount,
+    double? subtotal,
+    double? discount,
+    double? shippingFee,
+    double? grandTotal,
+  }) {
+    return CartSummaryModel(
+      totalItems: totalItems ?? this.totalItems,
+      selectedCount: selectedCount ?? this.selectedCount,
+      subtotal: subtotal ?? this.subtotal,
+      discount: discount ?? this.discount,
+      shippingFee: shippingFee ?? this.shippingFee,
+      grandTotal: grandTotal ?? this.grandTotal,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'CartSummaryModel(totalItems: $totalItems, selectedCount: $selectedCount, subtotal: $subtotal, discount: $discount, shippingFee: $shippingFee, grandTotal: $grandTotal)';
+  }
+
+  
 }

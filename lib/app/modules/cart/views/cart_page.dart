@@ -17,7 +17,7 @@ const CartPage({ Key? key }) : super(key: key);
       onRefresh: cartController.fetchCart ,
       child: Scaffold(
         backgroundColor: AppColors.brandBackground,
-        bottomSheet: CartCheckoutButton(),
+        bottomSheet:  CartCheckoutButton(),
         body: CustomScrollView(
           physics: AlwaysScrollableScrollPhysics(),
           slivers: [
