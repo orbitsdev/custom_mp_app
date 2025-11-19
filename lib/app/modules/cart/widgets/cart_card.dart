@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/global/widgets/image/online_image.dart';
+import 'package:custom_mp_app/app/modules/cart/controllers/cart_controller.dart';
 import 'package:custom_mp_app/app/modules/cart/widgets/cart_quantity_button.dart';
 import 'package:flutter/material.dart';
 
@@ -15,6 +16,7 @@ class CartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isOutOfStock = cartItem.variant?.availableStock == 0;
+        final controller = CartController.instance;
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -40,7 +42,8 @@ class CartCard extends StatelessWidget {
                         : AppColors.textLight,
                   ),
                   value: cartItem.isSelected,
-                  onChanged: isOutOfStock ? null : (value) {},
+                 onChanged: isOutOfStock ? null : (_) => controller.uiToggleSelect(cartItem),
+
                 ),
               ),
 
@@ -140,43 +143,41 @@ class CartCard extends StatelessWidget {
                     ),
                     const Gap(6),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Quantity',
-                          style: Get.textTheme.bodySmall!.copyWith(
-                            color: isOutOfStock ? AppColors.textLight : null,
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            CartQuantityButton(
-                              disable: isOutOfStock,
-                              icon: const Icon(Icons.remove, size: 14),
-                              onPressed: isOutOfStock ? null : () {
-                                print('descrease quantity');
-                              },
-                            ),
-                            const Gap(4),
-                            Container(
-                              constraints: BoxConstraints(minWidth: 30),
-                              child: Center(
-                                child: Text('${cartItem.quantity}',style: Get.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),),
-                              ),
-                            ),
-                            const Gap(4),
-                            CartQuantityButton(
-                              disable: isOutOfStock,
-                              icon: const Icon(Icons.add, size: 14),
-                              onPressed: isOutOfStock ? null : () {
-                                print('increase quantity');
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  Row(
+  children: [
+    CartQuantityButton(
+      disable: isOutOfStock,
+      icon: const Icon(Icons.remove, size: 14),
+      onPressed: isOutOfStock
+          ? null
+          : () => controller.uiRemoveQty(cartItem),
+    ),
+    const Gap(4),
+
+    // Quantity
+    Container(
+      constraints: const BoxConstraints(minWidth: 30),
+      child: Center(
+        child: Text(
+          '${cartItem.quantity}',
+          style: Get.textTheme.bodyMedium!
+              .copyWith(fontWeight: FontWeight.bold),
+        ),
+      ),
+    ),
+
+    const Gap(4),
+
+    CartQuantityButton(
+      disable: isOutOfStock,
+      icon: const Icon(Icons.add, size: 14),
+      onPressed: isOutOfStock
+          ? null
+          : () => controller.uiAddQty(cartItem),
+    ),
+  ],
+)
+
                   ],
                 ),
               ),
