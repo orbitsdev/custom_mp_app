@@ -229,8 +229,7 @@ void onInit() {
       (_) async {
          await fetchCartSummary();  
         isSummaryUpdating.value = false;
-
-        print('qadd quanity success');
+        print('qadd quanity success'); 
       },
     );
   }
