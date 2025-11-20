@@ -9,6 +9,8 @@ import 'package:custom_mp_app/app/modules/cart/views/cart_page.dart';
 import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
 import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
+import 'package:custom_mp_app/app/modules/orderpreperation/bindings/order_preparation_binding.dart';
+import 'package:custom_mp_app/app/modules/orderpreperation/views/order_preparation_page.dart';
 import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_details_page.dart';
@@ -35,6 +37,9 @@ class Routes {
   //CARTS
   static const String cartPage = '/cart';
 
+  //ORDER PREPRATION
+
+  static const String orderPreparationPage = '/order-preparation';
 
   //TEST IGN
   static const String modalPage = '/modal';
@@ -83,6 +88,12 @@ class Routes {
       middlewares: [AuthMiddleware()],
       page: () => CartPage(),
       // binding: HomeBinding()
+    ),
+    GetPage(
+      name: Routes.orderPreparationPage,
+      middlewares: [AuthMiddleware()],
+      page: () => OrderPreparationPage(),
+      binding: OrderPreparationBinding()
     ),
 
 

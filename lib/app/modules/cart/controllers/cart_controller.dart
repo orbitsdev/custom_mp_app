@@ -18,42 +18,33 @@ class CartController extends GetxController {
   /// ⭐ SINGLE debounce handler for ALL cart actions
   final isSummaryUpdating = false.obs;
   final cartDebounceHandler = CartDebounceHandler().obs;
- final selectAllHandler = CartSelectAllHandler().obs;
- final selectAllValue = false.obs;   // <-- REAL checkbox state
+  final selectAllHandler = CartSelectAllHandler().obs;
+  final selectAllValue = false.obs; // <-- REAL checkbox state
 
   int get selectedRowCount => carts.where((e) => e.isSelected == true).length;
 
   bool get hasSelectedItems => selectedRowCount > 0;
- @override
-void onInit() {
-  super.onInit();
+  @override
+  void onInit() {
+    super.onInit();
 
-  // Quantity / toggle worker
-  debounce(
-    cartDebounceHandler,
-    (handler) {
+    // Quantity / toggle worker
+    debounce(cartDebounceHandler, (handler) {
       if (handler.action == null || handler.item == null) return;
       handleAction(handler);
-    },
-    time: const Duration(milliseconds: 300),
-  );
+    }, time: const Duration(milliseconds: 300));
 
-  // Select-All worker
- debounce<CartSelectAllHandler>(
-  selectAllHandler,
-  (handler) {
-    if (handler.selectAll == null) return;
-    toggleSelectAll(handler.selectAll!);
-  },
-  time: const Duration(milliseconds: 300),
-);
-
-}
+    // Select-All worker
+    debounce<CartSelectAllHandler>(selectAllHandler, (handler) {
+      if (handler.selectAll == null) return;
+      toggleSelectAll(handler.selectAll!);
+    }, time: const Duration(milliseconds: 300));
+  }
 
   @override
   void onReady() {
     super.onReady();
-    fetchCart();
+      fetchCart();
   }
 
   Future<void> fetchCart() async {
@@ -61,11 +52,16 @@ void onInit() {
 
     final result = await _cartRepo.fetchCart();
     result.fold(
-      (failure) => AppToast.error(failure.message),
-      (data) => carts.assignAll(data),
-    );
+      (failure) {
+        AppToast.error(failure.message);
+        isLoading.value = false;
+      },
+      (data) async {
+        carts.assignAll(data);
+        isLoading.value = false;
 
-    isLoading.value = false;
+      },
+    );
   }
 
   // ----------------------------------------------------------------------
@@ -88,7 +84,6 @@ void onInit() {
     }
   }
 
- 
   // ----------------------------------------------------------------------
   // UI TRIGGERS (UI → local update → debounce backend)
   // ----------------------------------------------------------------------
@@ -117,9 +112,6 @@ void onInit() {
     );
   }
 
-
-  
-
   // ⭐ UI Delete Action (instant remove + backend sync)
   void uiDeleteItem(CartItemModel item) async {
     final index = carts.indexWhere((e) => e.id == item.id);
@@ -131,7 +123,7 @@ void onInit() {
     carts.removeAt(index);
 
     // 🔥 Call Backend
-     isSummaryUpdating.value = true;
+    isSummaryUpdating.value = true;
     final result = await _cartRepo.removeItem(item.id!);
 
     result.fold(
@@ -139,20 +131,16 @@ void onInit() {
         // ❌ API failed → revert UI
         carts.insert(index, oldItem);
         AppToast.error(failure.message);
-         isSummaryUpdating.value = false;
+        isSummaryUpdating.value = false;
       },
       (_) async {
         AppModal.success(message: "Item deleted successfully");
         print("✔ Cart item deleted successfully");
-           await fetchCartSummary();  
-         isSummaryUpdating.value = false;
+        await fetchCartSummary();
+        isSummaryUpdating.value = false;
       },
     );
   }
-
-
-
-
 
   // ----------------------------------------------------------------------
   // ⭐ LOCAL UI UPDATES (Optimistic UI)
@@ -171,36 +159,34 @@ void onInit() {
   }
 
   void _toggleLocalSelect(CartItemModel item) {
-  final index = carts.indexWhere((e) => e.id == item.id);
-  if (index == -1) return;
+    final index = carts.indexWhere((e) => e.id == item.id);
+    if (index == -1) return;
 
-  final current = carts[index];
-  final newValue = !(current.isSelected ?? false);
+    final current = carts[index];
+    final newValue = !(current.isSelected ?? false);
 
-  // 1️⃣ Update the item
-  carts[index] = current.copyWith(isSelected: newValue);
+    // 1️⃣ Update the item
+    carts[index] = current.copyWith(isSelected: newValue);
 
-  // 2️⃣ Auto-update select-all state
-  final allSelected = carts.every((e) => e.isSelected == true);
-  final noneSelected = carts.every((e) => e.isSelected == false);
+    // 2️⃣ Auto-update select-all state
+    final allSelected = carts.every((e) => e.isSelected == true);
+    final noneSelected = carts.every((e) => e.isSelected == false);
 
-  if (allSelected) {
-    selectAllValue.value = true;
-  } else if (noneSelected) {
-    selectAllValue.value = false;
-  } else {
-    // Mixed state — uncheck "select all"
-    selectAllValue.value = false;
+    if (allSelected) {
+      selectAllValue.value = true;
+    } else if (noneSelected) {
+      selectAllValue.value = false;
+    } else {
+      // Mixed state — uncheck "select all"
+      selectAllValue.value = false;
+    }
   }
-}
 
-
-   void uiToggleSelectAll(bool value) {
-  selectAllValue.value = value;
-  carts.value = carts.map((e) => e.copyWith(isSelected: value)).toList();
-  selectAllHandler.value = CartSelectAllHandler(selectAll: value);
-}
-
+  void uiToggleSelectAll(bool value) {
+    selectAllValue.value = value;
+    carts.value = carts.map((e) => e.copyWith(isSelected: value)).toList();
+    selectAllHandler.value = CartSelectAllHandler(selectAll: value);
+  }
 
   // ----------------------------------------------------------------------
   // ⭐ BACKEND SYNC ACTIONS (debounced)
@@ -214,7 +200,7 @@ void onInit() {
 
     final newItem = carts[index]; // updated by UI
     final oldItem = originalItem; // old version before UI changes
- isSummaryUpdating.value = true;
+    isSummaryUpdating.value = true;
     final result = await _cartRepo.updateQuantity(
       cartItemId: newItem.id!,
       quantity: newItem.quantity!,
@@ -224,12 +210,12 @@ void onInit() {
       (failure) {
         carts[index] = oldItem; // 🔥 revert
         AppToast.error(failure.message);
-         isSummaryUpdating.value = false;
+        isSummaryUpdating.value = false;
       },
       (_) async {
-         await fetchCartSummary();  
+        await fetchCartSummary();
         isSummaryUpdating.value = false;
-        print('qadd quanity success'); 
+        print('qadd quanity success');
       },
     );
   }
@@ -245,7 +231,7 @@ void onInit() {
 
     // Prevent negative quantity (UI already prevents it)
     if ((newItem.quantity ?? 1) < 1) return;
-     isSummaryUpdating.value = true;
+    isSummaryUpdating.value = true;
     final result = await _cartRepo.updateQuantity(
       cartItemId: newItem.id!,
       quantity: newItem.quantity!,
@@ -255,12 +241,12 @@ void onInit() {
       (failure) {
         carts[index] = oldItem;
         AppToast.error(failure.message);
-         isSummaryUpdating.value = false;
+        isSummaryUpdating.value = false;
       },
       (_) async {
         print('decemenent success');
-          await fetchCartSummary();
-           isSummaryUpdating.value = false;
+        await fetchCartSummary();
+        isSummaryUpdating.value = false;
       },
     );
   }
@@ -273,61 +259,50 @@ void onInit() {
 
     final newItem = carts[index];
     final oldItem = originalItem;
-   isSummaryUpdating.value = true;
+    isSummaryUpdating.value = true;
     final result = await _cartRepo.updateSelection(
       cartItemId: newItem.id!,
       isSelected: newItem.isSelected!,
     );
 
-    result.fold((failure) {
-      carts[index] = oldItem; // 🔥 revert
-      AppToast.error(failure.message);
-       isSummaryUpdating.value = false;
-    }, (_)  async {
-          await fetchCartSummary();
-           isSummaryUpdating.value = false;
-    });
+    result.fold(
+      (failure) {
+        carts[index] = oldItem; // 🔥 revert
+        AppToast.error(failure.message);
+        isSummaryUpdating.value = false;
+      },
+      (_) async {
+        await fetchCartSummary();
+        isSummaryUpdating.value = false;
+      },
+    );
   }
 
+  Future<void> toggleSelectAll(bool value) async {
+    isSummaryUpdating.value = true;
+    final result = await _cartRepo.selectAll(isSelected: value);
 
-
-Future<void> toggleSelectAll(bool value) async {
-   isSummaryUpdating.value = true;
-  final result = await _cartRepo.selectAll(isSelected: value);
-
-  result.fold(
-    (failure) {
-   
-      carts.value = carts.map((e) => e.copyWith(isSelected: !value)).toList();
-      selectAllValue.value = !value;
-      AppToast.error(failure.message);
-       isSummaryUpdating.value = false;
-    },
-    (_)  async {
-      print("✔ Select-all updated");
+    result.fold(
+      (failure) {
+        carts.value = carts.map((e) => e.copyWith(isSelected: !value)).toList();
+        selectAllValue.value = !value;
+        AppToast.error(failure.message);
+        isSummaryUpdating.value = false;
+      },
+      (_) async {
+        print("✔ Select-all updated");
         await fetchCartSummary();
-         isSummaryUpdating.value = false;
-    },
-  );
-}
+        isSummaryUpdating.value = false;
+      },
+    );
+  }
 
+  Future<void> fetchCartSummary() async {
+    final response = await _cartRepo.fetchCartSummary();
 
-
-
-
-Future<void> fetchCartSummary() async {
-
-  
-  final response = await _cartRepo.fetchCartSummary();
-
-  response.fold(
-    (failure) => AppToast.error(failure.message),
-    (data) {
+    response.fold((failure) => AppToast.error(failure.message), (data) {
       cartSummary.value = data;
       print("Updated summary: $cartSummary");
-    },
-  );
-}
-
-
+    });
+  }
 }

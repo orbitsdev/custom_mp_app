@@ -1,8 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class OrderPreparationSummaryModel {
-  final double subtotal;
-  final double packagingFee;
-  final double shippingFee;
-  final double total;
+  final num subtotal;
+  final num packagingFee;
+  final num shippingFee;
+  final num total;
 
   OrderPreparationSummaryModel({
     required this.subtotal,
@@ -11,12 +12,32 @@ class OrderPreparationSummaryModel {
     required this.total,
   });
 
-  factory OrderPreparationSummaryModel.fromJson(Map<String, dynamic> json) {
+  //from map
+  factory OrderPreparationSummaryModel.fromMap(Map<String, dynamic> map) {
     return OrderPreparationSummaryModel(
-      subtotal: (json['subtotal'] as num).toDouble(),
-      packagingFee: (json['packaging_fee'] as num).toDouble(),
-      shippingFee: (json['shipping_fee'] as num).toDouble(),
-      total: (json['total'] as num).toDouble(),
+      subtotal: map['subtotal'] as num,
+      packagingFee: map['packaging_fee'] as num,
+      shippingFee: map['shipping_fee'] as num,
+      total: map['total'] as num,
     );
+  }
+
+  OrderPreparationSummaryModel copyWith({
+    num? subtotal,
+    num? packagingFee,
+    num? shippingFee,
+    num? total,
+  }) {
+    return OrderPreparationSummaryModel(
+      subtotal: subtotal ?? this.subtotal,
+      packagingFee: packagingFee ?? this.packagingFee,
+      shippingFee: shippingFee ?? this.shippingFee,
+      total: total ?? this.total,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'OrderPreparationSummaryModel(subtotal: $subtotal, packagingFee: $packagingFee, shippingFee: $shippingFee, total: $total)';
   }
 }

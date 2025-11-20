@@ -97,8 +97,7 @@ class CartItemModel {
 
   @override
   String toString() {
-    return 'CartItemModel(id: $id, qty: $quantity, selected: $isSelected, '
-        'unitPrice: $unitPrice, adj: $adjustmentAmount, subtotal: $subtotal, variant: $variant)';
+    return 'CartItemModel(id: $id, quantity: $quantity, isSelected: $isSelected, unitPrice: $unitPrice, adjustmentAmount: $adjustmentAmount, adjustmentDetails: $adjustmentDetails, finalPrice: $finalPrice, subtotal: $subtotal, variant: $variant)';
   }
 
   // ---------- EQUALITY ----------
@@ -111,4 +110,9 @@ class CartItemModel {
 
   @override
   int get hashCode => id.hashCode;
+
+
+
+factory CartItemModel.fromJsonString(String source) =>
+    CartItemModel.fromMap(json.decode(source));
 }

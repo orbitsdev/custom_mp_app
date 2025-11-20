@@ -16,11 +16,9 @@ class CartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isOutOfStock = cartItem.variant?.availableStock == 0;
-        final controller = CartController.instance;
+    final controller = CartController.instance;
     return Container(
-      constraints: BoxConstraints(
-        minHeight: 120,
-      ),
+      constraints: BoxConstraints(minHeight: 120),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: (cartItem.isSelected == true)
@@ -45,8 +43,9 @@ class CartCard extends StatelessWidget {
                         : AppColors.textLight,
                   ),
                   value: cartItem.isSelected,
-                 onChanged: isOutOfStock ? null : (_) => controller.uiToggleSelect(cartItem),
-
+                  onChanged: isOutOfStock
+                      ? null
+                      : (_) => controller.uiToggleSelect(cartItem),
                 ),
               ),
 
@@ -59,12 +58,10 @@ class CartCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: OnlineImage(
-  imageUrl: 
-      (cartItem.variant?.media.isNotEmpty == true)
-          ? cartItem.variant!.media
-          : (cartItem.variant?.product.thumbnail ?? ""),
-)
- ,
+                        imageUrl: (cartItem.variant?.media.isNotEmpty == true)
+                            ? cartItem.variant!.media
+                            : (cartItem.variant?.product.thumbnail ?? ""),
+                      ),
                     ),
                     if (isOutOfStock)
                       Center(
@@ -152,39 +149,45 @@ class CartCard extends StatelessWidget {
                     ),
                     const Gap(6),
 
-                  Row(
-  children: [
-    CartQuantityButton(
-      disable: isOutOfStock,
-      icon: const Icon(Icons.remove, size: 14),
-      onPressed: cartItem.isSelected == false ? null:  isOutOfStock ? null: () => controller.uiRemoveQty(cartItem),
-    ),
-    const Gap(4),
+                    Row(
+                      children: [
+                        CartQuantityButton(
+                          disable: isOutOfStock,
+                          icon: const Icon(Icons.remove, size: 14),
+                          onPressed: cartItem.isSelected == false
+                              ? null
+                              : isOutOfStock
+                              ? null
+                              : () => controller.uiRemoveQty(cartItem),
+                        ),
+                        const Gap(4),
 
-    // Quantity
-    Container(
-      constraints: const BoxConstraints(minWidth: 30),
-      child: Center(
-        child: Text(
-          '${cartItem.quantity}',
-          style: Get.textTheme.bodyMedium!
-              .copyWith(fontWeight: FontWeight.bold),
-        ),
-      ),
-    ),
+                        // Quantity
+                        Container(
+                          constraints: const BoxConstraints(minWidth: 30),
+                          child: Center(
+                            child: Text(
+                              '${cartItem.quantity}',
+                              style: Get.textTheme.bodyMedium!.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
 
-    const Gap(4),
+                        const Gap(4),
 
-    CartQuantityButton(
-      disable: isOutOfStock,
-      icon: const Icon(Icons.add, size: 14),
-      onPressed: cartItem.isSelected == false ? null: isOutOfStock
-          ? null
-          : () => controller.uiAddQty(cartItem),
-    ),
-  ],
-)
-
+                        CartQuantityButton(
+                          disable: isOutOfStock,
+                          icon: const Icon(Icons.add, size: 14),
+                          onPressed: cartItem.isSelected == false
+                              ? null
+                              : isOutOfStock
+                              ? null
+                              : () => controller.uiAddQty(cartItem),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

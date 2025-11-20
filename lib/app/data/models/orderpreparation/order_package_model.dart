@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 class OrderPackageModel {
   final int id;
   final String name;
@@ -19,16 +20,21 @@ class OrderPackageModel {
     required this.thumbnail,
   });
 
-  factory OrderPackageModel.fromJson(Map<String, dynamic> json) {
+  factory OrderPackageModel.fromMap(Map<String, dynamic> map) {
     return OrderPackageModel(
-      id: json['id'],
-      name: json['name'],
-      price: json['price'],
-      availableStock: json['available_stock'],
-      minWeightKg: (json['min_weight_kg'] as num).toDouble(),
-      maxWeightKg: (json['max_weight_kg'] as num).toDouble(),
-      isAvailableForCheckout: json['is_available_for_checkout'],
-      thumbnail: json['thumbnail'] ?? '',
+      id: map['id'] ?? 0,
+      name: map['name'] ?? '',
+      price: map['price'] ?? 0,
+      availableStock: map['available_stock'] ?? 0,
+      minWeightKg: (map['min_weight_kg'] as num).toDouble(),
+      maxWeightKg: (map['max_weight_kg'] as num).toDouble(),
+      isAvailableForCheckout: map['is_available_for_checkout'] ?? false,
+      thumbnail: map['thumbnail'] ?? '',
     );
+  }
+
+  @override
+  String toString() {
+    return 'OrderPackageModel(id: $id, name: $name, price: $price, availableStock: $availableStock, minWeightKg: $minWeightKg, maxWeightKg: $maxWeightKg, isAvailableForCheckout: $isAvailableForCheckout, thumbnail: $thumbnail)';
   }
 }

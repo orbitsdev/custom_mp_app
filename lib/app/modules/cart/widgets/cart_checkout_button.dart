@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/core/utils/format.dart';
 import 'package:custom_mp_app/app/global/widgets/emptystate/empty_state.dart';
@@ -80,7 +81,9 @@ class CartCheckoutButton extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    onPressed: cartController.hasSelectedItems ? () {} : null,
+                    onPressed: cartController.hasSelectedItems ? () { 
+                          Get.toNamed(Routes.orderPreparationPage);
+                    } : null,
                     child: Text(
                       "Checkout",
                       style: TextStyle(color: Colors.white),
