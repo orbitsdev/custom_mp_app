@@ -1,54 +1,105 @@
+import 'package:custom_mp_app/app/modules/orderpreperation/widgets/skeleton/op_package_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/order_preparation_controller.dart';
 
+import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/modules/orderpreperation/controllers/order_preparation_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:gap/gap.dart';
+
 class OpPackageSelector extends GetView<OrderPreparationController> {
   @override
   Widget build(BuildContext context) {
-    final packages = controller.orderPreparation .value!.packages;
+    return Obx(() {
+      final data = controller.orderPreparation.value;
 
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        color: Colors.white,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text("Packaging",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
+      /// 🔥 LOADING STATE
+      if (controller.isLoading.value) return const OpPackageSkeleton();
 
-            Obx(() {
-              final selectedId = controller.selectedPackageId.value;
+      /// 🔥 NO PACKAGES
+      if (data == null || data.packages.isEmpty) {
+        return const SliverToBoxAdapter(
+          child: SizedBox.shrink(),
+        );
+      }
 
-              return Wrap(
-                spacing: 12,
-                children: packages.map((p) {
-                  final selected = p.id == selectedId;
+      return SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Packaging",
+                style: Get.textTheme.titleMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+
+              const Gap(10),
+
+              /// WRAP BUTTONS
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: data.packages.map((pkg) {
+                  final isSelected =
+                      controller.selectedPackageId.value == pkg.id;
 
                   return GestureDetector(
-                    onTap: () => controller.selectPackage(p.id),
+                    onTap: () => controller.selectPackage(pkg.id),
                     child: Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
+                        color: isSelected
+                            ? AppColors.brandLight
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                            color: selected ? Colors.green : Colors.grey),
+                          color: isSelected
+                              ? AppColors.brandDark
+                              : Colors.grey.shade300,
+                          width: isSelected ? 2 : 1,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: AppColors.brandDark.withOpacity(0.2),
+                                  blurRadius: 5,
+                                  offset: Offset(1, 2),
+                                )
+                              ]
+                            : [],
                       ),
-                      child: Column(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(p.name),
-                          Text("₱${p.price}"),
+                          Text(
+                            pkg.name,
+                            style: Get.textTheme.bodyMedium!.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Gap(6),
+                          Text(
+                            "(₱${pkg.price})",
+                            style: Get.textTheme.bodySmall!.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   );
                 }).toList(),
-              );
-            }),
-          ],
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }

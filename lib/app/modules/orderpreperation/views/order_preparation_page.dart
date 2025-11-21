@@ -40,7 +40,7 @@ class _OrderPreparationPageState extends State<OrderPreparationPage> {
               OpAppBar(),
               OpAddressSection(),
               OpCartItemList(),
-              // OpPackageSelector(),
+              OpPackageSelector(),
               OpSummarySection()
               
             ],
