@@ -31,37 +31,28 @@ class OrderPreparationController extends GetxController {
   // FETCH API
   // -------------------------------------------------------------
   Future<void> fetchOrderPreparation({int? packageId}) async {
-    isLoading.value = true;
+  isLoading.value = true;
 
-    final result = await _prepRepo.fetchOrderPreparation(packageId: packageId);
+  final result = await _prepRepo.fetchOrderPreparation(packageId: packageId);
 
-    result.fold(
-      (failure) {
-        AppToast.error(failure.message);
-        isLoading.value = false;
-        print('❌ Fetch failed: ${failure.message}');
-      },
-      (data) {
-        print('__________ahelwe');
-        print(data);
-        print('__________yow');
-            isLoading.value = false;
-        orderPreparation.value = data;
-        // print('_____________YOOO0000W');
-        // print(orderPreparation.value.toString());
-        // print('_____________YOOO0000000000W');
-        AppToast.success('sucues');
-        selectedPackageId.value = data.selectedPackageId;
-        isLoading.value = false;
+  result.fold(
+    (failure) {
+      isLoading.value = false;
+      AppToast.error(failure.message);
+    },
+    (data) {
+      isLoading.value = false;
 
-        if (data.shippingAddresses.isNotEmpty) {
-          selectedAddressId.value =
-              data.shippingAddresses.firstWhereOrNull((e) => e.isDefault as bool)?.id ??
-              data.shippingAddresses.first.id;
-        }
-      },
-    );
-  }
+      orderPreparation.value = data;
+
+      selectedPackageId.value = data.selectedPackageId;
+
+      // ⭐ CRITICAL FIX
+      selectedAddressId.value = data.selectedShippingAddressId;
+    },
+  );
+}
+
 
   // -------------------------------------------------------------
   // CHANGE PACKAGE

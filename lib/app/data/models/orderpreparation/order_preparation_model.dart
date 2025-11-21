@@ -6,10 +6,11 @@ import 'package:custom_mp_app/app/data/models/shippingaddress/shipping_address_m
 
 class OrderPreparationModel {
   final List<CartItemModel> cartItems;
- final List<OrderPackageModel> packages;
+  final List<OrderPackageModel> packages;
   final List<ShippingAddressModel> shippingAddresses;
   final OrderPreparationSummaryModel summary;
   final int? selectedPackageId;
+  final int? selectedShippingAddressId;
 
   OrderPreparationModel({
     required this.cartItems,
@@ -17,6 +18,7 @@ class OrderPreparationModel {
     required this.shippingAddresses,
     required this.summary,
     required this.selectedPackageId,
+    required this.selectedShippingAddressId,
   });
 
   //from map
@@ -33,9 +35,9 @@ class OrderPreparationModel {
       ),
       summary: OrderPreparationSummaryModel.fromMap(map['summary']),
       selectedPackageId: map['selected_package_id'],
+      selectedShippingAddressId: map['selected_shipping_address_id'],
     );
   }
-
 
   OrderPreparationModel copyWith({
     List<CartItemModel>? cartItems,
@@ -43,14 +45,16 @@ class OrderPreparationModel {
     List<ShippingAddressModel>? shippingAddresses,
     OrderPreparationSummaryModel? summary,
     int? selectedPackageId,
+    int? selectedShippingAddressId,
   }) {
     return OrderPreparationModel(
       cartItems: cartItems ?? this.cartItems,
-       packages: packages ?? this.packages,
+      packages: packages ?? this.packages,
       shippingAddresses: shippingAddresses ?? this.shippingAddresses,
       summary: summary ?? this.summary,
       selectedPackageId: selectedPackageId ?? this.selectedPackageId,
+      selectedShippingAddressId:
+          selectedShippingAddressId ?? this.selectedShippingAddressId,
     );
   }
- 
 }

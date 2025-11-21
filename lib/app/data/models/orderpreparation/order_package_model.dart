@@ -33,6 +33,21 @@ class OrderPackageModel {
     );
   }
 
+  // 
+  // factory OrderPackageModel.fromMap(Map<String, dynamic> map) {
+  //   return OrderPackageModel(
+  //     id: map['id'] ?? 0,
+  //     name: map['name'] ?? '',
+  //     price: map['price'] ?? 0,
+  //     availableStock: map['available_stock'] ?? 0,
+  //     minWeightKg:  map['min_weight_kg'] as double,
+  //     maxWeightKg: map['max_weight_kg'] as double,
+  //     isAvailableForCheckout: map['is_available_for_checkout'] ?? false,
+  //     thumbnail: map['thumbnail'] ?? '',
+  //   );
+    
+  // }
+
   @override
   String toString() {
     return 'OrderPackageModel(id: $id, name: $name, price: $price, availableStock: $availableStock, minWeightKg: $minWeightKg, maxWeightKg: $maxWeightKg, isAvailableForCheckout: $isAvailableForCheckout, thumbnail: $thumbnail)';

@@ -1,6 +1,6 @@
 import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
-import 'package:custom_mp_app/app/core/utils/format.dart';
+import 'package:custom_mp_app/app/core/utils/format_helper.dart';
 import 'package:custom_mp_app/app/global/widgets/emptystate/empty_state.dart';
 import 'package:custom_mp_app/app/modules/cart/controllers/cart_controller.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +54,7 @@ class CartCheckoutButton extends StatelessWidget {
                           .scaleDown, // ⭐ Shrinks text to fit width safely
                       alignment: Alignment.centerRight,
                       child: Text(
-                        "₱${formatMoney(cartController.cartSummary.value.grandTotal)}",
+                        "₱${formatNumber(cartController.cartSummary.value.grandTotal)}",
                         style: Get.textTheme.titleLarge?.copyWith(
                           color: cartController.hasSelectedItems
                               ? AppColors.brandDark

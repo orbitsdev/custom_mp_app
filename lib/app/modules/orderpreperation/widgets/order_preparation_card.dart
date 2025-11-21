@@ -15,93 +15,96 @@ class OrderPreparationCard extends StatelessWidget {
     final variant = cartItem.variant;
     final product = variant?.product;
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+   final qty = cartItem.quantity ?? 0;
+final price = cartItem.finalPrice ?? 0;
+
+final double subtotal = price * qty;
+
+
+    return  Container(
+  padding: const EdgeInsets.all(16), // was 12 → made wider
+  decoration: BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+  ),
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      // IMAGE
+      ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: SizedBox(
+          width: 90,
+          height: 90,
+          child: OnlineImage(
+            imageUrl: (variant?.media.isNotEmpty == true)
+                ? variant!.media
+                : (product?.thumbnail ?? ""),
+          ),
+        ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-                const Gap(8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: SizedBox(
-              width: 90,
-              height: 90,
-              child: OnlineImage(
-                imageUrl: (variant?.media.isNotEmpty == true)
-                    ? variant!.media
-                    : (product?.thumbnail ?? ""),
+
+      const SizedBox(width: 20), // ← bigger spacing from image
+
+      // TEXT SECTION
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // PRODUCT NAME
+            Text(
+              product?.name ?? '-',
+              style: Get.textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
             ),
-          ),
 
-          const Gap(24),
-
-          /// TEXT DETAILS
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                /// Product Name
-                Text(
-                  product?.name ?? '-',
-                  style: Get.textTheme.bodyLarge!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-
-                /// Variant Name (if not default)
-                if (variant != null && !variant.isDefault) ...[
-                  const Gap(4),
-                  Text(
-                    variant.name,
-                    style: Get.textTheme.bodySmall!.copyWith(
-                      color: AppColors.textLight,
-                    ),
-                  ),
-                ],
-
-                const Gap(6),
-
-                /// Price
-                Text(
-                  "₱${cartItem.finalPrice}",
-                  style: Get.textTheme.bodyMedium!.copyWith(
-                    color: AppColors.brandDark,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-
-                const Gap(3),
-
-                /// Stock
-                Text(
-                  "Stock: ${variant?.availableStock ?? 0}",
+            // VARIANT NAME
+            if (variant != null && !variant.isDefault)
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  variant.name,
                   style: Get.textTheme.bodySmall!.copyWith(
-                    color: AppColors.green,
-                    fontWeight: FontWeight.w600,
+                    color: AppColors.textLight,
                   ),
                 ),
+              ),
 
-                const Gap(8),
+            const SizedBox(height: 8),
 
-                /// Quantity (display only)
-                Text(
-                  "x${cartItem.quantity}",
-                  style: Get.textTheme.bodyMedium!.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+            // PRICE
+            Text(
+              "₱${cartItem.finalPrice}",
+              style: Get.textTheme.bodyMedium!.copyWith(
+                
+                fontSize: 15,
+              ),
             ),
-          ),
-        ],
+
+            const SizedBox(height: 6),
+
+            // Qty + Subtotal
+            Text(
+              "Qty: ${cartItem.quantity}",
+              style: Get.textTheme.bodySmall,
+            ),
+
+            const SizedBox(height: 6),
+
+            Text(
+              "Subtotal: ₱${subtotal.toStringAsFixed(2)}",
+              style: Get.textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
       ),
-    );
+    ],
+  ),
+);
+
   }
 }
