@@ -84,33 +84,32 @@ class OpPackageSelector extends GetView<OrderPreparationController> {
                                   ]
                                 : [],
                           ),
-                          child:  Row(
-  mainAxisSize: MainAxisSize.min,
-  children: [
-    if (isSelected) ...[
-      Icon(
-        Icons.check_circle,
-        color: AppColors.brandDark,
-        size: 18,
-      ),
-      const Gap(6),
-    ],
-    Text(
-      pkg.name,
-      style: Get.textTheme.bodyMedium!.copyWith(
-        fontWeight: FontWeight.w600,
-      ),
-    ),
-    const Gap(6),
-    Text(
-      "(₱${pkg.price})",
-      style: Get.textTheme.bodySmall!.copyWith(
-        color: Colors.grey[600],
-      ),
-    ),
-  ],
-),
-
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (isSelected) ...[
+                                Icon(
+                                  Icons.check_circle,
+                                  color: AppColors.brandDark,
+                                  size: 18,
+                                ),
+                                const Gap(6),
+                              ],
+                              Text(
+                                pkg.name,
+                                style: Get.textTheme.bodyMedium!.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const Gap(6),
+                              Text(
+                                "(₱${pkg.price})",
+                                style: Get.textTheme.bodySmall!.copyWith(
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     }).toList(),
