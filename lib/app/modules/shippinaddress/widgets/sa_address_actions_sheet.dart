@@ -1,3 +1,5 @@
+// lib/app/modules/shippinaddress/widgets/sa_address_actions_sheet.dart
+import 'package:custom_mp_app/app/modules/shippinaddress/views/create_address_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:custom_mp_app/app/data/models/shippingaddress/shipping_address_model.dart';
@@ -38,22 +40,30 @@ void showAddressActionsSheet(ShippingAddressModel address) {
             ListTile(
               leading: const Icon(Icons.edit_outlined),
               title: const Text("Edit Address"),
-              onTap: () {
-                // TODO: navigate to edit page
+              onTap: () async {
+                Get.back();
+                final updated = await Get.to(
+                  () => CreateAddressPage(address: address),
+                  transition: Transition.cupertino,
+                );
+                if (updated == true) {
+                  // optional: controller.loadAddresses();
+                }
               },
             ),
 
-            ListTile(
-              leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: const Text(
-                "Delete Address",
-                style: TextStyle(color: Colors.red),
+            if (!address.isDefault)
+              ListTile(
+                leading: const Icon(Icons.delete_outline, color: Colors.red),
+                title: const Text(
+                  "Delete Address",
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () async {
+                  Get.back();
+                  await controller.deleteAddress(address.id);
+                },
               ),
-              onTap: () async {
-                await controller.deleteAddress(address.id);
-                Get.back();
-              },
-            ),
 
             const Divider(),
 

@@ -16,6 +16,8 @@ import 'package:custom_mp_app/app/modules/products/controllers/product_controlle
 import 'package:custom_mp_app/app/modules/products/views/product_details_page.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_search_page.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/bindings/shipping_address_binding.dart';
+import 'package:custom_mp_app/app/modules/shippinaddress/views/create_address_page.dart';
+import 'package:custom_mp_app/app/modules/shippinaddress/views/psgc_select_page.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/views/shipping_address_page.dart';
 import 'package:custom_mp_app/app/modules/testing/modal_page.dart';
 import 'package:flutter/widgets.dart';
@@ -29,12 +31,9 @@ class Routes {
   static const String splashPage = '/splash';
   static const String homePage = '/home';
 
-
-
   //PRODUCTS
   static const String productSearchPage = '/product-search';
   static const String productDetailsPage = '/product-details';
-
 
   //CARTS
   static const String cartPage = '/cart';
@@ -44,6 +43,8 @@ class Routes {
 
   //SHIPPING ADDRESS
   static const String shippingAddressPage = '/shipping-address';
+  static const String shippingAddressCreatePage = '/shipping-address-create';
+  static const String psgcSelectPage = '/psgc-select';
 
   //TEST IGN
   static const String modalPage = '/modal';
@@ -55,7 +56,7 @@ class Routes {
       name: Routes.loginPage,
       middlewares: [GuestMiddleware()],
       page: () => LoginPage(),
-       binding: AuthBinding(),
+      binding: AuthBinding(),
     ),
     GetPage(
       name: Routes.signupPage,
@@ -67,15 +68,14 @@ class Routes {
       name: Routes.homePage,
       middlewares: [AuthMiddleware()],
       page: () => HomePage(),
-      binding: HomeBinding()
+      binding: HomeBinding(),
     ),
-    
+
     GetPage(
       name: Routes.productDetailsPage,
       middlewares: [AuthMiddleware()],
       page: () => ProductDetailsPage(),
-      binding: ProductBinding()
-  
+      binding: ProductBinding(),
     ),
 
     GetPage(
@@ -84,7 +84,6 @@ class Routes {
       page: () => ProductSearchPage(),
       // binding: HomeBinding()
     ),
-
 
     //carts
     GetPage(
@@ -97,17 +96,30 @@ class Routes {
       name: Routes.orderPreparationPage,
       middlewares: [AuthMiddleware()],
       page: () => OrderPreparationPage(),
-      binding: OrderPreparationBinding()
+      binding: OrderPreparationBinding(),
     ),
     GetPage(
       name: Routes.shippingAddressPage,
       middlewares: [AuthMiddleware()],
       page: () => ShippingAddressPage(),
-      binding: ShippingAddressBinding()
+      binding: ShippingAddressBinding(),
     ),
 
+    GetPage(
+      name: Routes.shippingAddressCreatePage,
+      middlewares: [AuthMiddleware()],
+      page: () => const CreateAddressPage(),
+      transition: Transition.cupertino,
+    
+    ),
 
   
 
+  GetPage(
+    name: Routes.psgcSelectPage,
+    page: () => const PSGCSelectPage(level: PSGCLevel.region), // overridden on call
+    binding: ShippingAddressBinding(),
+    transition: Transition.cupertino,
+  ),
   ];
 }

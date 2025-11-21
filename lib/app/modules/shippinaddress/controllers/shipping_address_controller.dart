@@ -1,12 +1,14 @@
+import 'package:custom_mp_app/app/data/repositories/shipping_address_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:custom_mp_app/app/data/models/shippingaddress/shipping_address_model.dart';
-import 'package:custom_mp_app/app/data/repositories/shipping_address_repository.dart';
 
 class ShippingAddressController extends GetxController {
-  final ShippingAddressRepository _repo;
+  static ShippingAddressController get to => Get.find();
+ final ShippingAddressRepository repo;
+  ShippingAddressController(this.repo);
 
-  ShippingAddressController(this._repo);
+
 
   final addresses = <ShippingAddressModel>[].obs;
   final isLoading = false.obs;
@@ -23,7 +25,7 @@ class ShippingAddressController extends GetxController {
     isLoading(true);
     errorMessage('');
 
-    final result = await _repo.fetchAddresses();
+    final result = await repo.fetchAddresses();
 
     result.match(
       (failure) {
@@ -42,7 +44,7 @@ class ShippingAddressController extends GetxController {
     isSaving(true);
     errorMessage('');
 
-    final result = await _repo.createAddress(payload);
+    final result = await repo.createAddress(payload);
 
     bool success = false;
 
@@ -62,7 +64,7 @@ class ShippingAddressController extends GetxController {
     isSaving(true);
     errorMessage('');
 
-    final result = await _repo.updateAddress(id, payload);
+    final result = await repo.updateAddress(id, payload);
 
     bool success = false;
 
@@ -82,7 +84,7 @@ class ShippingAddressController extends GetxController {
   Future<bool> deleteAddress(int id) async {
     errorMessage('');
 
-    final result = await _repo.deleteAddress(id);
+    final result = await repo.deleteAddress(id);
 
     bool success = false;
 
@@ -100,7 +102,7 @@ class ShippingAddressController extends GetxController {
   Future<bool> setDefault(int id) async {
     errorMessage('');
 
-    final result = await _repo.setDefault(id);
+    final result = await repo.setDefault(id);
 
     bool success = false;
 
