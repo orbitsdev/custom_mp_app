@@ -2,6 +2,7 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/shippingaddress/region_model.dart';
 import 'package:custom_mp_app/app/data/models/shippingaddress/shipping_address_model.dart';
+import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/controllers/shipping_address_controller.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/views/psgc_select_page.dart';
 import 'package:flutter/material.dart';
@@ -111,7 +112,7 @@ class _CreateAddressPageState extends State<CreateAddressPage> {
 
   Future<void> _pickProvince() async {
     if (_region == null) {
-      Get.snackbar('Select Region', 'Please select region first.');
+      AppModal.error(title: 'Select Region', message:  'Please select region first.'); 
       return;
     }
 
@@ -132,7 +133,7 @@ class _CreateAddressPageState extends State<CreateAddressPage> {
 
   Future<void> _pickMunicipality() async {
     if (_province == null) {
-      Get.snackbar('Select Province', 'Please select province first.');
+      AppModal.error(title: 'Select Province', message: 'Please select province first.');
       return;
     }
 
@@ -152,7 +153,7 @@ class _CreateAddressPageState extends State<CreateAddressPage> {
 
   Future<void> _pickBarangay() async {
     if (_municipality == null) {
-      Get.snackbar('Select Municipality', 'Please select municipality first.');
+      AppModal.error(title: 'Select Municipality', message: 'Please select municipality first.');
       return;
     }
 
@@ -176,10 +177,8 @@ class _CreateAddressPageState extends State<CreateAddressPage> {
         _province == null ||
         _municipality == null ||
         _barangay == null) {
-      Get.snackbar(
-        'Incomplete',
-        'Please complete Region, Province, Municipality and Barangay.',
-      );
+      AppModal.error(title: 'Incomplete', message: 'Please complete Region, Province, Municipality and Barangay.');
+       
       return;
     }
 
@@ -220,7 +219,7 @@ class _CreateAddressPageState extends State<CreateAddressPage> {
     } else {
       final err = _saController.errorMessage.value;
       if (err.isNotEmpty) {
-        Get.snackbar('Error', err);
+        AppModal.error(message: err);
       }
     }
   }
@@ -252,40 +251,44 @@ class _CreateAddressPageState extends State<CreateAddressPage> {
               child: Column(
                 children: [
                   // Full name + phone
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildLabeledField(
-                          label: 'Full Name *',
-                          child: TextFormField(
-                            controller: _fullNameCtrl,
-                            decoration:
-                                _inputDecoration('Enter full name'),
-                            validator: (v) =>
-                                v == null || v.trim().isEmpty
-                                    ? 'Required'
-                                    : null,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildLabeledField(
-                          label: 'Phone Number *',
-                          child: TextFormField(
-                            controller: _phoneCtrl,
-                            keyboardType: TextInputType.phone,
-                            decoration:
-                                _inputDecoration('09xxxxxxxxx'),
-                            validator: (v) =>
-                                v == null || v.trim().isEmpty
-                                    ? 'Required'
-                                    : null,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    _buildLabeledField(
+      label: 'Full Name *',
+      child: TextFormField(
+        controller: _fullNameCtrl,
+        decoration: _inputDecoration('Enter full name'),
+        validator: (v) =>
+            v == null || v.trim().isEmpty ? 'Required' : null,
+      ),
+    ),
+
+    const SizedBox(height: 16),
+
+    _buildLabeledField(
+      label: 'Phone Number *',
+      child: TextFormField(
+        controller: _phoneCtrl,
+        keyboardType: TextInputType.phone,
+        maxLength: 11,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+        ],
+        decoration: _inputDecoration('09xxxxxxxxx').copyWith(
+          counterText: "",
+        ),
+        validator: (v) {
+          if (v == null || v.trim().isEmpty) return 'Required';
+          if (v.length != 11) return 'Must be 11 digits';
+          if (!v.startsWith("09")) return 'Phone must start with 09';
+          return null;
+        },
+      ),
+    ),
+  ],
+),
+
 
                   const SizedBox(height: 16),
 

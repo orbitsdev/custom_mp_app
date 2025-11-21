@@ -1,6 +1,7 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/shippingaddress/region_model.dart';
 import 'package:custom_mp_app/app/data/repositories/psgc_repository.dart';
+import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -73,7 +74,8 @@ class _PSGCSelectPageState extends State<PSGCSelectPage> {
 
     result.match(
       (failure) {
-        Get.snackbar('Error', failure.message);
+        AppModal.error(title: 'Error', message: failure.message);
+      
       },
       (list) {
         _items

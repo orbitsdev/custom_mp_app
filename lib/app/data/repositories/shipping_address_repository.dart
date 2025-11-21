@@ -29,8 +29,7 @@ class ShippingAddressRepository {
     try {
       final dio = await DioClient.auth;
 
-      final response =
-          await dio.post('shipping-addresses', data: payload);
+      final response =  await dio.post('shipping-addresses', data: payload);
 
       return right(ShippingAddressModel.fromMap(response.data['data']));
     } on DioException catch (e) {

@@ -1,4 +1,4 @@
-// lib/app/modules/shippinaddress/widgets/sa_address_actions_sheet.dart
+import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/views/create_address_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,24 +19,42 @@ void showAddressActionsSheet(ShippingAddressModel address) {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.check_circle_outline),
-              title: const Text("Use This Address"),
-              onTap: () {
-                Get.back(result: address);
-              },
-            ),
+            // USE THIS ADDRESS
+          
 
+            // SET DEFAULT
             if (!address.isDefault)
               ListTile(
-                leading: const Icon(Icons.star_outline),
+                leading: const Icon(Icons.check_circle_outline),
                 title: const Text("Set as Default Address"),
                 onTap: () async {
-                  await controller.setDefault(address.id);
                   Get.back();
+
+                  AppModal.confirm(
+                    title: "Set as Default",
+                    message: "Do you want to make this your default address?",
+                    confirmText: "Yes",
+                    onConfirm: () async {
+                      AppModal.loading(title: "Updating...");
+                      final ok = await controller.setDefault(address.id);
+                      AppModal.close();
+
+                      if (ok) {
+                        AppModal.success(
+                          title: "Updated",
+                          message: "Default address updated.",
+                        );
+                      } else {
+                        AppModal.error(
+                          message: controller.errorMessage.value,
+                        );
+                      }
+                    },
+                  );
                 },
               ),
 
+            // EDIT
             ListTile(
               leading: const Icon(Icons.edit_outlined),
               title: const Text("Edit Address"),
@@ -47,11 +65,12 @@ void showAddressActionsSheet(ShippingAddressModel address) {
                   transition: Transition.cupertino,
                 );
                 if (updated == true) {
-                  // optional: controller.loadAddresses();
+                  // controller.loadAddresses(); // optional
                 }
               },
             ),
 
+            // DELETE
             if (!address.isDefault)
               ListTile(
                 leading: const Icon(Icons.delete_outline, color: Colors.red),
@@ -59,9 +78,32 @@ void showAddressActionsSheet(ShippingAddressModel address) {
                   "Delete Address",
                   style: TextStyle(color: Colors.red),
                 ),
-                onTap: () async {
+                onTap: () {
                   Get.back();
-                  await controller.deleteAddress(address.id);
+
+                  AppModal.confirm(
+                    title: "Delete Address",
+                    message:
+                        "Are you sure you want to delete this address? This action cannot be undone.",
+                    confirmText: "Delete",
+                    cancelText: "Cancel",
+                    onConfirm: () async {
+                      AppModal.loading(title: "Deleting...");
+                      final ok = await controller.deleteAddress(address.id);
+                      AppModal.close();
+
+                      if (ok) {
+                        AppModal.success(
+                          title: "Deleted",
+                          message: "Address deleted successfully.",
+                        );
+                      } else {
+                        AppModal.error(
+                          message: controller.errorMessage.value,
+                        );
+                      }
+                    },
+                  );
                 },
               ),
 
