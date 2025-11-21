@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/config.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
 import 'package:custom_mp_app/app/modules/orderpreperation/controllers/order_preparation_controller.dart';
@@ -71,7 +72,7 @@ class OpAddressSection extends GetView<OrderPreparationController> {
                   ),
                   InkWell(
                     onTap: () {
-                      // TODO: open change address
+                        Get.toNamed(Routes.shippingAddressPage);
                     },
                     child: Row(
                       children: [

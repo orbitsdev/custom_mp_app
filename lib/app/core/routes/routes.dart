@@ -15,6 +15,8 @@ import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_details_page.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_search_page.dart';
+import 'package:custom_mp_app/app/modules/shippinaddress/bindings/shipping_address_binding.dart';
+import 'package:custom_mp_app/app/modules/shippinaddress/views/shipping_address_page.dart';
 import 'package:custom_mp_app/app/modules/testing/modal_page.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/route_manager.dart';
@@ -38,8 +40,10 @@ class Routes {
   static const String cartPage = '/cart';
 
   //ORDER PREPRATION
-
   static const String orderPreparationPage = '/order-preparation';
+
+  //SHIPPING ADDRESS
+  static const String shippingAddressPage = '/shipping-address';
 
   //TEST IGN
   static const String modalPage = '/modal';
@@ -94,6 +98,12 @@ class Routes {
       middlewares: [AuthMiddleware()],
       page: () => OrderPreparationPage(),
       binding: OrderPreparationBinding()
+    ),
+    GetPage(
+      name: Routes.shippingAddressPage,
+      middlewares: [AuthMiddleware()],
+      page: () => ShippingAddressPage(),
+      binding: ShippingAddressBinding()
     ),
 
 
