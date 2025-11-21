@@ -38,23 +38,29 @@ class OrderPreparationModel {
       selectedShippingAddressId: map['selected_shipping_address_id'],
     );
   }
+OrderPreparationModel copyWith({
+  List<CartItemModel>? cartItems,
+  List<OrderPackageModel>? packages,
+  List<ShippingAddressModel>? shippingAddresses,
+  OrderPreparationSummaryModel? summary,
+  int? selectedPackageId,
+  int? selectedShippingAddressId,
+}) {
+  return OrderPreparationModel(
+    cartItems: cartItems ?? this.cartItems,
+    packages: packages ?? this.packages,
+    shippingAddresses: shippingAddresses ?? this.shippingAddresses,
+    summary: summary ?? this.summary,
+    selectedPackageId: selectedPackageId ?? this.selectedPackageId,
+    selectedShippingAddressId:
+        selectedShippingAddressId ?? this.selectedShippingAddressId,
+  );
+}
 
-  OrderPreparationModel copyWith({
-    List<CartItemModel>? cartItems,
-    List<OrderPackageModel>? packages,
-    List<ShippingAddressModel>? shippingAddresses,
-    OrderPreparationSummaryModel? summary,
-    int? selectedPackageId,
-    int? selectedShippingAddressId,
-  }) {
-    return OrderPreparationModel(
-      cartItems: cartItems ?? this.cartItems,
-      packages: packages ?? this.packages,
-      shippingAddresses: shippingAddresses ?? this.shippingAddresses,
-      summary: summary ?? this.summary,
-      selectedPackageId: selectedPackageId ?? this.selectedPackageId,
-      selectedShippingAddressId:
-          selectedShippingAddressId ?? this.selectedShippingAddressId,
-    );
+
+
+  @override
+  String toString() {
+    return 'OrderPreparationModel(cartItems: $cartItems, packages: $packages, shippingAddresses: $shippingAddresses, summary: $summary, selectedPackageId: $selectedPackageId, selectedShippingAddressId: $selectedShippingAddressId)';
   }
 }

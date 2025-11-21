@@ -52,17 +52,48 @@ class OrderPreparationController extends GetxController {
     },
   );
 }
+void selectPackage(int id) {
+  // If same package tapped → unselect
+  if (selectedPackageId.value == id) {
+    selectedPackageId.value = null;
 
+    final prep = orderPreparation.value!;
 
-  // -------------------------------------------------------------
-  // CHANGE PACKAGE
-  // -------------------------------------------------------------
-  void selectPackage(int id) {
-    selectedPackageId.value = id;
+    // Reset summary (remove packagingFee)
+    final newSummary = prep.summary.copyWith(
+      packagingFee: 0,
+      total: prep.summary.subtotal,
+    );
 
-    // Refresh summary by requesting package_id
-    fetchOrderPreparation(packageId: id);
+    orderPreparation.value = prep.copyWith(
+      summary: newSummary,
+      selectedPackageId: null,
+    );
+
+    print("UNSELECTED package");
+    return;
   }
+
+  // Normal selection
+  selectedPackageId.value = id;
+
+  final prep = orderPreparation.value!;
+  final selected = prep.packages.firstWhere((p) => p.id == id);
+
+  final newSummary = prep.summary.copyWith(
+    packagingFee: selected.price,
+    total: prep.summary.subtotal + selected.price,
+  );
+
+  orderPreparation.value = prep.copyWith(
+    summary: newSummary,
+    selectedPackageId: id,
+  );
+
+  print("SELECTED package: $id");
+}
+
+
 
   // -------------------------------------------------------------
   // CHANGE SHIPPING ADDRESS
