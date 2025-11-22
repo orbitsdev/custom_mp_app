@@ -125,7 +125,8 @@ class AppModal {
   }
 
   /// ⚠️ CONFIRMATION MODAL
-  static void confirm({
+  /// Returns Future<bool?> - true if confirmed, false if cancelled, null if dismissed
+  static Future<bool?> confirm({
     String title = 'Confirmation',
     String message = 'Are you sure you want to proceed?',
     String confirmText = 'Yes',
@@ -133,8 +134,8 @@ class AppModal {
     VoidCallback? onConfirm,
     VoidCallback? onCancel,
     bool barrierDismissible = false,
-  }) {
-    Get.dialog(
+  }) async {
+    return await Get.dialog<bool>(
       Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         backgroundColor: Colors.white,
@@ -171,7 +172,7 @@ class AppModal {
                         minimumSize: const Size(double.infinity, 45),
                       ),
                       onPressed: () {
-                        Get.back();
+                        Get.back(result: false);
                         onCancel?.call();
                       },
                       child: Text(cancelText),
@@ -188,7 +189,7 @@ class AppModal {
                         minimumSize: const Size(double.infinity, 45),
                       ),
                       onPressed: () {
-                        Get.back();
+                        Get.back(result: true);
                         onConfirm?.call();
                       },
                       child: Text(

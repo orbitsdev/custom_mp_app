@@ -63,18 +63,14 @@ class PaymentWebviewController extends GetxController {
   }
 
   Future<bool> _confirmExit() async {
-    bool shouldExit = false;
-
-    AppModal.confirm(
+    final shouldExit = await AppModal.confirm(
       title: "Exit Payment?",
       message: "Payment is still in progress. Do you want to exit?",
       confirmText: "Exit",
       cancelText: "Stay",
-      onConfirm: () => shouldExit = true,
     );
 
-    await Future.delayed(const Duration(milliseconds: 200));
-    return shouldExit;
+    return shouldExit ?? false;
   }
 
   // ---------------------------------------------------------
