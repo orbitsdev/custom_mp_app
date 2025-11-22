@@ -1,8 +1,8 @@
 import 'package:custom_mp_app/app/data/models/cart/cart_item_model.dart';
 import 'package:custom_mp_app/app/global/widgets/image/online_image.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
-import 'package:custom_mp_app/app/modules/orderpreperation/widgets/order_preparation_card.dart';
-import 'package:custom_mp_app/app/modules/orderpreperation/widgets/skeleton/op_cart_item_skeleton.dart';
+import 'package:custom_mp_app/app/modules/orderpreparation/widgets/order_preparation_card.dart';
+import 'package:custom_mp_app/app/modules/orderpreparation/widgets/skeleton/op_cart_item_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gap/gap.dart';
@@ -14,7 +14,7 @@ class OpCartItemList extends GetView<OrderPreparationController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      /// 🔥 Show skeleton if still loading
+      
       if (controller.isLoading.value) {
         return const OpCartItemSkeleton();
       }
@@ -29,7 +29,7 @@ class OpCartItemList extends GetView<OrderPreparationController> {
 
       return MultiSliver(
         children: [
-          /// HEADER
+
           SliverToBoxAdapter(
             child: Container(
               padding: const EdgeInsets.only(left: 12, right: 12, top: 0, bottom: 6),

@@ -1,5 +1,7 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/data/models/orderpreparation/order_preparation_model.dart';
 import 'package:custom_mp_app/app/data/repositories/order_preparation_repository.dart';
+import 'package:custom_mp_app/app/data/repositories/payment_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/controllers/shipping_address_controller.dart';
 import 'package:get/get.dart';
@@ -130,19 +132,44 @@ class OrderPreparationController extends GetxController {
 
   // -------------------------------------------------------------
   // PLACE ORDER
-  // (You will fill this later)
   // -------------------------------------------------------------
   Future<void> placeOrder() async {
     if (selectedAddressId.value == null) {
-      print("❌ No address selected");
+      AppToast.error('Please select a shipping address');
       return;
     }
 
     isPlacingOrder.value = true;
 
-    // TODO: call your API /orders here
-    await Future.delayed(Duration(seconds: 2));
+    // Import payment repository
+    final paymentRepo = Get.find<PaymentRepository>();
 
-    isPlacingOrder.value = false;
+    // Call checkout API
+    final result = await paymentRepo.createCheckout(
+      packageId: selectedPackageId.value,
+      shippingAddressId: selectedAddressId.value!,
+    );
+
+    result.fold(
+      (failure) {
+        isPlacingOrder.value = false;
+        AppToast.error(failure.message);
+      },
+      (checkout) {
+        isPlacingOrder.value = false;
+
+        // Navigate to payment WebView
+        Get.toNamed(
+          Routes.paymentPage,
+          arguments: {
+            'checkout_url': checkout.checkoutUrl,
+            'order_reference_id': checkout.orderReferenceId,
+            'success_url': checkout.successUrl,
+            'cancel_url': checkout.cancelUrl,
+            'total_amount': checkout.totalAmount,
+          },
+        );
+      },
+    );
   }
 }

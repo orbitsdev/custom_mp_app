@@ -1,12 +1,12 @@
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
-import 'package:custom_mp_app/app/modules/orderpreperation/widgets/skeleton/op_package_skeleton.dart';
+import 'package:custom_mp_app/app/modules/orderpreparation/widgets/skeleton/op_package_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import '../controllers/order_preparation_controller.dart';
 
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
-import 'package:custom_mp_app/app/modules/orderpreperation/controllers/order_preparation_controller.dart';
+import 'package:custom_mp_app/app/modules/orderpreparation/controllers/order_preparation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gap/gap.dart';

@@ -50,24 +50,38 @@ class OPPlaceOrderButton extends GetView<OrderPreparationController> {
                 ),
 
                 /// RIGHT
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.brandDark,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 22, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                Obx(() {
+                  final isPlacing = controller.isPlacingOrder.value;
+
+                  return ElevatedButton(
+                    onPressed: isPlacing ? null : () => controller.placeOrder(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.brandDark,
+                      disabledBackgroundColor: Colors.grey[400],
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 22, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    "Place Order",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+                    child: isPlacing
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
+                          )
+                        : const Text(
+                            "Place Order",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  );
+                }),
               ],
             ),
           ),
