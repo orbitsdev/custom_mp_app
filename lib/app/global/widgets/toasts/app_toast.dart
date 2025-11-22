@@ -28,6 +28,7 @@ class AppToast {
   static void error(String message) => show(
         message: message,
         bgColor: AppColors.error,
+        toastLength: Toast.LENGTH_LONG
       );
 
   static void info(String message) => show(

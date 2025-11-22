@@ -28,92 +28,99 @@ class OrderPreparationController extends GetxController {
     super.onInit();
     final sa = Get.find<ShippingAddressController>();
 
-  // 🔥 Listen only to default address changes
-  ever(sa.addresses, (_) {
-    'EVER WAS CALLLED';
-    updateSelectedAddressFromGlobalList();
-  });
+    // 🔥 Listen only to default address changes
+    ever(sa.addresses, (_) {
+      'EVER WAS CALLLED';
+      updateSelectedAddressFromGlobalList();
+    });
   }
 
+  void updateSelectedAddressFromGlobalList() {
+    final current = orderPreparation.value;
+    if (current == null) return;
 
-void updateSelectedAddressFromGlobalList() {
-  final current = orderPreparation.value;
-  if (current == null) return;
+    final sa = Get.find<ShippingAddressController>();
+    if (sa.addresses.isEmpty) return;
 
-  final sa = Get.find<ShippingAddressController>();
-  if (sa.addresses.isEmpty) return;
+    final defaultAddr = sa.addresses.firstWhereOrNull((e) => e.isDefault);
 
-  final defaultAddr = sa.addresses.firstWhereOrNull((e) => e.isDefault);
+    selectedAddressId.value = defaultAddr?.id;
+  }
 
-  selectedAddressId.value = defaultAddr?.id;
-}
   // -------------------------------------------------------------
   // FETCH API
   // -------------------------------------------------------------
   Future<void> fetchOrderPreparation({int? packageId}) async {
-  isLoading.value = true;
+    isLoading.value = true;
 
-  final result = await _prepRepo.fetchOrderPreparation(packageId: packageId);
+    final result = await _prepRepo.fetchOrderPreparation(packageId: packageId);
 
-  result.fold(
-    (failure) {
-      isLoading.value = false;
-      AppToast.error(failure.message);
-    },
-    (data) {
-      isLoading.value = false;
+    result.fold(
+      (failure) {
+        isLoading.value = false;
+        AppToast.error(failure.message);
 
-      orderPreparation.value = data;
+        if (failure.dioException?.response?.statusCode == 404) {
+          Future.delayed(const Duration(milliseconds: 300), () {
+            if (Get.isOverlaysOpen) Get.back();
+            Get.b
+            ack();
+          });
+        }
+      },
+      (data) {
+        isLoading.value = false;
 
-      selectedPackageId.value = data.selectedPackageId;
+        orderPreparation.value = data;
 
-      // ⭐ CRITICAL FIX
-      selectedAddressId.value = data.selectedShippingAddressId;
-    },
-  );
-}
-void selectPackage(int id) {
-  // If same package tapped → unselect
-  if (selectedPackageId.value == id) {
-    selectedPackageId.value = null;
+        selectedPackageId.value = data.selectedPackageId;
+
+        // ⭐ CRITICAL FIX
+        selectedAddressId.value = data.selectedShippingAddressId;
+      },
+    );
+  }
+
+  void selectPackage(int id) {
+    // If same package tapped → unselect
+    if (selectedPackageId.value == id) {
+      selectedPackageId.value = null;
+
+      final prep = orderPreparation.value!;
+
+      // Reset summary (remove packagingFee)
+      final newSummary = prep.summary.copyWith(
+        packagingFee: 0,
+        total: prep.summary.subtotal,
+      );
+
+      orderPreparation.value = prep.copyWith(
+        summary: newSummary,
+        selectedPackageId: null,
+      );
+
+      print("UNSELECTED package");
+      return;
+    }
+
+    // Normal selection
+    selectedPackageId.value = id;
 
     final prep = orderPreparation.value!;
+    final selected = prep.packages.firstWhere((p) => p.id == id);
 
-    // Reset summary (remove packagingFee)
     final newSummary = prep.summary.copyWith(
-      packagingFee: 0,
-      total: prep.summary.subtotal,
+      packagingFee: selected.price,
+      total: prep.summary.subtotal + selected.price,
     );
 
     orderPreparation.value = prep.copyWith(
       summary: newSummary,
-      selectedPackageId: null,
+      selectedPackageId: id,
     );
 
-    print("UNSELECTED package");
-    return;
+    print("SELECTED package: $id");
   }
-
-  // Normal selection
-  selectedPackageId.value = id;
-
-  final prep = orderPreparation.value!;
-  final selected = prep.packages.firstWhere((p) => p.id == id);
-
-  final newSummary = prep.summary.copyWith(
-    packagingFee: selected.price,
-    total: prep.summary.subtotal + selected.price,
-  );
-
-  orderPreparation.value = prep.copyWith(
-    summary: newSummary,
-    selectedPackageId: id,
-  );
-
-  print("SELECTED package: $id");
-}
-
-
 
   // -------------------------------------------------------------
   // CHANGE SHIPPING ADDRESS
