@@ -134,20 +134,14 @@ class OrderPreparationController extends GetxController {
   // PLACE ORDER
   // -------------------------------------------------------------
   Future<void> placeOrder() async {
-    if (selectedAddressId.value == null) {
-      AppToast.error('Please select a shipping address');
-      return;
-    }
-
     isPlacingOrder.value = true;
 
     // Import payment repository
     final paymentRepo = Get.find<PaymentRepository>();
 
-    // Call checkout API
+    // Call checkout API (backend uses default shipping address)
     final result = await paymentRepo.createCheckout(
       packageId: selectedPackageId.value,
-      shippingAddressId: selectedAddressId.value!,
     );
 
     result.fold(

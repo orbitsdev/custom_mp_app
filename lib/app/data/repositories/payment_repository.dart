@@ -7,9 +7,9 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 class PaymentRepository {
   /// POST /mobile/checkout
+  /// Backend automatically uses default shipping address
   EitherModel<CheckoutModel> createCheckout({
     int? packageId,
-    int? shippingAddressId,
   }) async {
     try {
       final dio = await DioClient.auth;
@@ -18,8 +18,6 @@ class PaymentRepository {
         'mobile/checkout',
         data: {
           if (packageId != null) 'package_id': packageId,
-          if (shippingAddressId != null)
-            'shipping_address_id': shippingAddressId,
         },
       );
 
