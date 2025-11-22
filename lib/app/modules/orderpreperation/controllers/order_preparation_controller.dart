@@ -1,6 +1,7 @@
 import 'package:custom_mp_app/app/data/models/orderpreparation/order_preparation_model.dart';
 import 'package:custom_mp_app/app/data/repositories/order_preparation_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+import 'package:custom_mp_app/app/modules/shippinaddress/controllers/shipping_address_controller.dart';
 import 'package:get/get.dart';
 
 class OrderPreparationController extends GetxController {
@@ -25,8 +26,27 @@ class OrderPreparationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    final sa = Get.find<ShippingAddressController>();
+
+  // 🔥 Listen only to default address changes
+  ever(sa.addresses, (_) {
+    'EVER WAS CALLLED';
+    updateSelectedAddressFromGlobalList();
+  });
   }
 
+
+void updateSelectedAddressFromGlobalList() {
+  final current = orderPreparation.value;
+  if (current == null) return;
+
+  final sa = Get.find<ShippingAddressController>();
+  if (sa.addresses.isEmpty) return;
+
+  final defaultAddr = sa.addresses.firstWhereOrNull((e) => e.isDefault);
+
+  selectedAddressId.value = defaultAddr?.id;
+}
   // -------------------------------------------------------------
   // FETCH API
   // -------------------------------------------------------------

@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 
 class OrderPreparationRepository {
+  
 EitherModel<OrderPreparationModel> fetchOrderPreparation({
     int? packageId, // optional
   }) async {

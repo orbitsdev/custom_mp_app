@@ -3,6 +3,7 @@ import 'package:custom_mp_app/app/core/theme/config.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
 import 'package:custom_mp_app/app/modules/orderpreperation/controllers/order_preparation_controller.dart';
 import 'package:custom_mp_app/app/modules/orderpreperation/widgets/skeleton/op_shipping_address_skeleton.dart';
+import 'package:custom_mp_app/app/modules/shippinaddress/controllers/shipping_address_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -25,7 +26,9 @@ class OpAddressSection extends GetView<OrderPreparationController> {
         );
       }
 
-      final addresses = data.shippingAddresses;
+    final sa = Get.find<ShippingAddressController>();
+final addresses = sa.addresses;
+
 
       /// 🔥 3. No addresses available
       if (addresses.isEmpty) {
@@ -37,11 +40,11 @@ class OpAddressSection extends GetView<OrderPreparationController> {
         );
       }
 
-      /// 🔥 4. Determine selected address
-      final selected = addresses.firstWhereOrNull(
-            (a) => a.id == data.selectedShippingAddressId,
-          ) ??
-          addresses.first;
+     final selectedId = controller.selectedAddressId.value;
+
+final selected = addresses.firstWhereOrNull((a) => a.id == selectedId)
+               ?? addresses.first;
+
 
       /// 🔥 5. Actual UI
       return SliverToBoxAdapter(
@@ -71,8 +74,10 @@ class OpAddressSection extends GetView<OrderPreparationController> {
                     ],
                   ),
                   InkWell(
-                    onTap: () {
-                        Get.toNamed(Routes.shippingAddressPage);
+                    onTap: () async  {
+                       await Get.toNamed(Routes.shippingAddressPage);
+controller.updateSelectedAddressFromGlobalList();
+
                     },
                     child: Row(
                       children: [

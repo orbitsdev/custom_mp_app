@@ -7,11 +7,11 @@ import 'package:custom_mp_app/app/data/repositories/psgc_repository.dart';
 class ShippingAddressBinding extends Bindings {
   @override
   void dependencies() {
-    // PSGC repo (for region/province/municipality/barangay)
-    Get.lazyPut<PSGCRepository>(() => PSGCRepository(), fenix: true);
-    // Shipping address repo
-    Get.lazyPut<ShippingAddressRepository>(() => ShippingAddressRepository() , fenix: true);
-    // Shipping address controller
-    Get.lazyPut<ShippingAddressController>(     () => ShippingAddressController(Get.find<ShippingAddressRepository>()), fenix: true);
+    // // PSGC repo (for region/province/municipality/barangay)
+    // Get.lazyPut<PSGCRepository>(() => PSGCRepository(), fenix: true);
+    // // Shipping address repo
+    // Get.lazyPut<ShippingAddressRepository>(() => ShippingAddressRepository() , fenix: true);
+    // // Shipping address controller
+    // Get.lazyPut<ShippingAddressController>(     () => ShippingAddressController(Get.find<ShippingAddressRepository>()), fenix: true);
   }
 }
