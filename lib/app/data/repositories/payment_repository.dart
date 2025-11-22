@@ -5,13 +5,11 @@ import 'package:custom_mp_app/app/data/models/payment/checkout_model.dart';
 import 'package:custom_mp_app/app/data/models/payment/order_status_model.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
-
 class PaymentRepository {
-  /// Create checkout session
-  /// POST /api/mobile/checkout
+  /// POST /mobile/checkout
   EitherModel<CheckoutModel> createCheckout({
     int? packageId,
-    required int shippingAddressId,
+    int? shippingAddressId,
   }) async {
     try {
       final dio = await DioClient.auth;
@@ -20,37 +18,31 @@ class PaymentRepository {
         'mobile/checkout',
         data: {
           if (packageId != null) 'package_id': packageId,
-          'shipping_address_id': shippingAddressId,
+          if (shippingAddressId != null)
+            'shipping_address_id': shippingAddressId,
         },
       );
 
-      final data = response.data['data'];
-      final checkout = CheckoutModel.fromMap(data);
-
+      final checkout = CheckoutModel.fromMap(response.data['data']);
       return right(checkout);
+
     } on DioException catch (e) {
       return left(FailureModel.fromDio(e));
-    } catch (e) {
-      return left(FailureModel.manual('Unexpected error: $e'));
     }
   }
 
-  /// Fetch order status
-  /// GET /api/mobile/orders/{orderReferenceId}
-  EitherModel<OrderStatusModel> fetchOrderStatus(String orderReferenceId) async {
+  /// GET /mobile/orders/{ref}
+  EitherModel<OrderStatusModel> fetchOrderStatus(String ref) async {
     try {
       final dio = await DioClient.auth;
 
-      final response = await dio.get('mobile/orders/$orderReferenceId');
+      final response = await dio.get('mobile/orders/$ref');
 
-      final data = response.data['data'];
-      final orderStatus = OrderStatusModel.fromMap(data);
+      final status = OrderStatusModel.fromMap(response.data['data']);
+      return right(status);
 
-      return right(orderStatus);
     } on DioException catch (e) {
       return left(FailureModel.fromDio(e));
-    } catch (e) {
-      return left(FailureModel.manual('Unexpected error: $e'));
     }
   }
 }

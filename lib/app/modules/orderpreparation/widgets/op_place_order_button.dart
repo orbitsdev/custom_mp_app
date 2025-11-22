@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/utils/format_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/order_preparation_controller.dart';
@@ -24,7 +25,6 @@ class OPPlaceOrderButton extends GetView<OrderPreparationController> {
             ),
             decoration: const BoxDecoration(
               color: Colors.white,
-            
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -40,7 +40,7 @@ class OPPlaceOrderButton extends GetView<OrderPreparationController> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "₱${summary.total}",
+                      "₱${formatNumber(summary.total)}",
                       style: Get.textTheme.titleMedium!.copyWith(
                         color: AppColors.brandDark,
                         fontWeight: FontWeight.bold,

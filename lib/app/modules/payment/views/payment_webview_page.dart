@@ -15,27 +15,26 @@ class PaymentWebviewPage extends StatelessWidget {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final shouldPop = await controller.handleBackPress();
-        if (shouldPop && context.mounted) {
-          Navigator.of(context).pop();
-        }
+        if (shouldPop && context.mounted) Navigator.of(context).pop();
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Payment'),
+          title: const Text("Payment"),
           centerTitle: true,
           leading: IconButton(
             icon: const Icon(Icons.close),
             onPressed: () async {
-              final shouldClose = await controller.handleBackPress();
-              if (shouldClose) {
-                controller.closeWebView();
-              }
+              final shouldExit = await controller.handleBackPress();
+              if (shouldExit) controller.closeWebView();
             },
           ),
         ),
+
+        // ----------------------------------------------------------
+        // WEBVIEW + LOADING OVERLAY
+        // ----------------------------------------------------------
         body: Stack(
           children: [
-            // WebView
             InAppWebView(
               initialUrlRequest: URLRequest(
                 url: WebUri(controller.checkoutUrl),
@@ -44,48 +43,54 @@ class PaymentWebviewPage extends StatelessWidget {
                 javaScriptEnabled: true,
                 domStorageEnabled: true,
                 databaseEnabled: true,
-                useOnLoadResource: true,
-                useOnDownloadStart: true,
-                useShouldOverrideUrlLoading: true,
+                supportZoom: false,
                 mediaPlaybackRequiresUserGesture: false,
                 allowsInlineMediaPlayback: true,
-                supportZoom: false,
-                userAgent: 'Mozilla/5.0 (Linux; Android 11) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
+                useShouldOverrideUrlLoading: true,
               ),
-              onLoadStart: controller.onWebViewStart,
-              onLoadStop: controller.onWebViewStop,
-              onReceivedError: (webController, request, error) {
-                controller.onWebViewError(
-                  webController,
+
+              // EVENTS
+              onLoadStart: controller.onLoadStart,
+              onLoadStop: controller.onLoadStop,
+              onReceivedError: (webCtrl, request, error) {
+                controller.onWebError(
+                  webCtrl,
                   request.url,
                   error.type.toNativeValue() ?? -1,
                   error.description,
                 );
               },
-              onReceivedHttpError: (webController, request, response) {
+              onReceivedHttpError: (webCtrl, request, response) {
                 controller.onHttpError(
-                  webController,
+                  webCtrl,
                   request.url,
+                  
                   response.statusCode ?? 0,
-                  response.reasonPhrase ?? 'Unknown error',
+                  response.reasonPhrase ?? "HTTP Error",
                 );
               },
-              onReceivedServerTrustAuthRequest: (webController, challenge) async {
-                // Allow all SSL certificates (for dev environment)
+
+              onReceivedServerTrustAuthRequest: (controller, challenge) async {
+                // Allow SSL for DEV
                 return ServerTrustAuthResponse(
                   action: ServerTrustAuthResponseAction.PROCEED,
                 );
               },
             ),
 
-            // Loading indicator
-            Obx(
-              () => controller.isLoading.value
-                  ? const Center(
-                      child: CircularProgressIndicator(),
+            // ----------------------------------------------------------
+            // LOADING INDICATOR
+            // ----------------------------------------------------------
+            Obx(() {
+              return controller.isLoading.value
+                  ? Container(
+                      color: Colors.black.withOpacity(0.05),
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
                     )
-                  : const SizedBox.shrink(),
-            ),
+                  : const SizedBox.shrink();
+            })
           ],
         ),
       ),

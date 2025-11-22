@@ -7,21 +7,20 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 
 class PaymentWebviewController extends GetxController {
-  final PaymentRepository _paymentRepo = PaymentRepository();
+  final PaymentRepository _paymentRepo = Get.find<PaymentRepository>();
 
-  // Loading states
+  // UI States
   final isLoading = false.obs;
   final isVerifyingPayment = false.obs;
   final hasCompletedPayment = false.obs;
 
-  // Arguments from navigation
+  // Arguments
   late String checkoutUrl;
   late String orderReferenceId;
   late String successUrl;
   late String cancelUrl;
 
-  // WebView controller
-  InAppWebViewController? webViewController;
+  InAppWebViewController? webView;
 
   @override
   void onInit() {
@@ -29,136 +28,109 @@ class PaymentWebviewController extends GetxController {
     _loadArguments();
   }
 
-  /// Load arguments passed from navigation
+  // ---------------------------------------------------------
+  //  LOAD ARGUMENTS FROM PAYMENT PAGE
+  // ---------------------------------------------------------
   void _loadArguments() {
-    final args = Get.arguments as Map<String, dynamic>?;
+    final args = Get.arguments;
 
     if (args == null) {
-      AppToast.error('Invalid payment session');
+      AppToast.error("Invalid payment arguments");
       Get.back();
       return;
     }
 
-    checkoutUrl = args['checkout_url'] as String? ?? '';
-    orderReferenceId = args['order_reference_id'] as String? ?? '';
-    successUrl = args['success_url'] as String? ?? '';
-    cancelUrl = args['cancel_url'] as String? ?? '';
+    checkoutUrl       = args['checkout_url'] ?? '';
+    orderReferenceId  = args['order_reference_id'] ?? '';
+    successUrl        = args['success_url'] ?? '';
+    cancelUrl         = args['cancel_url'] ?? '';
 
     if (checkoutUrl.isEmpty || orderReferenceId.isEmpty) {
-      AppToast.error('Invalid payment data');
+      AppToast.error("Missing payment details");
       Get.back();
     }
   }
 
-  /// Handle Android back button press
+  // ---------------------------------------------------------
+  //  BACK BUTTON LOGIC
+  // ---------------------------------------------------------
   Future<bool> handleBackPress() async {
-    // If payment is completed, allow exit
     if (hasCompletedPayment.value) {
       return true;
     }
 
-    // If payment is in progress, show confirmation
-    return await confirmExit();
+    return await _confirmExit();
   }
 
-  /// Show confirmation dialog before exiting
-  Future<bool> confirmExit() async {
+  Future<bool> _confirmExit() async {
     bool shouldExit = false;
 
     AppModal.confirm(
       title: "Exit Payment?",
-      message:
-          "You are currently processing a payment. Are you sure you want to exit?",
-      confirmText: "Yes, Exit",
+      message: "Payment is still in progress. Do you want to exit?",
+      confirmText: "Exit",
       cancelText: "Stay",
-      onConfirm: () {
-        shouldExit = true;
-      },
-      onCancel: () {
-        shouldExit = false;
-      },
+      onConfirm: () => shouldExit = true,
     );
 
-    // Wait a bit for the modal to be dismissed
-    await Future.delayed(const Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 200));
     return shouldExit;
   }
 
-  /// WebView started loading
-  void onWebViewStart(InAppWebViewController controller, WebUri? url) {
-    webViewController = controller;
+  // ---------------------------------------------------------
+  //  WEBVIEW EVENTS
+  // ---------------------------------------------------------
+  void onLoadStart(InAppWebViewController controller, WebUri? url) {
+    webView = controller;
     isLoading.value = true;
 
     if (url != null) {
-      _checkRedirect(url.toString());
+      _detectRedirect(url.toString());
     }
   }
 
-  /// WebView finished loading
-  void onWebViewStop(InAppWebViewController controller, WebUri? url) {
+  void onLoadStop(InAppWebViewController controller, WebUri? url) {
     isLoading.value = false;
 
     if (url != null) {
-      _checkRedirect(url.toString());
+      _detectRedirect(url.toString());
     }
   }
 
-  /// WebView encountered an error
-  void onWebViewError(
+  void onWebError(
     InAppWebViewController controller,
     Uri? url,
     int code,
     String message,
   ) {
     isLoading.value = false;
-    AppToast.error('Page load error: $message');
+    AppToast.error("Failed to load page");
   }
 
-  /// WebView HTTP error
-  void onHttpError(
-    InAppWebViewController controller,
-    Uri? url,
-    int statusCode,
-    String description,
-  ) {
-    isLoading.value = false;
-    AppToast.error('HTTP error: $statusCode');
-  }
-
-  /// Check if current URL is a redirect (success/cancel)
-  void _checkRedirect(String url) {
-    print('🌐 WebView URL: $url');
-
-    if (url.contains('/mobile/payment/success')) {
-      _handleSuccessRedirect(url);
-    } else if (url.contains('/mobile/payment/cancel')) {
-      _handleCancelRedirect(url);
+  // ---------------------------------------------------------
+  //  DETECT REDIRECT FOR SUCCESS / CANCEL
+  // ---------------------------------------------------------
+  void _detectRedirect(String url) {
+    if (url.contains("/mobile/payment/success")) {
+      _handleSuccess(url);
+    } else if (url.contains("/mobile/payment/cancel")) {
+      _handleCancel();
     }
   }
 
-  /// Handle success redirect
-  Future<void> _handleSuccessRedirect(String url) async {
-    // Prevent multiple calls
-    if (isVerifyingPayment.value || hasCompletedPayment.value) {
-      return;
-    }
+  // ---------------------------------------------------------
+  //  PAYMENT SUCCESS FLOW
+  // ---------------------------------------------------------
+  Future<void> _handleSuccess(String url) async {
+    if (isVerifyingPayment.value || hasCompletedPayment.value) return;
 
     isVerifyingPayment.value = true;
 
-    // Extract order reference from URL
-    final uri = Uri.parse(url);
-    final ref = uri.queryParameters['ref'] ?? orderReferenceId;
+    AppModal.loading(title: "Verifying payment...");
 
-    print('✅ Payment success detected. Verifying order: $ref');
-
-    // Show loading modal
-    AppModal.loading(title: 'Verifying payment...');
-
-    // Wait a moment for backend webhook to process
     await Future.delayed(const Duration(seconds: 2));
 
-    // Fetch order status
-    final result = await _paymentRepo.fetchOrderStatus(ref);
+    final result = await _paymentRepo.fetchOrderStatus(orderReferenceId);
 
     result.fold(
       (failure) {
@@ -166,82 +138,71 @@ class PaymentWebviewController extends GetxController {
         isVerifyingPayment.value = false;
 
         AppModal.error(
-          title: 'Verification Failed',
-          message:
-              'Unable to verify payment status. Please check your orders.\n\n${failure.message}',
-          onConfirm: () {
-            _closeAndNavigate();
-          },
+          title: "Verification Failed",
+          message: "Unable to confirm payment.\n${failure.message}",
+          onConfirm: () => _finishPayment(),
         );
       },
-      (orderStatus) {
+      (status) {
         AppModal.close();
         isVerifyingPayment.value = false;
 
-        if (orderStatus.isPaid) {
+        if (status.isPaid) {
           hasCompletedPayment.value = true;
 
           AppModal.success(
-            title: 'Payment Successful!',
-            message:
-                'Your order ${orderStatus.orderReferenceId} has been confirmed.',
-            onConfirm: () {
-              _closeAndNavigate();
-            },
+            title: "Payment Successful!",
+            message: "Order ${status.orderReferenceId} confirmed.",
+            onConfirm: () => _finishPayment(),
           );
         } else {
           AppModal.error(
-            title: 'Payment Pending',
-            message:
-                'Your payment is being processed. Please check your orders later.\n\nOrder: ${orderStatus.orderReferenceId}',
-            onConfirm: () {
-              _closeAndNavigate();
-            },
+            title: "Payment Pending",
+            message: "Your payment is still processing.",
+            onConfirm: () => _finishPayment(),
           );
         }
       },
     );
   }
 
-  /// Handle cancel redirect
-  void _handleCancelRedirect(String url) {
-    print('❌ Payment cancelled detected');
-
+  // ---------------------------------------------------------
+  //  PAYMENT CANCELED FLOW
+  // ---------------------------------------------------------
+  void _handleCancel() {
     AppModal.confirm(
-      title: 'Payment Cancelled',
-      message: 'Your payment was cancelled. Would you like to try again?',
-      confirmText: 'Try Again',
-      cancelText: 'Close',
+      title: "Payment Cancelled",
+      message: "Do you want to try again?",
+      confirmText: "Retry",
+      cancelText: "Close",
       onConfirm: () {
-        // Reload checkout URL
-        webViewController?.loadUrl(
+        webView?.loadUrl(
           urlRequest: URLRequest(url: WebUri(checkoutUrl)),
         );
       },
       onCancel: () {
-        Get.back(); // Close WebView
+        Get.back();
       },
     );
   }
 
-  /// Close WebView and navigate to home
-  void _closeAndNavigate() {
-    // Refresh order preparation if controller exists
-    try {
-      if (Get.isRegistered<OrderPreparationController>()) {
-        final opController = Get.find<OrderPreparationController>();
-        // opController.fetchOrderPreparation();
-      }
-    } catch (e) {
-      print('⚠️ OrderPreparationController not found: $e');
+  // ---------------------------------------------------------
+  //  AFTER VERIFICATION → CLEANUP + NAVIGATION
+  // ---------------------------------------------------------
+  void _finishPayment() {
+    if (Get.isRegistered<OrderPreparationController>()) {
+      final op = Get.find<OrderPreparationController>();
+      op.fetchOrderPreparation();
     }
 
-    // Navigate to home and clear stack
     Get.offAllNamed(Routes.homePage);
   }
 
-  /// Manually close WebView
-  void closeWebView() {
-    Get.back();
+   void closeWebView() {
+    if (Get.isOverlaysOpen) {
+      Get.back(); // just in case
+    } else if (Get.currentRoute != '/') {
+      Get.back();
+    }
   }
 }
