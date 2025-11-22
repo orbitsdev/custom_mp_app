@@ -11,6 +11,8 @@ import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
 import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
 import 'package:custom_mp_app/app/modules/orderpreperation/bindings/order_preparation_binding.dart';
 import 'package:custom_mp_app/app/modules/orderpreperation/views/order_preparation_page.dart';
+import 'package:custom_mp_app/app/modules/payment/bindings/payment_binding.dart';
+import 'package:custom_mp_app/app/modules/payment/views/payment_webview_page.dart';
 import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_details_page.dart';
@@ -45,6 +47,10 @@ class Routes {
   static const String shippingAddressPage = '/shipping-address';
   static const String shippingAddressCreatePage = '/shipping-address-create';
   static const String psgcSelectPage = '/psgc-select';
+  
+  //PAYMENT 
+  static const String paymentPage = '/payment';
+
 
   //TEST IGN
   static const String modalPage = '/modal';
@@ -110,16 +116,22 @@ class Routes {
       middlewares: [AuthMiddleware()],
       page: () => const CreateAddressPage(),
       transition: Transition.cupertino,
-    
     ),
 
-  
-
-  GetPage(
-    name: Routes.psgcSelectPage,
-    page: () => const PSGCSelectPage(level: PSGCLevel.region), // overridden on call
-    binding: ShippingAddressBinding(),
-    transition: Transition.cupertino,
-  ),
+    GetPage(
+      name: Routes.psgcSelectPage,
+      page: () =>
+          const PSGCSelectPage(level: PSGCLevel.region), // overridden on call
+      binding: ShippingAddressBinding(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+  name: Routes.paymentPage,
+  page: () => const PaymentWebviewPage(), 
+  binding: PaymentBinding(),
+  transition: Transition.cupertino,
+),
+                              
+                              
   ];
 }

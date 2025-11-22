@@ -63,8 +63,7 @@ class OrderPreparationController extends GetxController {
         if (failure.dioException?.response?.statusCode == 404) {
           Future.delayed(const Duration(milliseconds: 300), () {
             if (Get.isOverlaysOpen) Get.back();
-            Get.b
-            ack();
+            Get.back();
           });
         }
       },
