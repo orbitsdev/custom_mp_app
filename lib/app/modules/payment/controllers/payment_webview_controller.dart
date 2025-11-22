@@ -107,6 +107,16 @@ class PaymentWebviewController extends GetxController {
     AppToast.error("Failed to load page");
   }
 
+  void onHttpError(
+    InAppWebViewController controller,
+    WebUri? url,
+    int statusCode,
+    String reasonPhrase,
+  ) {
+    isLoading.value = false;
+    AppToast.error("HTTP Error: $statusCode - $reasonPhrase");
+  }
+
   // ---------------------------------------------------------
   //  DETECT REDIRECT FOR SUCCESS / CANCEL
   // ---------------------------------------------------------
@@ -205,4 +215,6 @@ class PaymentWebviewController extends GetxController {
       Get.back();
     }
   }
+
+  
 }
