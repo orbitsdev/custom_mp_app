@@ -3,7 +3,6 @@ import 'package:custom_mp_app/app/data/repositories/payment_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:custom_mp_app/app/modules/cart/controllers/cart_controller.dart';
-import 'package:custom_mp_app/app/modules/orderpreparation/controllers/order_preparation_controller.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 
@@ -201,24 +200,22 @@ class PaymentWebviewController extends GetxController {
   }
 
   // ---------------------------------------------------------
-  //  REFRESH CART & ORDER PREPARATION
+  //  REFRESH CART AFTER PAYMENT
   // ---------------------------------------------------------
   void _refreshData() {
-    print('🔄 [REFRESH] Refreshing cart and order preparation...');
+    print('🔄 [REFRESH] Refreshing cart...');
 
-    // 1. Refresh cart to remove checked-out items
+    // Refresh cart to show it's empty after successful payment
     if (Get.isRegistered<CartController>()) {
-      print('🛒 [REFRESH] Refreshing cart...');
+      print('🛒 [REFRESH] Fetching cart...');
       final cart = Get.find<CartController>();
       cart.fetchCart();
     }
 
-    // 2. Refresh order preparation
-    if (Get.isRegistered<OrderPreparationController>()) {
-      print('📦 [REFRESH] Refreshing order preparation...');
-      final op = Get.find<OrderPreparationController>();
-      op.fetchOrderPreparation();
-    }
+    // Note: We don't refresh order-preparation here because:
+    // 1. Cart is now empty (items were checked out)
+    // 2. Order-preparation page is removed from navigation stack
+    // 3. API will return "Cart is empty" error if we try to fetch it
   }
 
    void closeWebView() {
