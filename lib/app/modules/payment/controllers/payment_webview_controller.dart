@@ -157,54 +157,25 @@ class PaymentWebviewController extends GetxController {
   // ---------------------------------------------------------
   //  PAYMENT SUCCESS FLOW
   // ---------------------------------------------------------
-  Future<void> _handleSuccess(String url) async {
+  void _handleSuccess(String url) {
     print('🎉 [SUCCESS] Payment success URL hit: $url');
 
-    if (isVerifyingPayment.value || hasCompletedPayment.value) {
-      print('⚠️ [SUCCESS] Already verifying or completed, skipping...');
+    if (hasCompletedPayment.value) {
+      print('⚠️ [SUCCESS] Already completed, skipping...');
       return;
     }
 
-    print('🔄 [SUCCESS] Starting payment verification...');
-    isVerifyingPayment.value = true;
     hasCompletedPayment.value = true;
 
-    // Verify payment in background without showing modal
-    print('📡 [SUCCESS] Fetching order status for: $orderReferenceId');
-    final result = await _paymentRepo.fetchOrderStatus(orderReferenceId);
+    print('✅ [SUCCESS] Payment confirmed! Redirecting immediately...');
 
-    result.fold(
-      (failure) {
-        print('❌ [SUCCESS] Verification failed: ${failure.message}');
-        isVerifyingPayment.value = false;
+    // Refresh cart and order preparation in background
+    _refreshData();
 
-        AppModal.error(
-          title: "Verification Failed",
-          message: "Unable to confirm payment.\n${failure.message}",
-          onConfirm: () => _finishPayment(),
-        );
-      },
-      (status) {
-        print('✅ [SUCCESS] Order status received: isPaid=${status.isPaid}');
-        isVerifyingPayment.value = false;
-
-        if (status.isPaid) {
-          print('💰 [SUCCESS] Payment confirmed! Order: ${status.orderReferenceId}');
-
-          AppModal.success(
-            title: "Payment Successful!",
-            message: "Order ${status.orderReferenceId} confirmed.",
-            onConfirm: () => _finishPayment(),
-          );
-        } else {
-          print('⏳ [SUCCESS] Payment still pending...');
-          AppModal.error(
-            title: "Payment Pending",
-            message: "Your payment is still processing.",
-            onConfirm: () => _finishPayment(),
-          );
-        }
-      },
+    // Navigate to success page IMMEDIATELY (no verification, no dialog)
+    Get.offNamed(
+      Routes.paymentSuccessPage,
+      arguments: {'order_reference_id': orderReferenceId},
     );
   }
 
@@ -230,33 +201,24 @@ class PaymentWebviewController extends GetxController {
   }
 
   // ---------------------------------------------------------
-  //  AFTER VERIFICATION → CLEANUP + NAVIGATION
+  //  REFRESH CART & ORDER PREPARATION
   // ---------------------------------------------------------
-  void _finishPayment() {
-    print('🧹 [CLEANUP] Starting cleanup after payment...');
+  void _refreshData() {
+    print('🔄 [REFRESH] Refreshing cart and order preparation...');
 
     // 1. Refresh cart to remove checked-out items
     if (Get.isRegistered<CartController>()) {
-      print('🛒 [CLEANUP] Refreshing cart...');
+      print('🛒 [REFRESH] Refreshing cart...');
       final cart = Get.find<CartController>();
       cart.fetchCart();
     }
 
     // 2. Refresh order preparation
     if (Get.isRegistered<OrderPreparationController>()) {
-      print('📦 [CLEANUP] Refreshing order preparation...');
+      print('📦 [REFRESH] Refreshing order preparation...');
       final op = Get.find<OrderPreparationController>();
       op.fetchOrderPreparation();
     }
-
-    // 3. Navigate to order page and remove payment, order-preparation, cart from stack
-    // Stack before: home -> cart -> order-preparation -> payment
-    // Stack after:  home -> order page
-    print('📄 [CLEANUP] Redirecting to order page...');
-    Get.offNamedUntil(
-      Routes.orderPage,
-      (route) => route.settings.name == Routes.homePage,
-    );
   }
 
    void closeWebView() {

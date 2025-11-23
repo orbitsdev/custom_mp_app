@@ -33,14 +33,20 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: cartController.fetchCart,
-      child: Scaffold(
-        backgroundColor: AppColors.brandBackground,
-        bottomSheet: CartCheckoutButton(),
-        body: CustomScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          slivers: [
-            CartSliverAppBar(), 
-            CartItemList()],
+      child: Obx(
+        () => Scaffold(
+          backgroundColor: AppColors.brandBackground,
+          // Only show bottomSheet when cart is not empty
+          bottomSheet: cartController.carts.isNotEmpty
+              ? CartCheckoutButton()
+              : null,
+          body: CustomScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            slivers: [
+              CartSliverAppBar(),
+              CartItemList(),
+            ],
+          ),
         ),
       ),
     );

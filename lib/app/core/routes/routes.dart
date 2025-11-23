@@ -13,6 +13,7 @@ import 'package:custom_mp_app/app/modules/order/order_page.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/bindings/order_preparation_binding.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/views/order_preparation_page.dart';
 import 'package:custom_mp_app/app/modules/payment/bindings/payment_binding.dart';
+import 'package:custom_mp_app/app/modules/payment/views/payment_success_page.dart';
 import 'package:custom_mp_app/app/modules/payment/views/payment_webview_page.dart';
 import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
@@ -54,6 +55,7 @@ class Routes {
 
   //PAYMENT
   static const String paymentPage = '/payment';
+  static const String paymentSuccessPage = '/payment-success';
 
   //TEST IGN
   static const String modalPage = '/modal';
@@ -132,6 +134,12 @@ class Routes {
       name: Routes.paymentPage,
       page: () => const PaymentWebviewPage(),
       binding: PaymentBinding(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.paymentSuccessPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const PaymentSuccessPage(),
       transition: Transition.cupertino,
     ),
     GetPage(

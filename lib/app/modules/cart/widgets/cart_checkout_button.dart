@@ -13,88 +13,101 @@ class CartCheckoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartController = Get.find<CartController>();
-    return   Obx(
+    return Obx(
       () {
-     
-       return  Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        height: 65,
-        color: Colors.white,
-        child:  Column(
-          children: [
-            cartController.isSummaryUpdating.value ?  LinearProgressIndicator(color: AppColors.brand,) : const Gap(4),
-            Expanded(
-              child: Row(
-                children: [
-                  /// ☐ ALL
-                  Row(
-                    children: [
-                      Transform.scale(
-                        scale: 1.2,
-                        child: Checkbox(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
+        // Hide checkout button when cart is empty
+        if (cartController.carts.isEmpty) {
+          return SizedBox.shrink();
+        }
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          height: 65,
+          color: Colors.white,
+          child: Column(
+            children: [
+              cartController.isSummaryUpdating.value
+                  ? LinearProgressIndicator(
+                      color: AppColors.brand,
+                    )
+                  : const Gap(4),
+              Expanded(
+                child: Row(
+                  children: [
+                    /// ☐ ALL
+                    Row(
+                      children: [
+                        Transform.scale(
+                          scale: 1.2,
+                          child: Checkbox(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            side: BorderSide(color: AppColors.textLight),
+                            activeColor: cartController.hasSelectedItems
+                                ? AppColors.brand
+                                : AppColors.textLight,
+                            value: cartController.selectAllValue.value,
+                            onChanged: (value) =>
+                                cartController.uiToggleSelectAll(value!),
                           ),
-                          side: BorderSide(color: AppColors.textLight),
-                          activeColor: cartController.hasSelectedItems ? AppColors.brand : AppColors.textLight,
-                          value:  cartController.selectAllValue.value,
-                          onChanged:  cartController.carts.isEmpty ? null :  (value) =>  cartController.uiToggleSelectAll(value!),
+                        ),
+                        Text("All", style: Get.textTheme.bodyMedium),
+                      ],
+                    ),
+
+                    Spacer(), // ⭐ pushes total + button to the right
+                    /// 💰 TOTAL
+                    Expanded(
+                      flex: 2,
+                      child: FittedBox(
+                        fit: BoxFit
+                            .scaleDown, // ⭐ Shrinks text to fit width safely
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          "₱${formatNumber(cartController.cartSummary.value.grandTotal)}",
+                          style: Get.textTheme.titleLarge?.copyWith(
+                            color: cartController.hasSelectedItems
+                                ? AppColors.brandDark
+                                : AppColors.textLight,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                      Text("All", style: Get.textTheme.bodyMedium),
-                    ],
-                  ),
+                    ),
 
-                  Spacer(), // ⭐ pushes total + button to the right
-                  /// 💰 TOTAL
-                  Expanded(
-                    flex: 2,
-                    child: FittedBox(
-                      fit: BoxFit
-                          .scaleDown, // ⭐ Shrinks text to fit width safely
-                      alignment: Alignment.centerRight,
+                    SizedBox(width: 12),
+
+                    /// CHECKOUT
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: cartController.hasSelectedItems
+                            ? AppColors.brand
+                            : AppColors.textLight,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 22,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: cartController.hasSelectedItems
+                          ? () {
+                              Get.toNamed(Routes.orderPreparationPage);
+                            }
+                          : null,
                       child: Text(
-                        "₱${formatNumber(cartController.cartSummary.value.grandTotal)}",
-                        style: Get.textTheme.titleLarge?.copyWith(
-                          color: cartController.hasSelectedItems
-                              ? AppColors.brandDark
-                              : AppColors.textLight,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        "Checkout",
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                  ),
-
-                  SizedBox(width: 12),
-
-                  /// CHECKOUT
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: cartController.hasSelectedItems
-                          ? AppColors.brand
-                          : AppColors.textLight,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 22,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onPressed: cartController.hasSelectedItems ? () { 
-                          Get.toNamed(Routes.orderPreparationPage);
-                    } : null,
-                    child: Text(
-                      "Checkout",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
       },
     );
   }
