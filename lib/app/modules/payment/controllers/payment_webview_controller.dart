@@ -32,9 +32,11 @@ class PaymentWebviewController extends GetxController {
   //  LOAD ARGUMENTS FROM PAYMENT PAGE
   // ---------------------------------------------------------
   void _loadArguments() {
+    print('🔧 [INIT] Loading payment arguments...');
     final args = Get.arguments;
 
     if (args == null) {
+      print('❌ [INIT] No arguments provided!');
       AppToast.error("Invalid payment arguments");
       Get.back();
       return;
@@ -45,7 +47,13 @@ class PaymentWebviewController extends GetxController {
     successUrl        = args['success_url'] ?? '';
     cancelUrl         = args['cancel_url'] ?? '';
 
+    print('📋 [INIT] Checkout URL: $checkoutUrl');
+    print('📋 [INIT] Order Ref: $orderReferenceId');
+    print('📋 [INIT] Success URL: $successUrl');
+    print('📋 [INIT] Cancel URL: $cancelUrl');
+
     if (checkoutUrl.isEmpty || orderReferenceId.isEmpty) {
+      print('❌ [INIT] Missing required payment details!');
       AppToast.error("Missing payment details");
       Get.back();
     }
@@ -76,11 +84,17 @@ class PaymentWebviewController extends GetxController {
   // ---------------------------------------------------------
   //  WEBVIEW EVENTS
   // ---------------------------------------------------------
+  void onWebViewCreated(InAppWebViewController controller) {
+    print('🔧 [WEBVIEW] WebView created');
+    webView = controller;
+  }
+
   void onLoadStart(InAppWebViewController controller, WebUri? url) {
     webView = controller;
     isLoading.value = true;
 
     if (url != null) {
+      print('🌐 [WEBVIEW] Loading URL: ${url.toString()}');
       _detectRedirect(url.toString());
     }
   }
@@ -89,6 +103,7 @@ class PaymentWebviewController extends GetxController {
     isLoading.value = false;
 
     if (url != null) {
+      print('✅ [WEBVIEW] Loaded URL: ${url.toString()}');
       _detectRedirect(url.toString());
     }
   }
@@ -117,10 +132,24 @@ class PaymentWebviewController extends GetxController {
   //  DETECT REDIRECT FOR SUCCESS / CANCEL
   // ---------------------------------------------------------
   void _detectRedirect(String url) {
-    if (url.contains("/mobile/payment/success")) {
+    print('🔍 [DETECT] Checking URL: $url');
+
+    // Check for success patterns
+    if (url.contains("/mobile/payment/success") ||
+        url.contains("/mobile-app/success") ||
+        url.contains("payment/success")) {
+      print('✅ [DETECT] SUCCESS URL detected!');
       _handleSuccess(url);
-    } else if (url.contains("/mobile/payment/cancel")) {
+    }
+    // Check for cancel patterns
+    else if (url.contains("/mobile/payment/cancel") ||
+             url.contains("/mobile-app/cancel") ||
+             url.contains("payment/cancel")) {
+      print('❌ [DETECT] CANCEL URL detected!');
       _handleCancel();
+    }
+    else {
+      print('⏭️ [DETECT] Not a payment redirect URL');
     }
   }
 
@@ -128,18 +157,26 @@ class PaymentWebviewController extends GetxController {
   //  PAYMENT SUCCESS FLOW
   // ---------------------------------------------------------
   Future<void> _handleSuccess(String url) async {
-    if (isVerifyingPayment.value || hasCompletedPayment.value) return;
+    print('🎉 [SUCCESS] Payment success URL hit: $url');
 
+    if (isVerifyingPayment.value || hasCompletedPayment.value) {
+      print('⚠️ [SUCCESS] Already verifying or completed, skipping...');
+      return;
+    }
+
+    print('🔄 [SUCCESS] Starting payment verification...');
     isVerifyingPayment.value = true;
 
     AppModal.loading(title: "Verifying payment...");
 
     await Future.delayed(const Duration(seconds: 2));
 
+    print('📡 [SUCCESS] Fetching order status for: $orderReferenceId');
     final result = await _paymentRepo.fetchOrderStatus(orderReferenceId);
 
     result.fold(
       (failure) {
+        print('❌ [SUCCESS] Verification failed: ${failure.message}');
         AppModal.close();
         isVerifyingPayment.value = false;
 
@@ -150,10 +187,12 @@ class PaymentWebviewController extends GetxController {
         );
       },
       (status) {
+        print('✅ [SUCCESS] Order status received: isPaid=${status.isPaid}');
         AppModal.close();
         isVerifyingPayment.value = false;
 
         if (status.isPaid) {
+          print('💰 [SUCCESS] Payment confirmed! Order: ${status.orderReferenceId}');
           hasCompletedPayment.value = true;
 
           AppModal.success(
@@ -162,6 +201,7 @@ class PaymentWebviewController extends GetxController {
             onConfirm: () => _finishPayment(),
           );
         } else {
+          print('⏳ [SUCCESS] Payment still pending...');
           AppModal.error(
             title: "Payment Pending",
             message: "Your payment is still processing.",
@@ -176,6 +216,7 @@ class PaymentWebviewController extends GetxController {
   //  PAYMENT CANCELED FLOW
   // ---------------------------------------------------------
   void _handleCancel() {
+    print('🚫 [CANCEL] Payment cancelled URL detected');
     AppModal.confirm(
       title: "Payment Cancelled",
       message: "Do you want to try again?",

@@ -39,17 +39,7 @@ class PaymentWebviewPage extends StatelessWidget {
               initialUrlRequest: URLRequest(
                 url: WebUri(controller.checkoutUrl),
               ),
-              initialSettings: InAppWebViewSettings(
-                javaScriptEnabled: true,
-                domStorageEnabled: true,
-                databaseEnabled: true,
-                supportZoom: false,
-                mediaPlaybackRequiresUserGesture: false,
-                allowsInlineMediaPlayback: true,
-                useShouldOverrideUrlLoading: true,
-              ),
-
-              // EVENTS
+              onWebViewCreated: controller.onWebViewCreated,
               onLoadStart: controller.onLoadStart,
               onLoadStop: controller.onLoadStop,
               onReceivedError: (webCtrl, request, error) {
@@ -59,6 +49,15 @@ class PaymentWebviewPage extends StatelessWidget {
                   error.type.toNativeValue() ?? -1,
                   error.description,
                 );
+              },
+            
+             
+              shouldInterceptRequest: (webViewController, request) async {
+              // print("Request URL: ${request.url}"); // Debugging request
+                return null;
+              },
+              onLoadResource: (webViewController, resource) async {
+                //print("Resource URL: ${resource.url}"); // Debugging resource
               },
               onReceivedHttpError: (webCtrl, request, response) {
                 controller.onHttpError(
