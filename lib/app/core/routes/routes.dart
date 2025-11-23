@@ -9,6 +9,7 @@ import 'package:custom_mp_app/app/modules/cart/views/cart_page.dart';
 import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
 import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
+import 'package:custom_mp_app/app/modules/order/order_page.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/bindings/order_preparation_binding.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/views/order_preparation_page.dart';
 import 'package:custom_mp_app/app/modules/payment/bindings/payment_binding.dart';
@@ -42,6 +43,9 @@ class Routes {
 
   //ORDER PREPRATION
   static const String orderPreparationPage = '/order-preparation';
+
+  //ORDERS
+  static const String orderPage = '/orders';
 
   //SHIPPING ADDRESS
   static const String shippingAddressPage = '/shipping-address';
@@ -128,6 +132,12 @@ class Routes {
       name: Routes.paymentPage,
       page: () => const PaymentWebviewPage(),
       binding: PaymentBinding(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.orderPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const OrderPage(),
       transition: Transition.cupertino,
     ),
   ];

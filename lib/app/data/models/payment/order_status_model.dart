@@ -1,24 +1,24 @@
 class OrderStatusModel {
   final String orderReferenceId;
-  final String status;
+  final String deliveryStatus;
   final String? paidAt;
   final num totalPrice;
 
-  bool get isPaid => status == "paid" || paidAt != null;
+  bool get isPaid => paidAt != null;
 
   OrderStatusModel({
     required this.orderReferenceId,
-    required this.status,
+    required this.deliveryStatus,
     required this.paidAt,
     required this.totalPrice,
   });
 
   factory OrderStatusModel.fromMap(Map<String, dynamic> map) {
     return OrderStatusModel(
-      orderReferenceId: map['order_reference_id'],
-      status: map['status'],
+      orderReferenceId: map['order_reference_id'] ?? '',
+      deliveryStatus: map['delivery_status'] ?? '',
       paidAt: map['paid_at'],
-      totalPrice: map['total_price'],
+      totalPrice: map['total_price'] ?? 0,
     );
   }
 }

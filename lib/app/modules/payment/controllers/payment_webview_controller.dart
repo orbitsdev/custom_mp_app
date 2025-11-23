@@ -2,6 +2,7 @@ import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/data/repositories/payment_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+import 'package:custom_mp_app/app/modules/cart/controllers/cart_controller.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/controllers/order_preparation_controller.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
@@ -166,18 +167,15 @@ class PaymentWebviewController extends GetxController {
 
     print('🔄 [SUCCESS] Starting payment verification...');
     isVerifyingPayment.value = true;
+    hasCompletedPayment.value = true;
 
-    AppModal.loading(title: "Verifying payment...");
-
-    await Future.delayed(const Duration(seconds: 2));
-
+    // Verify payment in background without showing modal
     print('📡 [SUCCESS] Fetching order status for: $orderReferenceId');
     final result = await _paymentRepo.fetchOrderStatus(orderReferenceId);
 
     result.fold(
       (failure) {
         print('❌ [SUCCESS] Verification failed: ${failure.message}');
-        AppModal.close();
         isVerifyingPayment.value = false;
 
         AppModal.error(
@@ -188,12 +186,10 @@ class PaymentWebviewController extends GetxController {
       },
       (status) {
         print('✅ [SUCCESS] Order status received: isPaid=${status.isPaid}');
-        AppModal.close();
         isVerifyingPayment.value = false;
 
         if (status.isPaid) {
           print('💰 [SUCCESS] Payment confirmed! Order: ${status.orderReferenceId}');
-          hasCompletedPayment.value = true;
 
           AppModal.success(
             title: "Payment Successful!",
@@ -237,12 +233,30 @@ class PaymentWebviewController extends GetxController {
   //  AFTER VERIFICATION → CLEANUP + NAVIGATION
   // ---------------------------------------------------------
   void _finishPayment() {
+    print('🧹 [CLEANUP] Starting cleanup after payment...');
+
+    // 1. Refresh cart to remove checked-out items
+    if (Get.isRegistered<CartController>()) {
+      print('🛒 [CLEANUP] Refreshing cart...');
+      final cart = Get.find<CartController>();
+      cart.fetchCart();
+    }
+
+    // 2. Refresh order preparation
     if (Get.isRegistered<OrderPreparationController>()) {
+      print('📦 [CLEANUP] Refreshing order preparation...');
       final op = Get.find<OrderPreparationController>();
       op.fetchOrderPreparation();
     }
 
-    Get.offAllNamed(Routes.homePage);
+    // 3. Navigate to order page and remove payment, order-preparation, cart from stack
+    // Stack before: home -> cart -> order-preparation -> payment
+    // Stack after:  home -> order page
+    print('📄 [CLEANUP] Redirecting to order page...');
+    Get.offNamedUntil(
+      Routes.orderPage,
+      (route) => route.settings.name == Routes.homePage,
+    );
   }
 
    void closeWebView() {
@@ -253,5 +267,5 @@ class PaymentWebviewController extends GetxController {
     }
   }
 
-  
+
 }
