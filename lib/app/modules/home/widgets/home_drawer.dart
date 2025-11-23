@@ -2,6 +2,8 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/core/utils/path_helpers.dart';
 import 'package:custom_mp_app/app/global/widgets/image/local_image.dart';
+import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
+import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
 import 'package:custom_mp_app/app/modules/home/widgets/tbi_signature.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -81,17 +83,53 @@ class HomeDrawer extends StatelessWidget {
                         // Get.to(()=> NewProductScreen(), transition: Transition.cupertino);
                     },
                   ),
-                  Divider(color:AppColors.brandBackground,),
+                  Divider(color: AppColors.brandBackground),
                 ],
               ),
             ),
-           
-           TbiSignature(),
 
+            // Logout Button
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ListTile(
+                leading: Icon(Icons.logout, color: Colors.red),
+                title: Text(
+                  'Logout',
+                  style: Get.textTheme.bodyLarge?.copyWith(
+                    color: Colors.red,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                onTap: () => _handleLogout(context),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.red.withOpacity(0.3)),
+                ),
+              ),
+            ),
+
+            TbiSignature(),
           ],
         ),
       ),
     );
+  }
+
+  // Handle logout with confirmation
+  Future<void> _handleLogout(BuildContext context) async {
+    Get.back(); // Close drawer first
+
+    final shouldLogout = await AppModal.confirm(
+      title: 'Logout',
+      message: 'Are you sure you want to logout?',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+    );
+
+    if (shouldLogout == true) {
+      final authController = Get.find<AuthController>();
+      await authController.logout();
+    }
   }
 
   Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {

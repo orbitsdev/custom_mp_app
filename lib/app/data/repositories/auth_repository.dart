@@ -33,7 +33,9 @@ class AuthRepository {
       final user = UserModel.fromMap(data['user']);
       final token = data['token'] as String;
 
+      // Save both token and user data
       await SecureStorageService.saveToken(token);
+      await SecureStorageService.saveUser(user.toJson());
 
       print('✅ Registration success for ${user.email}');
       return right(user);
@@ -59,7 +61,10 @@ class AuthRepository {
       final token = data['token'];
       final user = UserModel.fromMap(data['user']);
 
+      // Save both token and user data
       await SecureStorageService.saveToken(token);
+      await SecureStorageService.saveUser(user.toJson());
+
       return right(user);
     } on DioException catch (e) {
       return left(FailureModel.fromDio(e));
@@ -77,7 +82,10 @@ class AuthRepository {
       final data = response.data['data'];
       final user = UserModel.fromMap(data['user']);
 
+      // Save to both storages
+      await SecureStorageService.saveUser(user.toJson());
       _getStorage.saveUser(user.toMap());
+
       return right(user);
     } on DioException catch (e) {
       return left(FailureModel.fromDio(e));
@@ -92,7 +100,8 @@ class AuthRepository {
       final dio = await DioClient.auth;
       await dio.post('logout');
 
-      await SecureStorageService.deleteToken();
+      // Clear all auth data
+      await SecureStorageService.clearAuthData();
       _getStorage.clearUser();
 
       return right(true);
