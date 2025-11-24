@@ -37,10 +37,15 @@ class _OrdersPageState extends State<OrdersPage>
   @override
   void initState() {
     super.initState();
+
+    // Get initial tab from arguments if provided
+    final args = Get.arguments as Map<String, dynamic>?;
+    final initialTab = args?['initialTab'] ?? widget.initialTabIndex;
+
     tabController = TabController(
       length: 5,
       vsync: this,
-      initialIndex: widget.initialTabIndex,
+      initialIndex: initialTab,
     );
   }
 

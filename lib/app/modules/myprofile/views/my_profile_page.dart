@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
+import 'package:custom_mp_app/app/modules/myprofile/controllers/profile_controller.dart';
 import 'package:custom_mp_app/app/modules/myprofile/widgets/account_information.dart';
 import 'package:custom_mp_app/app/modules/myprofile/widgets/orders_status_summary.dart';
 import 'package:custom_mp_app/app/modules/myprofile/widgets/product_that_you_might_also_;like.dart';
@@ -12,19 +13,26 @@ class MyProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authController = Get.find<AuthController>();
+    final profileController = Get.find<ProfileController>();
 
     return RefreshIndicator(
-      onRefresh: () => authController.refreshUserData(),
+      onRefresh: () async {
+        // Refresh both user data and order counts
+        await Future.wait([
+          authController.refreshUserData(),
+          profileController.refreshOrderCounts(),
+        ]);
+      },
       child: Scaffold(
         body: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             AccountInformation(),
-            SettingNavigation(),
             OrdersStatusSummary(),
-            ProductThatYouMightAlsoLike()
-              
-          ]),
+            SettingNavigation(),
+            ProductThatYouMightAlsoLike(),
+          ],
+        ),
       ),
     );
   }
