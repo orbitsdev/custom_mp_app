@@ -16,7 +16,24 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-   
+    _setupAppLifecycleListener();
+  }
+
+  /// Listen for app resume to refresh user data
+  void _setupAppLifecycleListener() {
+    // Optional: Refresh user data when app resumes from background
+    // Uncomment if you want to sync user data on app resume
+    /*
+    WidgetsBinding.instance.addObserver(
+      LifecycleEventHandler(
+        resumeCallBack: () async {
+          if (isAuthenticated.value) {
+            await refreshUserData();
+          }
+        },
+      ),
+    );
+    */
   }
 
 
@@ -92,6 +109,30 @@ Future<void> autoLogin() async {
 
 
 
+
+  /// Silently refresh user data from API (no loading indicator)
+  /// Useful for background sync when app resumes
+  Future<void> refreshUserData() async {
+    if (!isAuthenticated.value) return;
+
+    print('🔄 Silently refreshing user data...');
+    final result = await _authRepo.getAuthenticatedUser();
+
+    result.fold(
+      (failure) {
+        print('⚠️ Silent refresh failed: ${failure.message}');
+        // Don't show error to user - just log it
+        if (failure.statusCode == 401 || failure.statusCode == 403) {
+          // Token expired - logout
+          logout();
+        }
+      },
+      (userData) {
+        print('✅ User data refreshed: ${userData.email}');
+        user.value = userData;
+      },
+    );
+  }
 
   Future<void> logout() async {
     await _authRepo.logout();

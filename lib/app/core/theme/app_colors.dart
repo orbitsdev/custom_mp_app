@@ -54,7 +54,7 @@ class AppColors {
   static const Color green = Color(0xFF29C764);
 
   static const Color darkGray = Color(0xFF272625);
-  static const Color primaryOrange = Color(0xffECAD32);
+  static const Color orange = Color(0xffECAD32);
   static const Color lightGray = Color(0xffADADAD);
 
 
@@ -64,6 +64,7 @@ class AppColors {
   static const Color  gainsboro = Color(0xffF3F3F3);
 
   static const Color coolGray = Color(0xff8B8B8B);
+  static const Color dimGray = Color(0xFf575757);
 
 
 

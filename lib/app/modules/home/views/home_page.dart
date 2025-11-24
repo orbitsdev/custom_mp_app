@@ -9,7 +9,7 @@ import 'package:custom_mp_app/app/modules/home/controllers/home_controller.dart'
 import 'favorite_page.dart';
 import 'my_order_page.dart';
 import 'notification_page.dart';
-import 'my_profile_page.dart';
+import '../../myprofile/views/my_profile_page.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({Key? key}) : super(key: key);

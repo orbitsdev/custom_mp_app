@@ -121,7 +121,7 @@ class PaymentSuccessPage extends StatelessWidget {
 
   void _goToOrderPage() {
     Get.offNamedUntil(
-      Routes.orderPage,
+      Routes.ordesrPage,
       (route) => route.settings.name == Routes.homePage,
     );
   }

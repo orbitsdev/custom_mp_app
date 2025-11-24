@@ -66,7 +66,7 @@ class ProductSearchField extends StatelessWidget {
                     child: h.HeroIcon(
                       h.HeroIcons.magnifyingGlass,
                       size: 24,
-                      color: AppColors.primaryOrange,
+                      color: AppColors.orange,
                     ),
                   ),
                   Gap(8),

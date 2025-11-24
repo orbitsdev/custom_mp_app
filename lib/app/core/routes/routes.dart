@@ -46,7 +46,7 @@ class Routes {
   static const String orderPreparationPage = '/order-preparation';
 
   //ORDERS
-  static const String orderPage = '/orders';
+  static const String ordesrPage = '/orders';
 
   //SHIPPING ADDRESS
   static const String shippingAddressPage = '/shipping-address';
@@ -149,9 +149,9 @@ class Routes {
       transition: Transition.cupertino,
     ),
     GetPage(
-      name: Routes.orderPage,
+      name: Routes.ordesrPage,
       middlewares: [AuthMiddleware()],
-      page: () => const OrderPage(),
+      page: () => const OrdersPage(),
       transition: Transition.cupertino,
     ),
   ];

@@ -1,0 +1,138 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
+import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
+import 'package:custom_mp_app/app/modules/myprofile/widgets/order_summary_button.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gap/gap.dart';
+import 'package:get/get.dart';
+import 'package:sliver_tools/sliver_tools.dart';
+
+class OrdersStatusSummary extends StatelessWidget {
+  const OrdersStatusSummary({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiSliver(
+      children: [
+        ToSliver(child: Gap(   16)),
+        ToSliver(
+          child: Container(
+            color: Colors.white,
+            padding: EdgeInsets.all(16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'My Order',
+                          style: Get.textTheme.bodyLarge!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    GestureDetector(
+                      onTap: () => Get.toNamed(Routes.ordesrPage,),
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'View all Orders',
+                            style: Get.textTheme.bodyMedium!.copyWith(),
+                          ),
+                          Gap(4),
+                          Icon(Icons.arrow_forward_ios, size: 12),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Gap(16),
+                Container(height: 1, color: AppColors.brandBackground),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      OrderSummaryButton(
+                        notificationCount:1,
+                        onPressed: () {
+                          Get.toNamed(Routes.ordesrPage);
+                        },
+                        label: 'Orders',
+                        icon: ShaderMask(
+                          blendMode: BlendMode.srcIn,
+                          shaderCallback: (Rect bounds) => LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [AppColors.orange, AppColors.brand],
+                          ).createShader(bounds),
+                          child: FaIcon(
+                            FontAwesomeIcons.wallet,
+                            color: AppColors.dimGray,
+                          ),
+                        ),
+                      ),
+                      OrderSummaryButton(
+                        notificationCount:21,
+                        onPressed: () {
+
+                        },
+                        label: 'To Ship',
+                        icon: ShaderMask(
+                          blendMode: BlendMode.srcIn,
+                          shaderCallback: (Rect bounds) => LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [AppColors.orange, AppColors.brand],
+                          ).createShader(bounds),
+                          child: FaIcon(
+                            FontAwesomeIcons.box,
+                            color: AppColors.dimGray,
+                          ),
+                        ),
+                      ),
+
+                      OrderSummaryButton(
+                        notificationCount:22,
+                        onPressed: (){
+
+                        },
+                        label: 'To Recieve',
+                        icon: ShaderMask(
+                          blendMode: BlendMode.srcIn,
+                          shaderCallback: (Rect bounds) => LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [AppColors.orange, AppColors.brand],
+                          ).createShader(bounds),
+                          child: FaIcon(
+                            FontAwesomeIcons.truck,
+                            color: AppColors.dimGray,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+                ToSliver(child: Gap(   16)),
+      ],
+    );
+  }
+}
