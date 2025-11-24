@@ -2,6 +2,7 @@ import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/modules/search/controllers/search_controller.dart';
+import 'package:custom_mp_app/app/modules/search/widgets/search_loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -23,9 +24,9 @@ class InstantSearchResults extends StatelessWidget {
     final controller = ProductSearchController.instance;
 
     return Obx(() {
-      // Loading state
+      // Loading state with shimmer
       if (controller.isLoadingInstant.value) {
-        return _buildLoadingState();
+        return SearchLoadingWidget();
       }
 
       // No results

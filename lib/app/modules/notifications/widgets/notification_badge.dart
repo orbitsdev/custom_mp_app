@@ -1,20 +1,20 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:custom_mp_app/app/core/routes/routes.dart';
-import 'package:custom_mp_app/app/core/theme/config.dart';
-import 'package:custom_mp_app/app/modules/cart/controllers/cart_controller.dart';
+import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/modules/notifications/controllers/notification_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 
-class CartBadge extends StatelessWidget {
+/// Notification Badge
+///
+/// Shows notification icon with unread count badge
+class NotificationBadge extends StatelessWidget {
   final Color? badgeColor;
   final Color? textColor;
   final Color? iconColor;
-
-  /// 🔥 Dynamic tap behavior
   final VoidCallback? onTap;
 
-  CartBadge({
+  const NotificationBadge({
     Key? key,
     this.badgeColor,
     this.textColor,
@@ -24,10 +24,10 @@ class CartBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cart = CartController.instance;
+    final controller = NotificationController.instance;
 
     return Obx(() {
-      final count = cart.carts.length;
+      final count = controller.unreadCount;
 
       return Stack(
         children: [
@@ -35,11 +35,11 @@ class CartBadge extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.only(top: 8),
               child: IconButton(
-                onPressed: onTap ?? () => Get.toNamed(Routes.cartPage),
-                icon:  HeroIcon(
+                onPressed: onTap ?? () => Get.toNamed(Routes.notificationsPage),
+                icon: HeroIcon(
                   color: iconColor ?? Colors.white,
-                  HeroIcons.shoppingCart,
-                  style: HeroIconStyle.solid,
+                  HeroIcons.bell,
+                  style: HeroIconStyle.outline,
                 ),
               ),
             ),
@@ -50,15 +50,17 @@ class CartBadge extends StatelessWidget {
               right: 6,
               top: 6,
               child: Container(
+                padding: EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: badgeColor ?? Colors.white,
+                  color: badgeColor ?? AppColors.error,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
                 child: Text(
-                  '$count',
-                  style: Get.textTheme.bodyMedium?.copyWith(
-                    color: textColor ?? AppColors.brand,
+                  count > 99 ? '99+' : '$count',
+                  style: TextStyle(
+                    color: textColor ?? Colors.white,
+                    fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,

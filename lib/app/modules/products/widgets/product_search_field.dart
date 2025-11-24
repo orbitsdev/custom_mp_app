@@ -2,6 +2,7 @@
 import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/modules/cart/widgets/cart_badge.dart';
+import 'package:custom_mp_app/app/modules/notifications/widgets/notification_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -88,8 +89,22 @@ class ProductSearchField extends StatelessWidget {
             ),
           ),
         ),
-       
-        CartBadge( onTap: () => Get.toNamed(Routes.cartPage),)
+
+        // Notification Badge
+        NotificationBadge(
+          badgeColor: AppColors.error,
+          textColor: Colors.white,
+          iconColor: Colors.white,
+          onTap: () => Get.toNamed(Routes.notificationsPage),
+        ),
+
+        // Cart Badge
+        CartBadge(
+          badgeColor: AppColors.error,
+          textColor: Colors.white,
+          iconColor: Colors.white,
+          onTap: () => Get.toNamed(Routes.cartPage),
+        ),
       ],
     );
   }

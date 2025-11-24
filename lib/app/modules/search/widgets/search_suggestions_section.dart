@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/global/widgets/progress/shimmer_widget.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_card.dart';
 import 'package:custom_mp_app/app/modules/search/controllers/search_controller.dart';
 import 'package:flutter/material.dart';
@@ -18,12 +19,77 @@ class SearchSuggestionsSection extends StatelessWidget {
     final controller = ProductSearchController.instance;
 
     return Obx(() {
-      // Loading state
+      // Loading state with shimmer
       if (controller.isLoadingPopular.value) {
         return Container(
-          padding: EdgeInsets.all(32),
-          child: Center(
-            child: CircularProgressIndicator(color: AppColors.brand),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header shimmer
+              Row(
+                children: [
+                  ShimmerWidget(
+                    width: 20,
+                    height: 20,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  Gap(8),
+                  ShimmerWidget(
+                    width: 120,
+                    height: 16,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ],
+              ),
+              Gap(12),
+              // Grid shimmer
+              GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.75,
+                ),
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ShimmerWidget(
+                          height: 160,
+                          width: double.infinity,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10),
+                            topRight: Radius.circular(10),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ShimmerWidget(width: 80, height: 12),
+                              Gap(4),
+                              ShimmerWidget(width: double.infinity, height: 14),
+                              Gap(8),
+                              ShimmerWidget(width: 60, height: 16),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         );
       }

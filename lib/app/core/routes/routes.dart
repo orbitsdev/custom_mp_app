@@ -23,6 +23,7 @@ import 'package:custom_mp_app/app/modules/products/views/product_search_page.dar
 import 'package:custom_mp_app/app/modules/search/bindings/search_binding.dart';
 import 'package:custom_mp_app/app/modules/search/views/search_page.dart';
 import 'package:custom_mp_app/app/modules/search/views/search_results_page.dart';
+import 'package:custom_mp_app/app/modules/notifications/views/notifications_page.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/bindings/shipping_address_binding.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/views/create_address_page.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/views/psgc_select_page.dart';
@@ -46,6 +47,9 @@ class Routes {
   //SEARCH
   static const String searchPage = '/search';
   static const String searchResultsPage = '/search-results';
+
+  //NOTIFICATIONS
+  static const String notificationsPage = '/notifications';
 
   //CARTS
   static const String cartPage = '/cart';
@@ -124,6 +128,14 @@ class Routes {
       name: Routes.searchResultsPage,
       middlewares: [AuthMiddleware()],
       page: () => SearchResultsPage(),
+      transition: Transition.cupertino,
+    ),
+
+    // Notifications
+    GetPage(
+      name: Routes.notificationsPage,
+      middlewares: [AuthMiddleware()],
+      page: () => NotificationsPage(),
       transition: Transition.cupertino,
     ),
 

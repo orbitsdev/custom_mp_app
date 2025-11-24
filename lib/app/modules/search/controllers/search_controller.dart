@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:custom_mp_app/app/core/routes/routes.dart';
@@ -36,43 +35,32 @@ class ProductSearchController extends GetxController {
   final popularProducts = <ProductModel>[].obs;
   final isLoadingPopular = false.obs;
 
-  // Debouncing
-  Timer? _debounce;
-  static const _debounceDuration = Duration(milliseconds: 500);
-
   @override
   void onInit() {
     super.onInit();
+
+    // GetX debounce - cleaner than manual Timer
+    debounce(
+      searchQuery,
+      (value) => _performInstantSearch(value.trim()),
+      time: Duration(milliseconds: 500),
+    );
+
     _loadSearchHistory();
     _loadSuggestions();
   }
 
-  @override
-  void onClose() {
-    _debounce?.cancel();
-    super.onClose();
-  }
-
   /// Called when user types in search field
+  /// GetX debounce automatically handles the delay
   void onSearchChanged(String query) {
     searchQuery.value = query.trim();
-
-    // Cancel previous debounce
-    _debounce?.cancel();
 
     if (query.trim().isEmpty) {
       instantResults.clear();
       isLoadingInstant.value = false;
-      return;
+    } else {
+      isLoadingInstant.value = true;
     }
-
-    // Show loading immediately
-    isLoadingInstant.value = true;
-
-    // Debounce: Wait for user to stop typing
-    _debounce = Timer(_debounceDuration, () {
-      _performInstantSearch(query.trim());
-    });
   }
 
   /// Perform instant search (Stage 1 - as you type)
@@ -185,6 +173,5 @@ class ProductSearchController extends GetxController {
     searchQuery.value = '';
     instantResults.clear();
     isLoadingInstant.value = false;
-    _debounce?.cancel();
   }
 }
