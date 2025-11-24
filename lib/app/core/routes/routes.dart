@@ -9,12 +9,12 @@ import 'package:custom_mp_app/app/modules/cart/views/cart_page.dart';
 import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
 import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
-import 'package:custom_mp_app/app/modules/order/order_page.dart';
+import 'package:custom_mp_app/app/modules/orders/views/orders_page.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/bindings/order_preparation_binding.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/views/order_preparation_page.dart';
 import 'package:custom_mp_app/app/modules/payment/bindings/payment_binding.dart';
 import 'package:custom_mp_app/app/modules/payment/views/payment_success_page.dart';
-import 'package:custom_mp_app/app/modules/payment/views/payment_webview_page.dart';
+import 'package:custom_mp_app/app/modules/payment/views/payment_page.dart';
 import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_details_page.dart';
@@ -56,6 +56,12 @@ class Routes {
   //PAYMENT
   static const String paymentPage = '/payment';
   static const String paymentSuccessPage = '/payment-success';
+
+
+  //ORDERS
+  static const String ordersPage = '/orders';
+
+
 
   //TEST IGN
   static const String modalPage = '/modal';
@@ -132,7 +138,7 @@ class Routes {
     ),
     GetPage(
       name: Routes.paymentPage,
-      page: () => const PaymentWebviewPage(),
+      page: () => const PaymentPage(),
       binding: PaymentBinding(),
       transition: Transition.cupertino,
     ),

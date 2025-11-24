@@ -11,8 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 
 class OrderPreparationRepository {
-  
-EitherModel<OrderPreparationModel> fetchOrderPreparation({
+  EitherModel<OrderPreparationModel> fetchOrderPreparation({
     int? packageId, // optional
   }) async {
     try {
@@ -20,24 +19,12 @@ EitherModel<OrderPreparationModel> fetchOrderPreparation({
 
       final response = await dio.get(
         'order-preparation',
-        queryParameters: {
-          if (packageId != null) 'package_id': packageId,
-        },
+        queryParameters: {if (packageId != null) 'package_id': packageId},
       );
 
       final data = response.data['data'];
-  //     List<CartItemModel> carItems = (data['cart_items'] as List<dynamic>).map((e) => CartItemModel.fromMap(e)).toList();
-  //     List<OrderPackageModel> packages = (data['packages'] as List<dynamic>).map((e) => OrderPackageModel.fromMap(e)).toList();
-  //     List<ShippingAddressModel> addresses = (data['shipping_addresses'] as List<dynamic>).map((e) => ShippingAddressModel.fromMap(e)).toList();
-  //    OrderPreparationSummaryModel summary = OrderPreparationSummaryModel.fromMap(data['summary']);
 
-  //  print('-------------------------------');
-  //  print('--------------------------------');
-  //  print('---------------------------------');
-  //  print('----------------------------------');
-  //  print(summary.toString());
-
-       final preparation = OrderPreparationModel.fromMap(data);
+      final preparation = OrderPreparationModel.fromMap(data);
 
       return right(preparation);
     } on DioException catch (e) {

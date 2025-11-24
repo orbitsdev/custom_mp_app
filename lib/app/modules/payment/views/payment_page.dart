@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:get/get.dart';
 
-class PaymentWebviewPage extends StatelessWidget {
-  const PaymentWebviewPage({super.key});
+class PaymentPage extends StatelessWidget {
+  const PaymentPage({super.key});
 
   @override
   Widget build(BuildContext context) {
