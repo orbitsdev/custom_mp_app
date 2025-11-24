@@ -7,8 +7,23 @@ import 'package:custom_mp_app/app/modules/myprofile/widgets/setting_navigation.d
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class MyProfilePage extends StatelessWidget {
+class MyProfilePage extends StatefulWidget {
   const MyProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<MyProfilePage> createState() => _MyProfilePageState();
+}
+
+class _MyProfilePageState extends State<MyProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+    // Auto-refresh order counts if stale (older than 5 minutes)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final profileController = Get.find<ProfileController>();
+      profileController.checkAndRefresh();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -16,10 +16,23 @@ class ProfileController extends GetxController {
 
   final isLoadingOrderCounts = false.obs;
 
+  // Track last fetch time for smart refreshing
+  DateTime? _lastFetchTime;
+
+  // Refresh interval (5 minutes)
+  static const _refreshInterval = Duration(minutes: 5);
+
   @override
   void onInit() {
     super.onInit();
     fetchOrderCounts();
+  }
+
+  /// Check if data needs refresh (called when profile page is opened)
+  Future<void> checkAndRefresh() async {
+    if (_lastFetchTime == null || DateTime.now().difference(_lastFetchTime!) > _refreshInterval) {
+      await fetchOrderCounts();
+    }
   }
 
   /// Fetch order counts for each status
@@ -33,6 +46,9 @@ class ProfileController extends GetxController {
       _fetchCountForStatus(OrderStatus.outForDelivery, toReceiveCount),
       _fetchCountForStatus(OrderStatus.delivered, completedCount),
     ]);
+
+    // Update last fetch time
+    _lastFetchTime = DateTime.now();
 
     isLoadingOrderCounts.value = false;
   }

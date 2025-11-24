@@ -22,7 +22,9 @@ class HomeBinding extends Bindings {
     // Global State Controllers
     Get.put<CartController>(CartController(), permanent: true);
     Get.put<OrdersController>(OrdersController(), permanent: true);
-    Get.put<ProfileController>(ProfileController(), permanent: true);
+
+    // ProfileController - lazy loaded, will fetch fresh data each time profile is opened
+    Get.lazyPut<ProfileController>(() => ProfileController());
 
     // Repositories
     Get.put<PSGCRepository>(PSGCRepository(), permanent: true);
