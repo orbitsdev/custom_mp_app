@@ -3,7 +3,9 @@
     "allow": [
       "WebFetch(domain:dev.avantefoods.com)",
       "Bash(curl:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter build:*)"
     ],
     "deny": [],
     "ask": []

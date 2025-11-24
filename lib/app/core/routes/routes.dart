@@ -20,6 +20,9 @@ import 'package:custom_mp_app/app/modules/products/bindings/product_binding.dart
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_details_page.dart';
 import 'package:custom_mp_app/app/modules/products/views/product_search_page.dart';
+import 'package:custom_mp_app/app/modules/search/bindings/search_binding.dart';
+import 'package:custom_mp_app/app/modules/search/views/search_page.dart';
+import 'package:custom_mp_app/app/modules/search/views/search_results_page.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/bindings/shipping_address_binding.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/views/create_address_page.dart';
 import 'package:custom_mp_app/app/modules/shippinaddress/views/psgc_select_page.dart';
@@ -39,6 +42,10 @@ class Routes {
   //PRODUCTS
   static const String productSearchPage = '/product-search';
   static const String productDetailsPage = '/product-details';
+
+  //SEARCH
+  static const String searchPage = '/search';
+  static const String searchResultsPage = '/search-results';
 
   //CARTS
   static const String cartPage = '/cart';
@@ -102,6 +109,22 @@ class Routes {
       middlewares: [AuthMiddleware()],
       page: () => ProductSearchPage(),
       // binding: HomeBinding()
+    ),
+
+    // Search pages
+    GetPage(
+      name: Routes.searchPage,
+      middlewares: [AuthMiddleware()],
+      page: () => SearchPage(),
+      binding: SearchBinding(),
+      transition: Transition.cupertino,
+    ),
+
+    GetPage(
+      name: Routes.searchResultsPage,
+      middlewares: [AuthMiddleware()],
+      page: () => SearchResultsPage(),
+      transition: Transition.cupertino,
     ),
 
     //carts

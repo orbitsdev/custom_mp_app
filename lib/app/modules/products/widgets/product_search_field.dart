@@ -42,6 +42,9 @@ class ProductSearchField extends StatelessWidget {
             onTap: () {
               if (onSearchTap != null) {
                 onSearchTap!();
+              } else {
+                // Navigate to search page
+                Get.toNamed(Routes.searchPage);
               }
             },
             child: Container(
