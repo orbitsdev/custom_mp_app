@@ -10,6 +10,7 @@ import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
 import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
 import 'package:custom_mp_app/app/modules/orders/views/orders_page.dart';
+import 'package:custom_mp_app/app/modules/orders/views/order_detail_page.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/bindings/order_preparation_binding.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/views/order_preparation_page.dart';
 import 'package:custom_mp_app/app/modules/payment/bindings/payment_binding.dart';
@@ -60,6 +61,7 @@ class Routes {
 
   //ORDERS
   static const String ordersPage = '/orders';
+  static const String orderDetailPage = '/order-detail';
 
 
 
@@ -152,6 +154,12 @@ class Routes {
       name: Routes.ordesrPage,
       middlewares: [AuthMiddleware()],
       page: () => const OrdersPage(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.orderDetailPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const OrderDetailPage(),
       transition: Transition.cupertino,
     ),
   ];

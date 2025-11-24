@@ -1,6 +1,8 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/global/widgets/image/online_image.dart';
+import 'package:custom_mp_app/app/global/widgets/progress/shimmer_widget.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
+import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
@@ -12,6 +14,15 @@ class AccountInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authController = Get.find<AuthController>();
+
+    return Obx(() => _buildContent(authController));
+  }
+
+  Widget _buildContent(AuthController authController) {
+    final isLoading = authController.isLoading.value;
+    final user = authController.user.value;
+
     return ToSliver(
       child: Container(
         padding: EdgeInsets.only(left: 16, right: 16, top: 16),
@@ -51,28 +62,46 @@ class AccountInformation extends StatelessWidget {
                         ),
                         SizedBox(width: 24),
 
-                        // Replaced Gap with SizedBox
+                        // User info
                         Flexible(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text(
-                                    '',
-                                    style: Get.textTheme.titleMedium?.copyWith(
-                                      color: Colors.white,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  )
-                              ,Text(
-                                    '',
-                                    style: Get.textTheme.titleMedium?.copyWith(
-                                      color: Colors.white,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  )
+                              // Name
+                              if (isLoading || user == null)
+                                ShimmerWidget(
+                                  width: 150,
+                                  height: 18,
+                                  borderRadius: BorderRadius.circular(4),
+                                )
+                              else
+                                Text(
+                                  user.name ?? 'User',
+                                  style: Get.textTheme.titleMedium?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              const SizedBox(height: 4),
+                              // Email
+                              if (isLoading || user == null)
+                                ShimmerWidget(
+                                  width: 200,
+                                  height: 14,
+                                  borderRadius: BorderRadius.circular(4),
+                                )
+                              else
+                                Text(
+                                  user.email ?? '',
+                                  style: Get.textTheme.bodySmall?.copyWith(
+                                    color: Colors.white.withOpacity(0.85),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                             ],
                           ),
                         ),

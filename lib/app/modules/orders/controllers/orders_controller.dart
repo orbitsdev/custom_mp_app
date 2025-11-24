@@ -1,9 +1,11 @@
 import 'package:custom_mp_app/app/core/enums/order_status.dart';
+import 'package:custom_mp_app/app/data/models/errror/failure_model.dart';
 import 'package:custom_mp_app/app/data/models/orders/order_model.dart';
 import 'package:custom_mp_app/app/data/models/orders/order_pagination_model.dart';
 import 'package:custom_mp_app/app/data/repositories/order_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:get/get.dart';
 
 class OrdersController extends GetxController {
@@ -154,4 +156,14 @@ class OrdersController extends GetxController {
           order.orderStatus == OrderStatus.pending ||
           order.orderStatus == OrderStatus.placed)
       .toList();
+
+  /// Fetch orders by specific status (for tab pages)
+  Future<Either<FailureModel, Map<String, dynamic>>> fetchOrdersByStatus({
+    OrderStatus? status,
+    int page = 1,
+  }) async {
+    return status == null
+        ? await _orderRepo.fetchAllOrders(page: page)
+        : await _orderRepo.fetchOrders(page: page, orderStatus: status);
+  }
 }

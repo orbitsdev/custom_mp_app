@@ -15,12 +15,11 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.zero,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.shade200, width: 1),
+        border: Border.all(color: Colors.grey.shade200, width: 1),
       ),
       child: InkWell(
         onTap: onTap,
@@ -61,16 +60,14 @@ class OrderCard extends StatelessWidget {
                 '${order.itemCount} item${order.itemCount > 1 ? 's' : ''}',
               ),
               const SizedBox(height: 6),
-              if (order.deliveryType == 'delivery')
-                _buildInfoRow(
-                  Icons.location_on_outlined,
-                  order.deliveryAddress,
-                  maxLines: 1,
-                ),
+              // Delivery/Pickup Info
+              if (order.deliveryType == 'delivery' &&
+                  order.shippingAddressSnapshot != null)
+                _buildAddressInfo(order.shippingAddressSnapshot!),
               if (order.deliveryType == 'pickup')
                 _buildInfoRow(
                   Icons.store_outlined,
-                  'Pickup',
+                  'Pickup at Store',
                 ),
               const SizedBox(height: 12),
 
@@ -145,6 +142,56 @@ class OrderCard extends StatelessWidget {
             overflow: maxLines != null ? TextOverflow.ellipsis : null,
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildAddressInfo(Map<String, dynamic> address) {
+    final addressParts = [
+      address['address'],
+      address['city'],
+      address['zipcode'],
+    ].where((part) => part != null && part.toString().isNotEmpty).toList();
+
+    final fullAddress = addressParts.join(', ');
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.location_on_outlined,
+                size: 16, color: Colors.grey.shade600),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                address['name'] ?? 'Recipient',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey.shade800,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        if (fullAddress.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Padding(
+            padding: const EdgeInsets.only(left: 24),
+            child: Text(
+              fullAddress,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey.shade600,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ],
     );
   }
