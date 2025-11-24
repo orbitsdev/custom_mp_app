@@ -1,13 +1,14 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/global/widgets/image/online_image.dart';
 import 'package:custom_mp_app/app/global/widgets/progress/shimmer_widget.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
 import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
+import 'package:custom_mp_app/app/modules/cart/widgets/cart_badge.dart';
+import 'package:custom_mp_app/app/modules/notifications/widgets/notification_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
-
-import '../../notification/widgets/notifcation_badge.dart' show NotificationBadge;
 
 class AccountInformation extends StatelessWidget {
   const AccountInformation({Key? key}) : super(key: key);
@@ -110,18 +111,41 @@ class AccountInformation extends StatelessWidget {
                   ),
                   Row(
                     children: [
+                      // Notification Badge
                       NotificationBadge(
-                        icon: HeroIcon(
-                          HeroIcons.cog6Tooth,
-                          color: AppColors.textDark,
-                          size: 28,
-                        ),
-                        value: 0,
-                        action: () {
-                    
-                        },
+                        badgeColor: AppColors.error,
+                        textColor: Colors.white,
+                        iconColor: Colors.white,
+                        onTap: () => Get.toNamed(Routes.notificationsPage),
                       ),
 
+                      // Cart Badge
+                      CartBadge(
+                        badgeColor: AppColors.error,
+                        textColor: Colors.white,
+                        iconColor: Colors.white,
+                        onTap: () => Get.toNamed(Routes.cartPage),
+                      ),
+
+                      // Settings Button
+                      IconButton(
+                        icon: HeroIcon(
+                          HeroIcons.cog6Tooth,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        onPressed: () {
+                          // TODO: Navigate to settings page
+                          Get.snackbar(
+                            'Settings',
+                            'Settings page coming soon!',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: AppColors.brand,
+                            colorText: Colors.white,
+                            margin: EdgeInsets.all(16),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ],
