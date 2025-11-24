@@ -1,7 +1,15 @@
 import 'package:get/get.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/data/repositories/product_repository.dart';
-import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+import 'package:custom_mp_app/app/data/repositories/product_query_params.dart';
+import 'package:custom_mp_app/app/data/models/products/product_pagination_response.dart';
+
+/// Product Controller with flexible filtering and pagination
+///
+/// Supports all ProductRepository capabilities:
+/// - Search, filter by category, price range, status
+/// - Multiple sorting options
+/// - Pagination with load more
 class ProductController extends GetxController {
   final ProductRepository _repo = ProductRepository();
 
@@ -13,6 +21,9 @@ class ProductController extends GetxController {
   bool isLoading = false;
   bool isLoadingMore = false;
 
+  // Current query parameters
+  ProductQueryParams _currentParams = ProductQueryParams.all();
+
   bool get hasMore => currentPage < lastPage;
 
   @override
@@ -21,42 +32,153 @@ class ProductController extends GetxController {
     fetchProducts();
   }
 
-  Future<void> fetchProducts() async {
+  /// Fetch products with optional filters
+  ///
+  /// **Examples:**
+  /// ```dart
+  /// // Get all products
+  /// fetchProducts();
+  ///
+  /// // Search products
+  /// fetchProducts(params: ProductQueryParams.search('coconut'));
+  ///
+  /// // Filter by category
+  /// fetchProducts(params: ProductQueryParams.byCategory([1]));
+  ///
+  /// // Custom filters
+  /// fetchProducts(params: ProductQueryParams(
+  ///   search: 'coffee',
+  ///   priceMin: 10,
+  ///   priceMax: 50,
+  ///   sortBy: ProductSortOption.priceLowToHigh,
+  /// ));
+  /// ```
+  Future<void> fetchProducts({ProductQueryParams? params}) async {
     isLoading = true;
-     isLoadingMore = false;   // <-- IMPORTANT for refresh
-  currentPage = 1;  
+    isLoadingMore = false;  // Reset load more state
+    currentPage = 1;
     update();
 
-    final result = await _repo.fetchProducts(page: 1);
+    // Use provided params or default
+    _currentParams = params ?? ProductQueryParams.all();
 
-    result.fold((failure) {
-      products.clear();
-    }, (pagination) {
-      products = pagination.items;
-      currentPage = pagination.currentPage;
-      lastPage = pagination.lastPage;
-    });
+    final result = await _repo.fetchProducts(params: _currentParams);
+
+    result.fold(
+      (failure) {
+        products.clear();
+        print('❌ Failed to fetch products: ${failure.message}');
+      },
+      (pagination) {
+        products = pagination.items;
+        currentPage = pagination.currentPage;
+        lastPage = pagination.lastPage;
+        print('✅ Loaded ${pagination.items.length} products (page $currentPage/$lastPage)');
+      },
+    );
 
     isLoading = false;
     update();
   }
 
+  /// Load next page of products
+  ///
+  /// Uses the same filters/sorting as the current query
   Future<void> loadMore() async {
     if (!hasMore || isLoadingMore) return;
 
     isLoadingMore = true;
     update();
 
+    // Load next page with same parameters
     final nextPage = currentPage + 1;
-    final result = await _repo.fetchProducts(page: nextPage);
+    final nextParams = _currentParams.copyWith(page: nextPage);
 
-    result.fold((failure) {}, (pagination) {
-      products.addAll(pagination.items);
-      currentPage = pagination.currentPage;
-    });
+    final result = await _repo.fetchProducts(params: nextParams);
+
+    result.fold(
+      (failure) {
+        print('❌ Failed to load more: ${failure.message}');
+      },
+      (pagination) {
+        products.addAll(pagination.items);
+        currentPage = pagination.currentPage;
+        print('✅ Loaded ${pagination.items.length} more products');
+      },
+    );
 
     isLoadingMore = false;
     update();
+  }
+
+  /// Refresh products (pull to refresh)
+  Future<void> refreshProducts() async {
+    await fetchProducts(params: _currentParams.copyWith(page: 1));
+  }
+
+  // ==================== Convenience Methods ====================
+
+  /// Search products by keyword
+  Future<void> searchProducts(String keyword) async {
+    await fetchProducts(params: ProductQueryParams.search(keyword));
+  }
+
+  /// Filter by category
+  Future<void> filterByCategory(List<int> categoryIds) async {
+    await fetchProducts(params: ProductQueryParams.byCategory(categoryIds));
+  }
+
+  /// Get featured products
+  Future<void> fetchFeaturedProducts() async {
+    await fetchProducts(params: ProductQueryParams.featured());
+  }
+
+  /// Get best sellers
+  Future<void> fetchBestSellers() async {
+    await fetchProducts(params: ProductQueryParams.bestSellers());
+  }
+
+  /// Filter by price range
+  Future<void> filterByPrice(double min, double max) async {
+    await fetchProducts(params: ProductQueryParams.priceRange(min, max));
+  }
+
+  /// Sort products
+  Future<void> sortProducts(ProductSortOption sortBy) async {
+    await fetchProducts(
+      params: _currentParams.copyWith(sortBy: sortBy, page: 1),
+    );
+  }
+
+  /// Apply custom filters
+  Future<void> applyFilters({
+    String? search,
+    List<int>? categoryIds,
+    double? priceMin,
+    double? priceMax,
+    bool? isFeatured,
+    bool? isBestSeller,
+    bool? inStock,
+    ProductSortOption? sortBy,
+  }) async {
+    await fetchProducts(
+      params: ProductQueryParams(
+        search: search,
+        categoryIds: categoryIds,
+        priceMin: priceMin,
+        priceMax: priceMax,
+        isFeatured: isFeatured,
+        isBestSeller: isBestSeller,
+        inStock: inStock,
+        sortBy: sortBy,
+        includes: ProductIncludes.basic,
+      ),
+    );
+  }
+
+  /// Clear all filters and get all products
+  Future<void> clearFilters() async {
+    await fetchProducts(params: ProductQueryParams.all());
   }
 }
 
