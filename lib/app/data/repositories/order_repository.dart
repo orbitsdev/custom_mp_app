@@ -56,15 +56,23 @@ class OrderRepository {
         queryParameters: queryParams,
       );
 
-        final data = response.data['data'];
+      final dataWrapper = response.data['data'];
 
-      // Parse orders list
-      final ordersList = (data['items'] as List)
+      // API returns 'items' array, not 'data'
+      final items = dataWrapper['items'] as List;
+
+      final ordersList = items
           .map((json) => OrderModel.fromMap(json))
           .toList();
 
-      // Parse pagination
-      final pagination = OrderPaginationModel.fromMap(data['pagination']);
+      // Parse pagination from 'pagination' object
+      final paginationData = dataWrapper['pagination'];
+      final pagination = OrderPaginationModel.fromMap({
+        'current_page': paginationData['current_page'],
+        'last_page': paginationData['last_page'],
+        'per_page': paginationData['per_page'],
+        'total': paginationData['total'],
+      });
 
       return right({
         'orders': ordersList,
@@ -121,13 +129,21 @@ class OrderRepository {
         queryParameters: queryParams,
       );
 
-      final data = response.data['data'];
+      final dataWrapper = response.data['data'];
 
-      final ordersList = (data['items'] as List)
+      // API returns 'items' array, not 'data'
+      final ordersList = (dataWrapper['items'] as List)
           .map((json) => OrderModel.fromMap(json))
           .toList();
 
-      final pagination = OrderPaginationModel.fromMap(data['pagination']);
+      // Parse pagination from 'pagination' object
+      final paginationData = dataWrapper['pagination'];
+      final pagination = OrderPaginationModel.fromMap({
+        'current_page': paginationData['current_page'],
+        'last_page': paginationData['last_page'],
+        'per_page': paginationData['per_page'],
+        'total': paginationData['total'],
+      });
 
       return right({
         'orders': ordersList,

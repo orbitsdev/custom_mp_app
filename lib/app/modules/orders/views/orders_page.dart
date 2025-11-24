@@ -5,6 +5,7 @@ import 'package:custom_mp_app/app/modules/orders/views/tabs/completed_orders_tab
 import 'package:custom_mp_app/app/modules/orders/views/tabs/pending_orders_tab.dart';
 import 'package:custom_mp_app/app/modules/orders/views/tabs/to_receive_orders_tab.dart';
 import 'package:custom_mp_app/app/modules/orders/views/tabs/to_ship_orders_tab.dart';
+import 'package:custom_mp_app/app/modules/orders/widgets/order_custom_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -71,20 +72,24 @@ class _OrdersPageState extends State<OrdersPage>
         bottom: TabBar(
           controller: tabController,
           isScrollable: true,
-          indicatorColor: AppColors.brandDark,
-          indicatorWeight: 3,
-          labelColor: AppColors.brandDark,
-          unselectedLabelColor: Colors.grey.shade600,
-          labelStyle: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 14,
-          ),
-          unselectedLabelStyle: const TextStyle(
-            fontWeight: FontWeight.normal,
-            fontSize: 14,
-          ),
+          dividerColor: Colors.transparent,
+            indicator: OrderCustomUnderlineTabIndicator(
+              color: AppColors.orange,
+            ),
+            indicatorSize: TabBarIndicatorSize.label,
+            indicatorColor: AppColors.orange,
+           
+            labelColor: AppColors.orange,
+            tabAlignment: TabAlignment.start,
+          
+            unselectedLabelStyle: Get.textTheme.bodyMedium!.copyWith(
+              height: 0,
+            ),
+            labelStyle: Get.textTheme.bodyLarge!.copyWith(
+              height: 0,
+            ),
           tabs: const [
-            Tab(text: 'Pending'),
+            Tab(text: 'To Pay'),
             Tab(text: 'To Ship'),
             Tab(text: 'To Receive'),
             Tab(text: 'Completed'),

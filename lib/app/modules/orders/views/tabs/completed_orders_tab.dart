@@ -8,9 +8,9 @@ class CompletedOrdersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const BaseOrdersTab(
-      orderStatus: OrderStatus.completed,
+      orderStatus: OrderStatus.delivered,
       emptyTitle: 'No Completed Orders',
-      emptySubtitle: 'Your completed orders will appear here',
+      emptySubtitle: 'Your delivered orders will appear here',
     );
   }
 }

@@ -41,29 +41,47 @@ class OrderModel {
   });
 
   factory OrderModel.fromMap(Map<String, dynamic> map) {
-    return OrderModel(
-      id: map['id'] ?? 0,
-      orderReferenceId: map['order_reference_id'] ?? '',
-      orderStatus: OrderStatus.fromString(map['order_status'] ?? 'pending'),
-      paymentType: map['payment_type'] ?? '',
-      paymentMethodUsed: map['payment_method_used'],
-      deliveryType: map['delivery_type'] ?? '',
-      paidAt: map['paid_at'],
-      isActive: map['is_active'] ?? true,
-      totalPrice: map['total_price'] ?? 0,
-      totalItemPrice: map['total_item_price'] ?? 0,
-      shippingFee: map['shipping_fee'] ?? 0,
-      orderedAt: map['ordered_at'] != null
-          ? OrderDateModel.fromMap(map['ordered_at'])
-          : null,
-      createdAt: OrderDateModel.fromMap(map['created_at'] ?? {}),
-      updatedAt: OrderDateModel.fromMap(map['updated_at'] ?? {}),
-      shippingAddressSnapshot: map['shipping_address_snapshot'],
-      cartItemsSnapshot: map['cart_items_snapshot'] != null
-          ? List<Map<String, dynamic>>.from(map['cart_items_snapshot'])
-          : [],
-      packageSnapshot: map['package_snapshot'],
-    );
+    try {
+      return OrderModel(
+        id: map['id'] ?? 0,
+        orderReferenceId: map['order_reference_id'] ?? '',
+        orderStatus: OrderStatus.fromString(map['order_status'] ?? 'pending'),
+        paymentType: map['payment_type'] ?? '',
+        paymentMethodUsed: map['payment_method_used'],
+        deliveryType: map['delivery_type'] ?? '',
+        paidAt: map['paid_at'],
+        isActive: map['is_active'] ?? true,
+        totalPrice: _parseNumeric(map['total_price']),
+        totalItemPrice: _parseNumeric(map['total_item_price']),
+        shippingFee: _parseNumeric(map['shipping_fee']),
+        orderedAt: map['ordered_at'] != null
+            ? OrderDateModel.fromMap(map['ordered_at'])
+            : null,
+        createdAt: OrderDateModel.fromMap(map['created_at'] ?? {}),
+        updatedAt: OrderDateModel.fromMap(map['updated_at'] ?? {}),
+        shippingAddressSnapshot: map['shipping_address_snapshot'],
+        cartItemsSnapshot: map['cart_items_snapshot'] != null
+            ? List<Map<String, dynamic>>.from(map['cart_items_snapshot'])
+            : [],
+        packageSnapshot: map['package_snapshot'],
+      );
+    } catch (e, stackTrace) {
+      print('❌ [OrderModel] Error parsing order:');
+      print('Map data: $map');
+      print('Error: $e');
+      print('Stack trace: $stackTrace');
+      rethrow;
+    }
+  }
+
+  /// Helper method to safely parse numeric values from various types
+  static num _parseNumeric(dynamic value) {
+    if (value == null) return 0;
+    if (value is num) return value;
+    if (value is String) {
+      return num.tryParse(value) ?? 0;
+    }
+    return 0;
   }
 
   Map<String, dynamic> toMap() {

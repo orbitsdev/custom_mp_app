@@ -8,7 +8,7 @@ class ToShipOrdersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const BaseOrdersTab(
-      orderStatus: OrderStatus.preparing,
+      orderStatus: OrderStatus.processing,
       emptyTitle: 'No Orders To Ship',
       emptySubtitle: 'Orders being prepared will appear here',
     );

@@ -10,7 +10,7 @@ class ToReceiveOrdersTab extends StatelessWidget {
     return const BaseOrdersTab(
       orderStatus: OrderStatus.outForDelivery,
       emptyTitle: 'No Orders To Receive',
-      emptySubtitle: 'Orders out for delivery will appear here',
+      emptySubtitle: 'Orders being shipped will appear here',
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/orders/order_model.dart';
 import 'package:custom_mp_app/app/modules/orders/controllers/orders_controller.dart';
 import 'package:custom_mp_app/app/modules/orders/widgets/order_card.dart';
+import 'package:custom_mp_app/app/modules/orders/widgets/order_loading_card.dart';
 import 'package:custom_mp_app/app/modules/orders/widgets/orders_empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -141,8 +142,10 @@ class _BaseOrdersTabState extends State<BaseOrdersTab>
     super.build(context);
 
     if (isInitialLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: AppColors.brandDark),
+      return CustomScrollView(
+        slivers: [
+          const OrderLoadingCard(itemCount: 5),
+        ],
       );
     }
 

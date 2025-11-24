@@ -94,7 +94,9 @@ Future<void> autoLogin() async {
       } else {
         // Other backend errors - keep cached user
         print('⚠️ Backend error - keeping cached user data');
-        AppToast.error('Failed to sync user data: ${failure.message}');
+        print('Backend error details: ${failure.message}');
+        // Show user-friendly error instead of technical backend error
+        AppToast.error('Unable to sync data. Using cached information. ${failure.message}', );
       }
     },
     (userData) {

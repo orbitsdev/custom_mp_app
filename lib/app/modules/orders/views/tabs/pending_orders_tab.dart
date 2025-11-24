@@ -8,9 +8,9 @@ class PendingOrdersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const BaseOrdersTab(
-      orderStatus: OrderStatus.pending,
-      emptyTitle: 'No Pending Orders',
-      emptySubtitle: 'Your pending orders will appear here',
+      orderStatus: OrderStatus.placed,
+      emptyTitle: 'No Orders To Pay',
+      emptySubtitle: 'Orders waiting for payment will appear here',
     );
   }
 }
