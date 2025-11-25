@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/category/category_model.dart';
 import 'package:custom_mp_app/app/global/widgets/progress/shimmer_widget.dart';
@@ -57,7 +58,11 @@ class CategoryHorizontalList extends StatelessWidget {
 
             return GestureDetector(
               onTap: () {
-                // TODO: Navigate to product-by-category page
+                // Navigate to category products page
+                Get.toNamed(
+                  Routes.categoryProductsPage,
+                  arguments: category,
+                );
               },
               child: Container(
                 width: 120,
