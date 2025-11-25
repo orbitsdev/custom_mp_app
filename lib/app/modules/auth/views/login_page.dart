@@ -108,7 +108,7 @@ class LoginPage extends StatelessWidget {
                             const Label(text: 'Password'),
                             const Gap(6),
                             FormBuilderTextField(
-                              initialValue: '@Password2!!',
+                              initialValue: 'password',
                               style: Get.textTheme.bodyMedium!
                                   .copyWith(color: AppColors.textDark),
                               name: 'password',

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "807229341646",
+    "project_id": "avantefoods-ce668",
+    "storage_bucket": "avantefoods-ce668.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807229341646:android:a87da273b07bd7727b759f",
+        "android_client_info": {
+          "package_name": "com.avantefoods.customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzwSyRATqUQnY6cR4XOYtRY8e7uHyZHec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
