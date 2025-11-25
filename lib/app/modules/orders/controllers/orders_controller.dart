@@ -27,6 +27,24 @@ class OrdersController extends GetxController {
   // Scroll controller for infinite scroll
   final ScrollController scrollController = ScrollController();
 
+  // Cache management - Track last fetch time for each tab
+  final Map<String, DateTime> _lastFetchTimes = {};
+  final Map<String, List<OrderModel>> _ordersCache = {};
+  final Map<String, OrderPaginationModel?> _paginationCache = {};
+
+  // Cache validity duration
+  // 15s = More API calls but fresher (Shopee-like)
+  // 30s = Balanced (Current - Recommended)
+  // 60s = Fewer API calls but less fresh
+  static const _cacheValidityDuration = Duration(seconds: 15); // Shopee-like feel
+
+  // Order counts (synchronized with actual orders)
+  final toPayCount = 0.obs;
+  final toShipCount = 0.obs;
+  final toReceiveCount = 0.obs;
+  final completedCount = 0.obs;
+  final cancelledCount = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -158,12 +176,112 @@ class OrdersController extends GetxController {
       .toList();
 
   /// Fetch orders by specific status (for tab pages)
+  /// Now with smart caching and automatic count updates
   Future<Either<FailureModel, Map<String, dynamic>>> fetchOrdersByStatus({
     OrderStatus? status,
     int page = 1,
+    bool forceRefresh = false,
   }) async {
-    return status == null
+    final cacheKey = _getCacheKey(status);
+
+    // Check cache validity
+    if (!forceRefresh && page == 1 && _isCacheValid(cacheKey)) {
+      // Return cached data
+      return right({
+        'orders': _ordersCache[cacheKey] ?? [],
+        'pagination': _paginationCache[cacheKey],
+      });
+    }
+
+    // Fetch fresh data
+    final result = status == null
         ? await _orderRepo.fetchAllOrders(page: page)
         : await _orderRepo.fetchOrders(page: page, orderStatus: status);
+
+    // Update cache and counts if successful
+    result.fold(
+      (_) {}, // On failure, do nothing
+      (data) {
+        if (page == 1) {
+          // Update cache for first page
+          _ordersCache[cacheKey] = data['orders'] as List<OrderModel>;
+          _paginationCache[cacheKey] = data['pagination'] as OrderPaginationModel?;
+          _lastFetchTimes[cacheKey] = DateTime.now();
+
+          // Update counts from pagination
+          _updateCountFromPagination(status, data['pagination']);
+        }
+      },
+    );
+
+    return result;
+  }
+
+  /// Get cache key for a specific status
+  String _getCacheKey(OrderStatus? status) {
+    return status?.value ?? 'all';
+  }
+
+  /// Check if cache is still valid
+  bool _isCacheValid(String cacheKey) {
+    final lastFetch = _lastFetchTimes[cacheKey];
+    if (lastFetch == null) return false;
+
+    final age = DateTime.now().difference(lastFetch);
+    return age < _cacheValidityDuration;
+  }
+
+  /// Update order count based on pagination data
+  void _updateCountFromPagination(OrderStatus? status, OrderPaginationModel? pagination) {
+    if (pagination == null) return;
+
+    final count = pagination.total ?? 0;
+
+    switch (status) {
+      case OrderStatus.placed:
+        toPayCount.value = count;
+        break;
+      case OrderStatus.processing:
+        toShipCount.value = count;
+        break;
+      case OrderStatus.outForDelivery:
+        toReceiveCount.value = count;
+        break;
+      case OrderStatus.delivered:
+      case OrderStatus.completed:
+        completedCount.value = count;
+        break;
+      case OrderStatus.canceled:
+        cancelledCount.value = count;
+        break;
+      default:
+        break;
+    }
+  }
+
+  /// Invalidate cache for a specific status (call after order status changes)
+  void invalidateCache(OrderStatus? status) {
+    final cacheKey = _getCacheKey(status);
+    _lastFetchTimes.remove(cacheKey);
+    _ordersCache.remove(cacheKey);
+    _paginationCache.remove(cacheKey);
+  }
+
+  /// Invalidate all caches (call after major changes)
+  void invalidateAllCaches() {
+    _lastFetchTimes.clear();
+    _ordersCache.clear();
+    _paginationCache.clear();
+  }
+
+  /// Refresh all order counts (for profile page)
+  Future<void> refreshAllCounts() async {
+    await Future.wait([
+      fetchOrdersByStatus(status: OrderStatus.placed, forceRefresh: true),
+      fetchOrdersByStatus(status: OrderStatus.processing, forceRefresh: true),
+      fetchOrdersByStatus(status: OrderStatus.outForDelivery, forceRefresh: true),
+      fetchOrdersByStatus(status: OrderStatus.delivered, forceRefresh: true),
+      fetchOrdersByStatus(status: OrderStatus.canceled, forceRefresh: true),
+    ]);
   }
 }

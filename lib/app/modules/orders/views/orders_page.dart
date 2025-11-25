@@ -47,6 +47,38 @@ class _OrdersPageState extends State<OrdersPage>
       vsync: this,
       initialIndex: initialTab,
     );
+
+    // Listen to tab changes and refresh data
+    tabController.addListener(_onTabChanged);
+  }
+
+  void _onTabChanged() {
+    if (!tabController.indexIsChanging) {
+      // Tab animation completed, user switched to a new tab
+      // Force refresh the current tab's data by invalidating cache
+      final currentIndex = tabController.index;
+      final OrderStatus? status = _getStatusForTabIndex(currentIndex);
+
+      // Invalidate cache to force fresh data on next fetch
+      controller.invalidateCache(status);
+    }
+  }
+
+  OrderStatus? _getStatusForTabIndex(int index) {
+    switch (index) {
+      case 0:
+        return OrderStatus.placed;
+      case 1:
+        return OrderStatus.processing;
+      case 2:
+        return OrderStatus.outForDelivery;
+      case 3:
+        return OrderStatus.delivered;
+      case 4:
+        return OrderStatus.canceled;
+      default:
+        return null;
+    }
   }
 
   @override

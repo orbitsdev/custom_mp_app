@@ -1,6 +1,7 @@
 import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
+import 'package:custom_mp_app/app/modules/orders/controllers/orders_controller.dart';
 import 'package:custom_mp_app/app/modules/myprofile/controllers/profile_controller.dart';
 import 'package:custom_mp_app/app/modules/myprofile/widgets/order_summary_button.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +16,14 @@ class OrdersStatusSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profileController = Get.find<ProfileController>();
+    final ordersController = Get.find<OrdersController>();
 
     return Obx(() {
       final isLoading = profileController.isLoadingOrderCounts.value;
-      final toPayCount = profileController.toPayCount.value;
-      final toShipCount = profileController.toShipCount.value;
-      final toReceiveCount = profileController.toReceiveCount.value;
+      // Get counts directly from OrdersController (single source of truth)
+      final toPayCount = ordersController.toPayCount.value;
+      final toShipCount = ordersController.toShipCount.value;
+      final toReceiveCount = ordersController.toReceiveCount.value;
 
       return MultiSliver(
         children: [

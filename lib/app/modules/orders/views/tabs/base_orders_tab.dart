@@ -27,7 +27,7 @@ class BaseOrdersTab extends StatefulWidget {
 }
 
 class _BaseOrdersTabState extends State<BaseOrdersTab>
-    with AutomaticKeepAliveClientMixin {
+    with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
   final controller = Get.find<OrdersController>();
   late ScrollController scrollController;
 
@@ -37,6 +37,10 @@ class _BaseOrdersTabState extends State<BaseOrdersTab>
   int currentPage = 1;
   List<OrderModel> orders = [];
 
+  // Track if tab has been visible before
+  bool _hasBeenVisible = false;
+  DateTime? _lastVisibleTime;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -45,13 +49,29 @@ class _BaseOrdersTabState extends State<BaseOrdersTab>
     super.initState();
     scrollController = ScrollController();
     scrollController.addListener(_scrollListener);
+    WidgetsBinding.instance.addObserver(this);
     _fetchOrders();
+    _hasBeenVisible = true;
+    _lastVisibleTime = DateTime.now();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Refresh when app comes back to foreground
+    if (state == AppLifecycleState.resumed && _hasBeenVisible) {
+      final now = DateTime.now();
+      if (_lastVisibleTime != null &&
+          now.difference(_lastVisibleTime!) > const Duration(seconds: 30)) {
+        _fetchOrders();
+      }
+    }
   }
 
   void _scrollListener() {
