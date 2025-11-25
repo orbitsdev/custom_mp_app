@@ -49,12 +49,7 @@ class SettingNavigation extends StatelessWidget {
           content: "View and edit your profile information",
           showIcon: true,
           function: () {
-            // TODO: Navigate to account edit page
-            Get.snackbar(
-              'Coming Soon',
-              'Account editing will be available soon',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            Get.toNamed(Routes.profileUpdatePage);
           },
         ),
 

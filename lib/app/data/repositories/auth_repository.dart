@@ -111,4 +111,85 @@ class AuthRepository {
       return left(FailureModel.manual('Unexpected error: $e'));
     }
   }
+
+  /// Update user profile details
+  /// Accepts any combination of fields:
+  /// - name, email, password, password_confirmation
+  /// - account_information.full_name, phone_number, gender, date_of_birth
+  EitherModel<UserModel> updateUserDetails(Map<String, dynamic> body) async {
+    try {
+      final dio = await DioClient.auth;
+      final response = await dio.patch('profile/details', data: body);
+
+      final data = response.data['data'];
+      final user = UserModel.fromMap(data);
+
+      // Update stored user data
+      await SecureStorageService.saveUser(user.toJson());
+      _getStorage.saveUser(user.toMap());
+
+      return right(user);
+    } on DioException catch (e) {
+      return left(FailureModel.fromDio(e));
+    } catch (e) {
+      return left(FailureModel.manual('Unexpected error: $e'));
+    }
+  }
+
+  /// Upload user avatar with progress tracking
+  /// Returns updated user model with new avatar URL
+  EitherModel<UserModel> uploadAvatar(
+    String filePath, {
+    ProgressCallback? onSendProgress,
+  }) async {
+    try {
+      final dio = await DioClient.auth;
+
+      // Create FormData with the file
+      final formData = FormData.fromMap({
+        'avatar': await MultipartFile.fromFile(filePath),
+      });
+
+      final response = await dio.post(
+        'profile/avatar',
+        data: formData,
+        onSendProgress: onSendProgress,
+      );
+
+      final data = response.data['data'];
+      final user = UserModel.fromMap(data);
+
+      // Update stored user data
+      await SecureStorageService.saveUser(user.toJson());
+      _getStorage.saveUser(user.toMap());
+
+      return right(user);
+    } on DioException catch (e) {
+      return left(FailureModel.fromDio(e));
+    } catch (e) {
+      return left(FailureModel.manual('Unexpected error: $e'));
+    }
+  }
+
+  /// Delete user avatar
+  /// Returns user model with fallback UI Avatars URL
+  EitherModel<UserModel> deleteAvatar() async {
+    try {
+      final dio = await DioClient.auth;
+      final response = await dio.delete('profile/avatar');
+
+      final data = response.data['data'];
+      final user = UserModel.fromMap(data);
+
+      // Update stored user data
+      await SecureStorageService.saveUser(user.toJson());
+      _getStorage.saveUser(user.toMap());
+
+      return right(user);
+    } on DioException catch (e) {
+      return left(FailureModel.fromDio(e));
+    } catch (e) {
+      return left(FailureModel.manual('Unexpected error: $e'));
+    }
+  }
 }

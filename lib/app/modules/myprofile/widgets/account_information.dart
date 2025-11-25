@@ -48,17 +48,25 @@ class AccountInformation extends StatelessWidget {
                     child: Row(
                       children: [
                         GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            Get.toNamed(Routes.profileUpdatePage);
+                          },
                           child: Container(
                             height: 60,
                             width: 60,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            child: OnlineImage(
-                              borderRadius: BorderRadius.circular(100),
-                              imageUrl: 'https://dummyimage.com/300x300/eeeeee/000000&text=No+Image',
-                            ),
+                            child: isLoading || user == null
+                                ? ShimmerWidget(
+                                    width: 60,
+                                    height: 60,
+                                    borderRadius: BorderRadius.circular(100),
+                                  )
+                                : OnlineImage(
+                                    borderRadius: BorderRadius.circular(100),
+                                    imageUrl: user.profilePhotoUrl,
+                                  ),
                           ),
                         ),
                         SizedBox(width: 24),
@@ -135,15 +143,7 @@ class AccountInformation extends StatelessWidget {
                           size: 24,
                         ),
                         onPressed: () {
-                          // TODO: Navigate to settings page
-                          Get.snackbar(
-                            'Settings',
-                            'Settings page coming soon!',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: AppColors.brand,
-                            colorText: Colors.white,
-                            margin: EdgeInsets.all(16),
-                          );
+                          Get.toNamed(Routes.profileUpdatePage);
                         },
                       ),
                     ],
