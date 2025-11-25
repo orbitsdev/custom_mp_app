@@ -1,20 +1,16 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/repositories/product_query_params.dart';
+import 'package:custom_mp_app/app/global/widgets/progress/shimmer_widget.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_card.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_loading_card.dart';
 import 'package:custom_mp_app/app/modules/search/controllers/search_results_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 
-/// Stage 2: Search Results Page
-///
-/// Shows:
-/// - All matching products in grid
-/// - Sorting options
-/// - Load more functionality
-/// - Empty states
+
 class SearchResultsPage extends StatefulWidget {
   const SearchResultsPage({Key? key}) : super(key: key);
 
@@ -63,7 +59,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Search Results',
+                'Search Results ',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -148,23 +144,18 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 ),
               ),
 
-              // Products grid
+              // Products masonry grid (dynamic heights to prevent overflow)
               SliverPadding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverGrid(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.75,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                  ),
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      final product = controller.products[index];
-                      return ProductCard(product: product);
-                    },
-                    childCount: controller.products.length,
-                  ),
+                sliver: SliverAlignedGrid.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  itemCount: controller.products.length,
+                  itemBuilder: (context, index) {
+                    final product = controller.products[index];
+                    return ProductCard(product: product);
+                  },
                 ),
               ),
 
@@ -188,16 +179,60 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   }
 
   Widget _buildLoadingState() {
-    return GridView.builder(
-      padding: EdgeInsets.all(16),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.75,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: EdgeInsets.all(16),
+          sliver: SliverAlignedGrid.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+            itemCount: 6,
+            itemBuilder: (context, index) => _buildSingleLoadingCard(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Single loading card widget (non-sliver) with shimmer animation
+  Widget _buildSingleLoadingCard() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: Colors.white,
       ),
-      itemCount: 6,
-      itemBuilder: (context, index) => ProductLoadingCard(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image placeholder with shimmer
+          ShimmerWidget(
+            height: 150,
+            width: double.infinity,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
+          ),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name placeholder with shimmer
+                ShimmerWidget(
+                  height: 14,
+                  width: double.infinity,
+                ),
+                Gap(8),
+                // Price placeholder with shimmer
+                ShimmerWidget(
+                  height: 14,
+                  width: 80,
+                ),
+                Gap(8),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

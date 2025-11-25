@@ -89,29 +89,41 @@ lib/app/
 
 ## Critical Patterns & Conventions
 
-### 1. Binding Strategy (IMPORTANT!)
+### 1. Binding Strategy (CRITICAL!)
 
-**HomeBinding vs Page Bindings:**
+**Three-Tier Binding System:**
 
-- **HomeBinding** (`home_binding.dart`) - For global/persistent controllers:
-  ```dart
-  Get.put<Controller>(Controller(), permanent: true);
-  ```
-  Use when:
-  - Controller needed across multiple pages
-  - State must persist throughout session
-  - Used for: Auth, Cart, Orders, Profile, Notifications
+1. **AppBinding** (`app_binding.dart`) - App initialization:
+   ```dart
+   Get.put(AuthController(), permanent: true);
+   ```
+   - Loaded before app starts
+   - Only for: AuthController
 
-- **Page Bindings** - For page-specific controllers:
-  ```dart
-  Get.lazyPut<Controller>(() => Controller());
-  ```
-  Use when:
-  - Controller only needed on one page
-  - Should dispose when leaving page
-  - Used for: ProductDetail, Checkout, specific settings
+2. **HomeBinding** (`home_binding.dart`) - Global/persistent controllers:
+   ```dart
+   Get.put<Controller>(Controller(), permanent: true);
+   ```
+   Use when:
+   - Controller needed across multiple pages
+   - State must persist throughout session
+   - Current permanent controllers: HomeController, CategoryController, ProductController, CartController, OrdersController, NotificationController, ShippingAddressController
+   - ProfileController is lazy-loaded (not permanent)
 
-**Rule:** If a controller is already in HomeBinding, do NOT create it in page bindings.
+3. **Page Bindings** - Page-specific controllers:
+   ```dart
+   Get.lazyPut<Controller>(() => Controller());
+   ```
+   Use when:
+   - Controller only needed on one page
+   - Should dispose when leaving page
+   - Examples: ProductBinding, SearchBinding, PaymentBinding
+
+**CRITICAL RULES:**
+- If a controller is in AppBinding or HomeBinding, NEVER create it in page bindings
+- ALL modules must have a binding registered in routes, even if using HomeBinding controllers
+- Use `Get.find<Controller>()` in pages, NOT `Get.put()` manually
+- Manual `Get.put()` without binding causes lifecycle issues and Obx errors
 
 ### 2. API Communication
 
@@ -222,6 +234,13 @@ class MyPage extends StatelessWidget {
 }
 ```
 
+**CRITICAL Obx Rules:**
+- `Obx()` can ONLY observe reactive variables (`.obs` types)
+- If you use `Obx()` in a view, the variable MUST be observable
+- Common mistake: `String searchQuery = ''` with `Obx(() => Text(controller.searchQuery))` → ERROR!
+- Fix: Use `final searchQuery = ''.obs` and access with `controller.searchQuery.value`
+- If a variable doesn't need to be reactive, don't wrap it in `Obx()`
+
 ### 6. Navigation
 
 **Route Navigation:**
@@ -246,6 +265,53 @@ Get.offAllNamed(Routes.loginPage);
 - `AuthMiddleware` - Protects authenticated routes
 - `GuestMiddleware` - Redirects authenticated users away from login/signup
 
+### 6.5. Search Flow Architecture (Professional 3-Page Pattern)
+
+**CRITICAL: Proper Search Navigation**
+
+The search module follows the industry-standard 3-page architecture (Shopee, Lazada, Amazon):
+
+**Page 1: SearchPage** (`/search`)
+- Search input with auto-focus
+- Shows when input is empty:
+  - Search history (persistent, saved in GetStorage)
+  - Popular product suggestions
+- Shows when typing:
+  - Instant search results (text-only list)
+  - Highlighted matching text
+  - Debounced API calls (500ms)
+- **Action:** Click instant result → Navigate to SearchResultsPage with query
+
+**Page 2: SearchResultsPage** (`/search-results`)
+- Full product grid (2 columns)
+- ProductCard with images, prices, ratings
+- Sorting options (price, popularity, etc.)
+- Pagination/infinite scroll
+- Pull-to-refresh
+- **Action:** Click product card → Navigate to ProductDetailsPage
+
+**Page 3: ProductDetailsPage** (`/product-details`)
+- Full product information
+- Add to cart functionality
+
+**❌ WRONG Pattern:**
+```dart
+// DON'T navigate directly to product details from instant search
+onTap: () => Get.toNamed(Routes.productDetailsPage, arguments: product);
+```
+
+**✅ CORRECT Pattern:**
+```dart
+// Navigate to search results page first (shows all matching products in grid)
+onTap: () => controller.executeSearch(query);
+```
+
+**Why This Matters:**
+- Users expect to see all matching products before drilling into one
+- Allows comparison shopping (key for e-commerce)
+- Matches mental model from Shopee, Lazada, Amazon
+- Better conversion rates
+
 ### 7. Order Status Management
 
 **Order Status Flow:**
@@ -254,7 +320,12 @@ Get.offAllNamed(Routes.loginPage);
 3. `out_for_delivery` - In transit (To Receive tab)
 4. `delivered` - Customer received (Completed tab)
 5. `completed` - Finalized
-6. `canceled` - Cancelled orders
+6. `canceled` - Cancelled orders (use American spelling, NOT "cancelled")
+
+**CRITICAL: Enum Naming Convention**
+- Backend API uses American spelling: `"canceled"` (single 'l')
+- Enum constant must match: `OrderStatus.canceled` (NOT cancelled)
+- Always match enum names to backend spelling to avoid switch case mismatches
 
 **Tab Indices:**
 - Tab 0: To Pay (`placed`)
@@ -262,6 +333,13 @@ Get.offAllNamed(Routes.loginPage);
 - Tab 2: To Receive (`out_for_delivery`)
 - Tab 3: Completed (`delivered`)
 - Tab 4: Cancelled (`canceled`)
+
+**OrdersController Caching:**
+- Uses 15-second cache validity (Shopee-like UX)
+- Cache invalidates automatically on tab switch
+- ProfileController references OrdersController counts (single source of truth)
+- Call `invalidateCache(status)` after order status changes
+- Call `refreshAllCounts()` to force refresh all status counts
 
 ### 8. Storage
 
@@ -282,7 +360,37 @@ await SecureStorageService.clearAuthData();
 **GetStorage (get_storage):**
 Used for non-sensitive data like preferences.
 
-### 9. Model Conventions
+### 9. User Feedback Patterns
+
+**Smart Feedback System:**
+Use appropriate feedback mechanism based on action importance:
+
+```dart
+// Critical updates (password, email, account changes)
+AppModal.success(
+  title: 'Password Updated',
+  message: 'Your password has been changed successfully.',
+  onConfirm: () => Get.back(),
+);
+
+// Quick updates (name, avatar, profile fields)
+AppToast.success('Profile updated successfully');
+Get.back();
+
+// Errors - always use modal
+AppModal.error(
+  title: 'Update Failed',
+  message: failure.message,
+);
+```
+
+**Guidelines:**
+- Critical/Security actions → Modal (blocks user attention)
+- Quick updates → Toast (non-intrusive)
+- All errors → Modal (ensures user sees the issue)
+- Confirmations for destructive actions (delete avatar, cancel order)
+
+### 10. Model Conventions
 
 **fromMap/toMap Pattern:**
 ```dart
@@ -313,26 +421,56 @@ class MyModel {
 - Use `Rxn<Type>()` for nullable observables in controllers
 - Check null before accessing nested objects in API responses
 
-## Common Pitfalls
+## Common Pitfalls & Recent Bug Fixes
 
-1. **Don't create controllers in page bindings if they're in HomeBinding**
-   - OrdersController, CartController, ProfileController are permanent
+### Critical Pitfalls
 
-2. **Always use actual API response structure, not documentation**
+1. **❌ Manual Controller Creation Without Binding**
+   - NEVER use `Get.put()` in page initState or build methods
+   - ALWAYS register bindings in routes and use `Get.find()`
+   - Example error: SearchResultsPage manually creating controller → Obx lifecycle errors
+   - Fix: Add SearchBinding to routes, use `Get.find<SearchResultsController>()`
+
+2. **❌ Non-Observable Variables in Obx**
+   - If `Obx()` observes a variable, it MUST be `.obs`
+   - Common mistake: `String searchQuery = ''` → `Obx(() => Text(controller.searchQuery))`
+   - Error: `[Get] the improper use of a GetX has been detected`
+   - Fix: Change to `final searchQuery = ''.obs` and access with `.value`
+
+3. **❌ Enum Spelling Mismatches**
+   - Backend uses American spelling (e.g., "canceled")
+   - Enum constant name must match exactly: `OrderStatus.canceled` NOT `cancelled`
+   - Mismatch causes switch cases to fail silently
+   - Always reference backend API documentation for exact spelling
+
+4. **❌ Duplicate State Sources**
+   - Don't fetch same data in multiple controllers independently
+   - Example: ProfileController and OrdersController both fetching order counts
+   - Fix: Use single source of truth (OrdersController), reference from other controllers
+   - Reduces API calls by 40-50% and keeps data synchronized
+
+5. **❌ Missing Cache Invalidation**
+   - Order tabs keep stale data without refresh on tab switch
+   - Fix: Add tab change listener that calls `controller.invalidateCache(status)`
+   - Implement smart caching (15s validity) instead of fetching every time
+
+### Data Structure Pitfalls
+
+6. **Always use actual API response structure, not documentation**
    - Check actual responses with `curl` or Dio logger
    - API returns `items` not `data` for orders
    - Pagination is in `pagination` not `meta`
 
-3. **Don't use private build methods in large pages**
+7. **Don't use private build methods in large pages**
    - Extract to separate widget files in `widgets/` subdirectory
    - Makes code more maintainable and testable
 
-4. **Media URL handling**
+8. **Media URL handling**
    - Use `original_url` for images from API
    - Check variant media first, then product media
    - Handle empty media arrays gracefully
 
-5. **Never skip error handling in repositories**
+9. **Never skip error handling in repositories**
    - Always return `Either<FailureModel, Success>`
    - Wrap all API calls in try-catch
    - Provide meaningful error messages
@@ -356,8 +494,29 @@ When implementing new features:
 - **get_storage** (^2.1.1) - Local key-value storage
 - **pretty_dio_logger** (^1.4.0) - API request/response logging
 
-## Documentation
+## Documentation & Bug Fix History
 
-- Order API documentation: `documentation/MOBILE_ORDER_API_DOCUMENTATION.md`
+### API Documentation
+- Order API: `documentation/MOBILE_ORDER_API_DOCUMENTATION.md`
 - Always check actual API responses, not just documentation
 - Use Dio logger to inspect real response structures
+
+### Recent Bug Fixes (November 2025)
+Reference these files for detailed fix explanations:
+
+1. **`SEARCH_OBX_BUGFIX.md`** - Search query not observable
+   - Fixed: Made searchQuery reactive in SearchResultsController
+   - Learning: All variables used in Obx must be `.obs`
+
+2. **`ORDERSTATUS_BUGFIX.md`** - Enum spelling mismatch
+   - Fixed: Changed `cancelled` to `canceled` (American spelling)
+   - Learning: Enum names must match backend API exactly
+
+3. **`ORDER_SYNC_IMPROVEMENT.md`** - Order data synchronization
+   - Fixed: Unified state management with OrdersController as single source
+   - Added: 15-second smart caching with automatic invalidation
+   - Learning: Single source of truth pattern prevents data inconsistency
+
+4. **`PROFILE_UPDATE_IMPLEMENTATION.md`** - Profile update UX
+   - Added: Smart feedback system (modals vs toasts)
+   - Learning: Match feedback to action importance

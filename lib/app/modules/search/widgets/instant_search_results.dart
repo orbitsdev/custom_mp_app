@@ -51,12 +51,10 @@ class InstantSearchResults extends StatelessWidget {
   Widget _buildProductNameItem(ProductModel product, String query) {
     return InkWell(
       onTap: () {
-        // Save to history when user clicks
+        // Navigate to search results page with the query
+        // This will show all matching products in a grid (professional UX)
         final controller = ProductSearchController.instance;
         controller.executeSearch(query);
-
-        // Navigate to product detail
-        Get.toNamed(Routes.productDetailsPage, arguments: product);
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
