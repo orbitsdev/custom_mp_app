@@ -21,6 +21,9 @@ class ProductController extends GetxController {
   bool isLoading = false;
   bool isLoadingMore = false;
 
+  // Current sort option (for UI display)
+  final selectedSort = Rxn<ProductSortOption>();
+
   // Current query parameters
   ProductQueryParams _currentParams = ProductQueryParams.all();
 
@@ -148,6 +151,12 @@ class ProductController extends GetxController {
     await fetchProducts(
       params: _currentParams.copyWith(sortBy: sortBy, page: 1),
     );
+  }
+
+  /// Apply sort and update UI state
+  Future<void> applySort(ProductSortOption sort) async {
+    selectedSort.value = sort;
+    await sortProducts(sort);
   }
 
   /// Apply custom filters

@@ -18,8 +18,8 @@ class CategoryHorizontalList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 📱 Define consistent height based on screen size
-    final double listHeight = Get.size.height * 0.23;
+    // 📱 Fixed height for professional appearance (matches Shopee/Lazada)
+    const double listHeight = 110.0;
 
     if (isLoading) {
       // 🔄 Beautiful shimmer loading state
@@ -32,10 +32,10 @@ class CategoryHorizontalList extends StatelessWidget {
             itemCount: 4,
             separatorBuilder: (_, __) => const Gap(12),
             itemBuilder: (context, index) => ShimmerWidget(
-              width: 120,
-              height: listHeight - 10,
+              width: 90,
+              height: 110,
               borderRadius: BorderRadius.circular(12),
-              margin: const EdgeInsets.symmetric(vertical: 6),
+              margin: const EdgeInsets.symmetric(vertical: 0),
             ),
           ),
         ),
@@ -65,7 +65,7 @@ class CategoryHorizontalList extends StatelessWidget {
                 );
               },
               child: Container(
-                width: 120,
+                width: 90,
                 decoration: BoxDecoration(
                   color: hasThumbnail
                       ? Colors.transparent
