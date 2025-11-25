@@ -13,8 +13,8 @@ import 'package:custom_mp_app/app/data/models/products/product_pagination_respon
 class SearchResultsController extends GetxController {
   final ProductRepository _productRepo = ProductRepository();
 
-  // Search query
-  String searchQuery = '';
+  // Search query (observable for reactive UI)
+  final searchQuery = ''.obs;
 
   // Results
   final products = <ProductModel>[].obs;
@@ -37,10 +37,10 @@ class SearchResultsController extends GetxController {
 
     // Get search query from arguments
     if (Get.arguments != null && Get.arguments is Map) {
-      searchQuery = Get.arguments['query'] ?? '';
+      searchQuery.value = Get.arguments['query'] ?? '';
     }
 
-    if (searchQuery.isNotEmpty) {
+    if (searchQuery.value.isNotEmpty) {
       searchProducts();
     }
   }
@@ -51,7 +51,7 @@ class SearchResultsController extends GetxController {
     products.clear();
 
     _currentParams = ProductQueryParams(
-      search: searchQuery,
+      search: searchQuery.value,
       sortBy: selectedSort.value,
       page: 1,
       perPage: 20,
@@ -67,7 +67,7 @@ class SearchResultsController extends GetxController {
       (response) {
         products.value = response.items;
         _currentResponse = response;
-        print('✅ Found ${response.total} products for "$searchQuery"');
+        print('✅ Found ${response.total} products for "${searchQuery.value}"');
       },
     );
 

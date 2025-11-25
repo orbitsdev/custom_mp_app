@@ -30,7 +30,7 @@ class OrderHeaderWidget extends StatelessWidget {
         return 'Order has been delivered';
       case OrderStatus.completed:
         return 'Order completed';
-      case OrderStatus.cancelled:
+      case OrderStatus.canceled:
         return 'Order was cancelled';
       case OrderStatus.returned:
         return 'Order was returned';
@@ -81,7 +81,7 @@ class OrderHeaderWidget extends StatelessWidget {
         return Colors.teal;
       case OrderStatus.completed:
         return Colors.green;
-      case OrderStatus.cancelled:
+      case OrderStatus.canceled:
         return Colors.red;
       case OrderStatus.returned:
         return Colors.brown;
@@ -108,7 +108,7 @@ class OrderHeaderWidget extends StatelessWidget {
         return Icons.home;
       case OrderStatus.completed:
         return Icons.done_all;
-      case OrderStatus.cancelled:
+      case OrderStatus.canceled:
         return Icons.cancel;
       case OrderStatus.returned:
         return Icons.assignment_return;

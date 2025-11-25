@@ -60,7 +60,7 @@ class OrderStatusBadge extends StatelessWidget {
       case OrderStatus.delivered:
       case OrderStatus.completed:
         return Colors.green;
-      case OrderStatus.cancelled:
+      case OrderStatus.canceled:
         return Colors.red;
       case OrderStatus.returned:
         return Colors.grey;
@@ -84,7 +84,7 @@ class OrderStatusBadge extends StatelessWidget {
       case OrderStatus.delivered:
       case OrderStatus.completed:
         return Icons.check_circle;
-      case OrderStatus.cancelled:
+      case OrderStatus.canceled:
         return Icons.cancel;
       case OrderStatus.returned:
         return Icons.keyboard_return;
@@ -111,7 +111,7 @@ class OrderStatusBadge extends StatelessWidget {
         return 'Delivered';
       case OrderStatus.completed:
         return 'Completed';
-      case OrderStatus.cancelled:
+      case OrderStatus.canceled:
         return 'Cancelled';
       case OrderStatus.returned:
         return 'Returned';

@@ -1,7 +1,7 @@
 enum OrderStatus {
   pending('pending'),
   placed('placed'),
-  cancelled('canceled'),
+  canceled('canceled'), // American spelling to match backend API
   processing('processing'),
   paid('paid'),
   preparing('preparing'),

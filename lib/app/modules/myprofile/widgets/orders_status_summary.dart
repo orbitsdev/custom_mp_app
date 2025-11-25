@@ -15,6 +15,12 @@ class OrdersStatusSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Safety check: Ensure controllers are registered
+    if (!Get.isRegistered<ProfileController>() ||
+        !Get.isRegistered<OrdersController>()) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+
     final profileController = Get.find<ProfileController>();
     final ordersController = Get.find<OrdersController>();
 

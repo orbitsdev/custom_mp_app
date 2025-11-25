@@ -23,7 +23,8 @@ class SearchResultsPage extends StatefulWidget {
 }
 
 class _SearchResultsPageState extends State<SearchResultsPage> {
-  final controller = Get.put(SearchResultsController());
+  // Controller is injected via SearchBinding, just find it
+  final controller = Get.find<SearchResultsController>();
   final scrollController = ScrollController();
 
   @override
@@ -42,6 +43,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   @override
   void dispose() {
     scrollController.dispose();
+    // Controller will be automatically disposed by GetX when route is removed
     super.dispose();
   }
 
@@ -68,9 +70,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   color: Colors.white,
                 ),
               ),
-              if (controller.searchQuery.isNotEmpty)
+              if (controller.searchQuery.value.isNotEmpty)
                 Text(
-                  '"${controller.searchQuery}"',
+                  '"${controller.searchQuery.value}"',
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.white70,

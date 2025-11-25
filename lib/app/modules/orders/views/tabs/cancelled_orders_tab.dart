@@ -8,7 +8,7 @@ class CancelledOrdersTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const BaseOrdersTab(
-      orderStatus: OrderStatus.cancelled,
+      orderStatus: OrderStatus.canceled,
       emptyTitle: 'No Cancelled Orders',
       emptySubtitle: 'Your cancelled orders will appear here',
     );

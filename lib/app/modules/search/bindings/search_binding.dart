@@ -12,6 +12,6 @@ class SearchBinding extends Bindings {
     Get.put<ProductSearchController>(ProductSearchController(), permanent: true);
 
     // SearchResultsController - lazy load for results page only
-    Get.lazyPut<SearchResultsController>(() => SearchResultsController());
+    Get.lazyPut<SearchResultsController>(() => SearchResultsController(),fenix: true);
   }
 }

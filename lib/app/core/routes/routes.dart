@@ -136,6 +136,7 @@ class Routes {
       name: Routes.searchResultsPage,
       middlewares: [AuthMiddleware()],
       page: () => SearchResultsPage(),
+      binding: SearchBinding(), // ← Added binding!
       transition: Transition.cupertino,
     ),
 
