@@ -520,3 +520,4 @@ Reference these files for detailed fix explanations:
 4. **`PROFILE_UPDATE_IMPLEMENTATION.md`** - Profile update UX
    - Added: Smart feedback system (modals vs toasts)
    - Learning: Match feedback to action importance
+- if possible use CustomScrollview when creating new page rather than normal widget, sliver offer because slvers offer advance features, if possible use seprate widget class  instead creaing function this make clean and easey to maintain,

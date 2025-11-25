@@ -20,6 +20,8 @@ import 'package:custom_mp_app/app/modules/products/views/product_details_page.da
 import 'package:custom_mp_app/app/modules/products/views/product_search_page.dart';
 import 'package:custom_mp_app/app/modules/category/bindings/category_products_binding.dart';
 import 'package:custom_mp_app/app/modules/category/views/category_products_page.dart';
+import 'package:custom_mp_app/app/modules/category/bindings/all_categories_binding.dart';
+import 'package:custom_mp_app/app/modules/category/views/all_categories_page.dart';
 import 'package:custom_mp_app/app/modules/search/bindings/search_binding.dart';
 import 'package:custom_mp_app/app/modules/search/views/search_page.dart';
 import 'package:custom_mp_app/app/modules/search/views/search_results_page.dart';
@@ -51,6 +53,7 @@ class Routes {
 
   //CATEGORY
   static const String categoryProductsPage = '/category-products';
+  static const String allCategoriesPage = '/all-categories';
 
   //SEARCH
   static const String searchPage = '/search';
@@ -126,6 +129,14 @@ class Routes {
       middlewares: [AuthMiddleware()],
       page: () => CategoryProductsPage(),
       binding: CategoryProductsBinding(),
+      transition: Transition.cupertino,
+    ),
+
+    GetPage(
+      name: Routes.allCategoriesPage,
+      middlewares: [AuthMiddleware()],
+      page: () => AllCategoriesPage(),
+      binding: AllCategoriesBinding(),
       transition: Transition.cupertino,
     ),
 

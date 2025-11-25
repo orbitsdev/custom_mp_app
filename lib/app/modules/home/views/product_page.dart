@@ -212,8 +212,8 @@ class _ProductPageState extends State<ProductPage> {
                     const Spacer(),
                     TextButton.icon(
                       onPressed: () {
-                        // TODO: Navigate to all categories page
-                        // Get.toNamed(Routes.allCategoriesPage);
+                        // Navigate to all categories page
+                        Get.toNamed(Routes.allCategoriesPage);
                       },
                       icon: Text(
                         'See All',
