@@ -66,21 +66,22 @@ class _SearchPageState extends State<SearchPage> {
           return InstantSearchResults(query: query);
         }
 
-        // Show history and suggestions when empty
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Search History
-              SearchHistorySection(),
+        // Show history and suggestions when empty using CustomScrollView
+        return CustomScrollView(
+          slivers: [
+            // Search History
+            SliverToBoxAdapter(
+              child: SearchHistorySection(),
+            ),
 
-              // Divider
-              Divider(height: 32, thickness: 8, color: AppColors.brandBackground),
+            // Divider
+            SliverToBoxAdapter(
+              child: Divider(height: 32, thickness: 8, color: AppColors.brandBackground),
+            ),
 
-              // Search Suggestions
-              SearchSuggestionsSection(),
-            ],
-          ),
+            // Search Suggestions (Sliver-based)
+            SearchSuggestionsSection(),
+          ],
         );
       }),
     );

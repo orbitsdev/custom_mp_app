@@ -10,6 +10,7 @@ class CartBadge extends StatelessWidget {
   final Color? badgeColor;
   final Color? textColor;
   final Color? iconColor;
+  final bool? isSolid;
 
   /// 🔥 Dynamic tap behavior
   final VoidCallback? onTap;
@@ -20,6 +21,7 @@ class CartBadge extends StatelessWidget {
     this.textColor,
     this.iconColor,
     this.onTap,
+    this.isSolid,
   }) : super(key: key);
 
   @override
@@ -39,7 +41,7 @@ class CartBadge extends StatelessWidget {
                 icon:  HeroIcon(
                   color: iconColor ?? Colors.white,
                   HeroIcons.shoppingCart,
-                  style: HeroIconStyle.solid,
+                  style:  isSolid == true ? HeroIconStyle.solid : HeroIconStyle.outline,
                 ),
               ),
             ),
