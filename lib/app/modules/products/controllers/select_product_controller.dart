@@ -31,9 +31,35 @@ class SelectProductController extends GetxController {
   void onInit() {
     super.onInit();
 
-    if (Get.arguments != null && Get.arguments is ProductModel) {
-      selectedProduct.value = Get.arguments as ProductModel;
+    final arg = Get.arguments;
+
+    if (arg == null) {
+      print('⚠️ No product argument provided');
+      return;
     }
+
+    // Pattern A: Full ProductModel (from product list - existing behavior)
+    if (arg is ProductModel) {
+      selectedProduct.value = arg;
+      print('✅ Product loaded from argument: ${arg.name}');
+      return;
+    }
+
+    // Pattern B: Product ID (from notification - new behavior)
+    if (arg is int) {
+      print('🔍 Loading product by ID: $arg');
+      _loadProductById(arg);
+      return;
+    }
+
+    // Pattern C: Product slug (from deep link - new behavior)
+    if (arg is String) {
+      print('🔍 Loading product by slug: $arg');
+      _loadProductBySlug(arg);
+      return;
+    }
+
+    print('⚠️ Unknown argument type: ${arg.runtimeType}');
   }
 
   List<String> get fullGallery {
@@ -177,8 +203,44 @@ void showProductOptionsSheet() {
   );
 }
 
+/// Load product by ID (for notifications and direct access)
+Future<void> _loadProductById(int productId) async {
+  isLoading.value = true;
 
+  final result = await _productRepository.fetchProductById(productId);
 
+  isLoading.value = false;
 
+  result.fold(
+    (failure) {
+      print('❌ Failed to load product: ${failure.message}');
+      AppToast.error('Failed to load product');
+    },
+    (product) {
+      selectedProduct.value = product;
+      print('✅ Product loaded by ID: ${product.name}');
+    },
+  );
+}
+
+/// Load product by slug (for deep links)
+Future<void> _loadProductBySlug(String slug) async {
+  isLoading.value = true;
+
+  final result = await _productRepository.fetchProductBySlug(slug);
+
+  isLoading.value = false;
+
+  result.fold(
+    (failure) {
+      print('❌ Failed to load product: ${failure.message}');
+      AppToast.error('Failed to load product');
+    },
+    (product) {
+      selectedProduct.value = product;
+      print('✅ Product loaded by slug: ${product.name}');
+    },
+  );
+}
 
 }

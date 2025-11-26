@@ -67,32 +67,47 @@ class ProductDetailsPage extends StatelessWidget {
       // ===========================================================
       body: Obx(() {
         final product = controller.selectedProduct.value;
+        final isLoading = controller.isLoading.value;
 
-        if (product == null) {
-          return  Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          LocalImageSvg(
-            imageUrl: PathHelpers.imagePath('empty.svg'),
-            width: 180,
-            height: 180,
-            fit: BoxFit.contain,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Product not found',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,
-            ),
-          )
-        ],
-      ),
-    );;
+        // Show loading spinner while fetching product
+        if (isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         }
 
+        // Show error if product not found
+        if (product == null) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                LocalImageSvg(
+                  imageUrl: PathHelpers.imagePath('empty.svg'),
+                  width: 180,
+                  height: 180,
+                  fit: BoxFit.contain,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Product not found',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => Get.back(),
+                  child: const Text('Go Back'),
+                ),
+              ],
+            ),
+          );
+        }
+
+        // Display product
         return RefreshIndicator(
           onRefresh: controller.refreshProduct,
           child: CustomScrollView(

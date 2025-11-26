@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:dio/dio.dart';
 
 import 'package:custom_mp_app/app/core/plugins/dio/dio_client.dart';
+import 'package:get/get.dart';
 import 'firebase_logger.dart';
 
 class LocalNotificationService {
@@ -113,8 +115,15 @@ class LocalNotificationService {
 
   static void _handleProductTap(Map<String, dynamic> data) {
     FirebaseLogger.log("📍 Navigate to Product: ${data['product_id']}");
-    // TODO: Uncomment when ready
-    // Get.toNamed(Routes.productDetailsPage, arguments: data['product_id']);
+
+    final productId = data['product_id'];
+    if (productId != null) {
+      // Convert to int if it's a string
+      final id = productId is int ? productId : int.tryParse(productId.toString());
+      if (id != null) {
+        Get.toNamed(Routes.productDetailsPage, arguments: id);
+      }
+    }
   }
 
   static void _handleOrderTap(Map<String, dynamic> data) {
@@ -125,8 +134,15 @@ class LocalNotificationService {
 
   static void _handleNewProductTap(Map<String, dynamic> data) {
     FirebaseLogger.log("📍 Navigate to New Product: ${data['product_id']}");
-    // TODO: Uncomment when ready
-    // Get.toNamed(Routes.productDetailsPage, arguments: data['product_id']);
+
+    final productId = data['product_id'];
+    if (productId != null) {
+      // Convert to int if it's a string
+      final id = productId is int ? productId : int.tryParse(productId.toString());
+      if (id != null) {
+        Get.toNamed(Routes.productDetailsPage, arguments: id);
+      }
+    }
   }
 
   static void _handleDefaultTap(Map<String, dynamic> data) {

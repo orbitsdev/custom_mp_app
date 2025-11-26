@@ -343,6 +343,47 @@ class ProductRepository {
     );
   }
 
+  /// Fetch product by ID with full details
+  ///
+  /// Returns detailed information about a specific product.
+  /// Includes all relations: variants, media, categories, attributes.
+  /// Used for notifications, deep links, and direct product access.
+  ///
+  /// **Parameters:**
+  /// - [productId] - Product ID (e.g., 123)
+  ///
+  /// **Example:**
+  /// ```dart
+  /// final result = await productRepo.fetchProductById(123);
+  /// ```
+  EitherModel<ProductModel> fetchProductById(int productId) async {
+    try {
+      final dio = await DioClient.auth;
+
+      print('🔍 Fetching product ID: $productId');
+
+      final response = await dio.get(
+        'products/$productId',
+        queryParameters: {
+          'include': ProductIncludes.full.join(','),
+        },
+      );
+
+      final product = ProductModel.fromMap(response.data['data']);
+
+      print('✅ Product loaded: ${product.name}');
+
+      return right(product);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        return left(FailureModel.manual('Product not found'));
+      }
+      return left(FailureModel.fromDio(e));
+    } catch (e) {
+      return left(FailureModel.manual('Unexpected error: $e'));
+    }
+  }
+
   /// Fetch product by slug with full details
   ///
   /// Returns detailed information about a specific product.
