@@ -56,6 +56,7 @@ class LocalNotificationService {
   /// Create all notification channels with sound configuration
   static Future<void> _createNotificationChannels() async {
     FirebaseLogger.log('🔊 Creating channels with sound: $_notificationSound');
+    FirebaseLogger.log('🔊 Sound object: RawResourceAndroidNotificationSound($_notificationSound)');
 
     final sound = RawResourceAndroidNotificationSound(_notificationSound);
 
