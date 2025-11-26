@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:dio/dio.dart';
-import 'package:get_storage/get_storage.dart';
 
 import 'package:custom_mp_app/app/core/plugins/dio/dio_client.dart';
 import 'package:get/get.dart';
@@ -17,46 +16,8 @@ class LocalNotificationService {
   // Cache for app logo to avoid loading it multiple times
   static ByteArrayAndroidBitmap? _appLogoIcon;
 
-  // Storage key for notification sound
-  static const String _soundStorageKey = 'notification_sound';
-
-  // Available notification sounds (must exist in android/app/src/main/res/raw/)
-  static const List<String> availableSounds = [
-    'japanese',
-    'applause',
-  ];
-
-  // Default sound
-  static const String _defaultSound = 'japanese';
-
-  /// Get current notification sound from storage
-  static String get notificationSound {
-    final storage = GetStorage();
-    final sound = storage.read(_soundStorageKey) as String?;
-
-    // Validate sound exists in available sounds
-    if (sound != null && availableSounds.contains(sound)) {
-      return sound;
-    }
-
-    return _defaultSound;
-  }
-
-  /// Set notification sound (will be used for all future notifications)
-  static Future<void> setNotificationSound(String soundName) async {
-    if (!availableSounds.contains(soundName)) {
-      FirebaseLogger.log('⚠️ Invalid sound name: $soundName');
-      return;
-    }
-
-    final storage = GetStorage();
-    await storage.write(_soundStorageKey, soundName);
-    FirebaseLogger.log('🔊 Notification sound changed to: $soundName');
-
-    // Recreate channels with new sound
-    await _createNotificationChannels();
-    FirebaseLogger.log('📢 Channels updated with new sound');
-  }
+  // Notification sound file (must exist in android/app/src/main/res/raw/)
+  static const String _notificationSound = 'notification';
 
   static Future<void> init() async {
     const AndroidInitializationSettings androidSettings =
@@ -94,7 +55,9 @@ class LocalNotificationService {
 
   /// Create all notification channels with sound configuration
   static Future<void> _createNotificationChannels() async {
-    final sound = RawResourceAndroidNotificationSound(notificationSound);
+    FirebaseLogger.log('🔊 Creating channels with sound: $_notificationSound');
+
+    final sound = RawResourceAndroidNotificationSound(_notificationSound);
 
     // Define all channels
     final channels = [
@@ -354,7 +317,7 @@ class LocalNotificationService {
           importance: Importance.max,
           priority: Priority.high,
           playSound: true,
-          sound: RawResourceAndroidNotificationSound(notificationSound),
+          sound: RawResourceAndroidNotificationSound(_notificationSound),
           icon: '@mipmap/ic_launcher',
           largeIcon: _appLogoIcon,  // App logo on the side
           styleInformation: BigPictureStyleInformation(
@@ -416,7 +379,7 @@ class LocalNotificationService {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      sound: RawResourceAndroidNotificationSound(notificationSound),
+      sound: RawResourceAndroidNotificationSound(_notificationSound),
       icon: '@mipmap/ic_launcher',
       largeIcon: _appLogoIcon,  // App logo on the side
       styleInformation: BigTextStyleInformation(
@@ -475,7 +438,7 @@ class LocalNotificationService {
         importance: Importance.max,
         priority: Priority.high,
         playSound: true,
-        sound: RawResourceAndroidNotificationSound(notificationSound),
+        sound: RawResourceAndroidNotificationSound(_notificationSound),
         icon: '@mipmap/ic_launcher',
         largeIcon: _appLogoIcon,
         styleInformation: messagingStyle,

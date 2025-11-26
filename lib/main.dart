@@ -11,8 +11,13 @@ import 'package:get_storage/get_storage.dart';
 Future<void> main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
-  await FirebaseInitializer.init();
+
+  // IMPORTANT: Initialize GetStorage FIRST (needed for notification sound preference)
   await GetStorage.init();
+
+  // Then initialize Firebase (which creates notification channels with sound)
+  await FirebaseInitializer.init();
+
   await DeviceInfoService.init();
   AppBinding().dependencies();
   await AuthController.instance.autoLogin();
