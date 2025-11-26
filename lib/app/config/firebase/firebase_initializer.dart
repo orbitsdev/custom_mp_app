@@ -1,15 +1,17 @@
+import 'package:custom_mp_app/app/config/firebase/firebase_messaging_handler.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:custom_mp_app/firebase_options.dart';
-import 'firebase_messaging_handler.dart';
+
 import 'firebase_logger.dart';
+import 'local_notification_service.dart';
 
 class FirebaseInitializer {
   static Future<void> init() async {
     // 📌 1. Register background handler FIRST!
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
-   
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
@@ -17,6 +19,9 @@ class FirebaseInitializer {
     FirebaseLogger.group("🔥 Firebase Initialized");
     FirebaseLogger.log("Project: ${DefaultFirebaseOptions.currentPlatform.projectId}");
     FirebaseLogger.endGroup();
+
+    // 📌 2. Initialize local notifications
+    await LocalNotificationService.init();
 
     // 📌 3. Request notification permission (Android 13+ + iOS)
     FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -31,19 +36,27 @@ class FirebaseInitializer {
     FirebaseLogger.log("Status: ${settings.authorizationStatus}");
     FirebaseLogger.endGroup();
 
+    // Request Android 13+ local notification permission
+    await LocalNotificationService.requestPermission();
+
     // 📌 4. Get FCM Token
     final token = await messaging.getToken();
     FirebaseLogger.group("📱 FCM TOKEN");
     FirebaseLogger.log(token ?? "No token found");
     FirebaseLogger.endGroup();
 
-    // 📌 5. Foreground message listener
+    // 📌 5. Foreground message listener - Display notification
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       FirebaseLogger.group("📩 Foreground Message");
       FirebaseLogger.log("Title: ${message.notification?.title}");
       FirebaseLogger.log("Body: ${message.notification?.body}");
       FirebaseLogger.log("Data: ${message.data}");
       FirebaseLogger.endGroup();
+
+      // Show notification when app is in foreground
+      if (message.notification != null) {
+        LocalNotificationService.showNotification(message);
+      }
     });
 
     // 📌 6. User tapped notification
