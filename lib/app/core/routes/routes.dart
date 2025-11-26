@@ -36,7 +36,9 @@ import 'package:custom_mp_app/app/modules/myprofile/views/update_field_page.dart
 import 'package:custom_mp_app/app/modules/myprofile/views/update_password_page.dart';
 import 'package:custom_mp_app/app/modules/myprofile/views/update_account_info_page.dart';
 import 'package:custom_mp_app/app/modules/myprofile/views/upload_avatar_page.dart';
-import 'package:custom_mp_app/app/modules/testing/modal_page.dart';
+import 'package:custom_mp_app/app/modules/testing/views/modal_page.dart';
+import 'package:custom_mp_app/app/modules/testing/bindings/testing_binding.dart';
+import 'package:custom_mp_app/app/modules/testing/views/testing_page.dart';
 import 'package:get/route_manager.dart';
 
 class Routes {
@@ -92,12 +94,14 @@ class Routes {
   static const String updateAccountInfoPage = '/update-account-info';
   static const String uploadAvatarPage = '/upload-avatar';
 
-  //TEST IGN
+  //TESTING
   static const String modalPage = '/modal';
+  static const String testingPage = '/testing';
 
   static List<GetPage> pages = [
     GetPage(name: Routes.splashPage, page: () => const SplashPage()),
     GetPage(name: modalPage, page: () => ModalPage()),
+  
     GetPage(
       name: Routes.loginPage,
       middlewares: [GuestMiddleware()],
@@ -262,7 +266,13 @@ class Routes {
       transition: Transition.cupertino,
     ),
 
-
+    GetPage(
+      name: Routes.testingPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const TestingPage(),
+      binding: TestingBinding(),
+      transition: Transition.cupertino,
+    ),
    
   ];
 }

@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
+
+import 'package:custom_mp_app/app/core/plugins/dio/dio_client.dart';
 import 'firebase_logger.dart';
 
 class LocalNotificationService {
@@ -275,12 +276,18 @@ class LocalNotificationService {
     );
   }
 
-  /// Download image from URL for notification
+  /// Download image from URL for notification using DioClient
   static Future<ByteArrayAndroidBitmap?> _downloadImage(String url) async {
     try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        return ByteArrayAndroidBitmap(response.bodyBytes);
+      final response = await DioClient.public.get(
+        url,
+        options: Options(
+          responseType: ResponseType.bytes, // Get raw bytes for image
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        return ByteArrayAndroidBitmap(response.data);
       }
     } catch (e) {
       FirebaseLogger.log("⚠️ Failed to download image: $e");
