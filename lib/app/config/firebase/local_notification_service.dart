@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:dio/dio.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'package:custom_mp_app/app/core/plugins/dio/dio_client.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,47 @@ class LocalNotificationService {
 
   // Cache for app logo to avoid loading it multiple times
   static ByteArrayAndroidBitmap? _appLogoIcon;
+
+  // Storage key for notification sound
+  static const String _soundStorageKey = 'notification_sound';
+
+  // Available notification sounds (must exist in android/app/src/main/res/raw/)
+  static const List<String> availableSounds = [
+    'japanese',
+    'applause',
+  ];
+
+  // Default sound
+  static const String _defaultSound = 'japanese';
+
+  /// Get current notification sound from storage
+  static String get notificationSound {
+    final storage = GetStorage();
+    final sound = storage.read(_soundStorageKey) as String?;
+
+    // Validate sound exists in available sounds
+    if (sound != null && availableSounds.contains(sound)) {
+      return sound;
+    }
+
+    return _defaultSound;
+  }
+
+  /// Set notification sound (will be used for all future notifications)
+  static Future<void> setNotificationSound(String soundName) async {
+    if (!availableSounds.contains(soundName)) {
+      FirebaseLogger.log('⚠️ Invalid sound name: $soundName');
+      return;
+    }
+
+    final storage = GetStorage();
+    await storage.write(_soundStorageKey, soundName);
+    FirebaseLogger.log('🔊 Notification sound changed to: $soundName');
+
+    // Recreate channels with new sound
+    await _createNotificationChannels();
+    FirebaseLogger.log('📢 Channels updated with new sound');
+  }
 
   static Future<void> init() async {
     const AndroidInitializationSettings androidSettings =
@@ -37,13 +79,91 @@ class LocalNotificationService {
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
 
+    // Create notification channels with sound
+    await _createNotificationChannels();
+
     // Pre-load app logo for notifications
     await _loadAppLogo();
 
     FirebaseLogger.group("🔔 Local Notifications Initialized");
     FirebaseLogger.log("Plugin ready");
+    FirebaseLogger.log("Channels created with sound");
     FirebaseLogger.log("App logo loaded: ${_appLogoIcon != null}");
     FirebaseLogger.endGroup();
+  }
+
+  /// Create all notification channels with sound configuration
+  static Future<void> _createNotificationChannels() async {
+    final sound = RawResourceAndroidNotificationSound(notificationSound);
+
+    // Define all channels
+    final channels = [
+      AndroidNotificationChannel(
+        'promo_channel',
+        'Promotions',
+        description: 'Special offers and promotions',
+        importance: Importance.max,
+        playSound: true,
+        sound: sound,
+        enableVibration: true,
+      ),
+      AndroidNotificationChannel(
+        'product_channel',
+        'Products',
+        description: 'Product updates and new arrivals',
+        importance: Importance.max,
+        playSound: true,
+        sound: sound,
+        enableVibration: true,
+      ),
+      AndroidNotificationChannel(
+        'order_channel',
+        'Orders',
+        description: 'Order status updates',
+        importance: Importance.max,
+        playSound: true,
+        sound: sound,
+        enableVibration: true,
+      ),
+      AndroidNotificationChannel(
+        'new_product_channel',
+        'New Arrivals',
+        description: 'New product announcements',
+        importance: Importance.max,
+        playSound: true,
+        sound: sound,
+        enableVibration: true,
+      ),
+      AndroidNotificationChannel(
+        'message_channel',
+        'Messages',
+        description: 'Chat and direct messages',
+        importance: Importance.max,
+        playSound: true,
+        sound: sound,
+        enableVibration: true,
+      ),
+      AndroidNotificationChannel(
+        'default_channel',
+        'General',
+        description: 'General notifications',
+        importance: Importance.max,
+        playSound: true,
+        sound: sound,
+        enableVibration: true,
+      ),
+    ];
+
+    // Create all channels
+    final androidPlugin = _notificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+
+    if (androidPlugin != null) {
+      for (final channel in channels) {
+        await androidPlugin.createNotificationChannel(channel);
+        FirebaseLogger.log("📢 Created channel: ${channel.id}");
+      }
+    }
   }
 
   /// Load app logo from assets for use as large icon
@@ -234,7 +354,7 @@ class LocalNotificationService {
           importance: Importance.max,
           priority: Priority.high,
           playSound: true,
-          // sound: RawResourceAndroidNotificationSound('notification'),  // Uncomment if you have custom sound
+          sound: RawResourceAndroidNotificationSound(notificationSound),
           icon: '@mipmap/ic_launcher',
           largeIcon: _appLogoIcon,  // App logo on the side
           styleInformation: BigPictureStyleInformation(
@@ -296,7 +416,7 @@ class LocalNotificationService {
       importance: Importance.max,
       priority: Priority.high,
       playSound: true,
-      // sound: RawResourceAndroidNotificationSound('notification'),  // Uncomment if you have custom sound
+      sound: RawResourceAndroidNotificationSound(notificationSound),
       icon: '@mipmap/ic_launcher',
       largeIcon: _appLogoIcon,  // App logo on the side
       styleInformation: BigTextStyleInformation(
@@ -355,6 +475,7 @@ class LocalNotificationService {
         importance: Importance.max,
         priority: Priority.high,
         playSound: true,
+        sound: RawResourceAndroidNotificationSound(notificationSound),
         icon: '@mipmap/ic_launcher',
         largeIcon: _appLogoIcon,
         styleInformation: messagingStyle,

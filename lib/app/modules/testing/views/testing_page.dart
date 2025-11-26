@@ -1,5 +1,6 @@
 import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/modules/testing/controllers/testing_controller.dart';
+import 'package:custom_mp_app/app/config/firebase/local_notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -106,6 +107,97 @@ class TestingPage extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.green.shade700,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Sound Selection Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.purple.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.purple.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.volume_up, color: Colors.purple.shade700),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Notification Sound',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.purple.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Change notification sound dynamically.\n'
+                    'Selection persists across app restarts.',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Japanese Sound Button
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      await LocalNotificationService.setNotificationSound('japanese');
+                      Get.snackbar(
+                        '🔊 Sound Changed',
+                        'Using: japanese.mp3',
+                        snackPosition: SnackPosition.BOTTOM,
+                        duration: const Duration(seconds: 2),
+                      );
+                    },
+                    icon: const Icon(Icons.music_note),
+                    label: const Text('Use Japanese Sound'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Applause Sound Button
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      await LocalNotificationService.setNotificationSound('applause');
+                      Get.snackbar(
+                        '🔊 Sound Changed',
+                        'Using: applause.wav',
+                        snackPosition: SnackPosition.BOTTOM,
+                        duration: const Duration(seconds: 2),
+                      );
+                    },
+                    icon: const Icon(Icons.music_note),
+                    label: const Text('Use Applause Sound'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  Text(
+                    '✓ Changes apply immediately\n'
+                    '✓ No app restart needed\n'
+                    '✓ Saved to device storage',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.purple.shade700,
                       height: 1.5,
                     ),
                   ),
