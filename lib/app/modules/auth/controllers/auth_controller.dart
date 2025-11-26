@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:get/get.dart';
 import 'package:custom_mp_app/app/data/repositories/auth_repository.dart';
 import 'package:custom_mp_app/app/data/models/user/user_model.dart';
@@ -40,20 +41,23 @@ class AuthController extends GetxController {
 
 Future<void> autoLogin() async {
   print('🔍 [AuthController] Starting autoLogin()');
-  isLoading.value = true;
 
-  // 1. Check for token
+  // 1. Check for token FIRST (before showing loading)
   final token = await SecureStorageService.getToken();
   print('🔑 [AuthController] Retrieved token: ${token != null ? "exists" : "null"}');
 
   if (token == null || token.isEmpty) {
-    print('🚫 No saved token found');
+    print('🚫 No saved token found - skipping session check');
     isAuthenticated.value = false;
-    isLoading.value = false;
-    return;
+    return; // Exit early - no loading indicator needed
   }
 
-  // 2. Load cached user data from storage
+  // 2. Token exists - NOW show loading indicator
+  isLoading.value = true;
+  AppModal.loading(title: "Loading...");
+  print('✅ Token found - checking session...');
+
+  // 3. Load cached user data from storage
   final cachedUserJson = await SecureStorageService.getUser();
   print('👤 [AuthController] Cached user: ${cachedUserJson != null ? "exists" : "null"}');
 
@@ -69,7 +73,7 @@ Future<void> autoLogin() async {
     }
   }
 
-  // 3. Try to refresh user data from API (background sync)
+  // 4. Try to refresh user data from API (background sync)
   print('🔄 Attempting to refresh user data from API...');
   final result = await _authRepo.getAuthenticatedUser();
 
@@ -112,6 +116,7 @@ Future<void> autoLogin() async {
   );
 
   isLoading.value = false;
+  AppModal.close(); // Close the loading modal
 }
 
 

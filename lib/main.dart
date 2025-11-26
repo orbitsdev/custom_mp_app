@@ -16,7 +16,7 @@ Future<void> main() async {
   await FirebaseInitializer.init();
   await DeviceInfoService.init();
   AppBinding().dependencies();
-  await AuthController.instance.autoLogin();
+  // Note: autoLogin is called by SplashController after UI is ready
   runApp(const CustomMPAPP());
 
 }

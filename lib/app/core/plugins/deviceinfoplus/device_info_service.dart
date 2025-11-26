@@ -22,13 +22,11 @@ class DeviceInfoService {
     final info = await _plugin.deviceInfo;
 
     if (info is AndroidDeviceInfo) {
-
+      // Extract Android device ID - tries multiple sources for compatibility
+      // Falls back to info.id.toString() which contains build ID
       final deviceId = info.data['androidId'] as String? ??
                        info.data['id'] as String? ??
                        info.id.toString();
-
-      print('🔍 [DeviceInfoService] Android ID: $deviceId');
-      print('🔍 [DeviceInfoService] info.data keys: ${info.data.keys}');
 
       return {
         'platform': 'android',

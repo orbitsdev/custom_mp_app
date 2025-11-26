@@ -13,18 +13,12 @@ class SplashController extends GetxController {
 
   Future<void> _startAppFlow() async {
     print('[SPLASH] Starting initialization...');
-    
-    // 🌀 Show loading modal
-    AppModal.loading(title: "Checking your session...");
-    
+
     // Small UX delay (optional)
     await Future.delayed(const Duration(milliseconds: 800));
 
-    // 🔑 Run auth check
+    // 🔑 Run auth check (will show loading only if token exists)
     await _auth.autoLogin();
-
-    // Close modal before navigating
-    AppModal.close();
 
     // 🔁 Route decision
     if (_auth.isAuthenticated.value) {
