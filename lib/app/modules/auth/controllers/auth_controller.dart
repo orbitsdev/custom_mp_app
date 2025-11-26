@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:custom_mp_app/app/data/repositories/auth_repository.dart';
 import 'package:custom_mp_app/app/data/models/user/user_model.dart';
 import 'package:custom_mp_app/app/core/plugins/storage/secure_storage_service.dart';
+import 'package:custom_mp_app/app/modules/user_device/controllers/user_device_controller.dart';
 
 class AuthController extends GetxController {
   static AuthController get instance => Get.find();
@@ -99,10 +100,14 @@ Future<void> autoLogin() async {
         AppToast.error('Unable to sync data. Using cached information. ${failure.message}', );
       }
     },
-    (userData) {
+    (userData) async {
       print('✅ User data refreshed from API: ${userData.email}');
       user.value = userData;
       isAuthenticated.value = true;
+
+      // Re-register device (backend updates if FCM token changed)
+      print('📱 Re-registering device on app startup...');
+      await UserDeviceController.instance.registerDevice();
     },
   );
 
@@ -137,10 +142,23 @@ Future<void> autoLogin() async {
   }
 
   Future<void> logout() async {
+    print('🚪 [AuthController] Starting logout...');
+
+    // 1. Logout device (stop receiving notifications)
+    await UserDeviceController.instance.logoutDevice();
+
+    // 2. Logout from backend
     await _authRepo.logout();
+
+    // 3. Clear local auth data
     await SecureStorageService.clearAuthData();
+
+    // 4. Clear controller state
     user.value = null;
     isAuthenticated.value = false;
+
+    // 5. Navigate to login
     Get.offAllNamed('/login');
+    print('✅ [AuthController] Logout complete');
   }
 }

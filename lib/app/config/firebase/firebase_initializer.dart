@@ -1,7 +1,10 @@
 import 'package:custom_mp_app/app/config/firebase/firebase_messaging_handler.dart';
+import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
+import 'package:custom_mp_app/app/modules/user_device/controllers/user_device_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:custom_mp_app/firebase_options.dart';
+import 'package:get/get.dart';
 
 import 'firebase_logger.dart';
 import 'local_notification_service.dart';
@@ -64,6 +67,28 @@ class FirebaseInitializer {
       FirebaseLogger.group("📬 Notification Clicked");
       FirebaseLogger.log("Data: ${message.data}");
       FirebaseLogger.endGroup();
+    });
+
+    // 📌 7. FCM Token Refresh Listener
+    // CRITICAL: Firebase can refresh tokens anytime - must update backend
+    FirebaseMessaging.instance.onTokenRefresh.listen((String newToken) async {
+      FirebaseLogger.group("🔄 FCM Token Refreshed");
+      FirebaseLogger.log("New Token: ${newToken.substring(0, 20)}...");
+      FirebaseLogger.endGroup();
+
+      // Only re-register if user is authenticated
+      try {
+        if (Get.isRegistered<AuthController>()) {
+          final authController = AuthController.instance;
+          if (authController.isAuthenticated.value) {
+            print('📱 [FirebaseInitializer] Auto-registering device with new FCM token...');
+            await UserDeviceController.instance.registerDevice();
+            print('✅ [FirebaseInitializer] Device re-registered successfully');
+          }
+        }
+      } catch (e) {
+        print('⚠️ [FirebaseInitializer] Failed to re-register device: $e');
+      }
     });
   }
 }

@@ -11,7 +11,8 @@
       "Bash(convert:*)",
       "Bash(find:*)",
       "Bash(flutter doctor:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(flutter upgrade:*)"
     ],
     "deny": [],
     "ask": []

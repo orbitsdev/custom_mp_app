@@ -24,6 +24,7 @@ class DeviceInfoService {
     if (info is AndroidDeviceInfo) {
       return {
         'platform': 'android',
+        'device_id': info.id, // Android unique device ID
         'model': info.model,
         'brand': info.brand,
         'device': info.device,
@@ -37,6 +38,7 @@ class DeviceInfoService {
     if (info is IosDeviceInfo) {
       return {
         'platform': 'ios',
+        'device_id': info.identifierForVendor, // iOS unique identifier
         'model': info.model,
         'systemName': info.systemName,
         'systemVersion': info.systemVersion,

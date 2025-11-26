@@ -5,6 +5,7 @@ import 'package:custom_mp_app/app/data/repositories/auth_repository.dart';
 import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
+import 'package:custom_mp_app/app/modules/user_device/controllers/user_device_controller.dart';
 
 class LoginController extends GetxController {
   final formKeyLogin = GlobalKey<FormBuilderState>();
@@ -49,19 +50,24 @@ class LoginController extends GetxController {
   
   result.fold(
     (failure) {
-     
+
       AppModal.error(
         title: "Login Failed",
         message: failure.message,
       );
     },
-    (user) {
+    (user) async {
 
       // print(user.toString());
         AuthController.instance.user.value = user;
           AuthController.instance.isAuthenticated.value = true;
+
+          // Register device for push notifications
+          print('📱 [LoginController] Registering device after login...');
+          await UserDeviceController.instance.registerDevice();
+
           Get.offAllNamed('/home'); // ✅ replace with your home route
-      // 
+      //
     },
   );
 }

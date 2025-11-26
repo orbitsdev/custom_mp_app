@@ -4,6 +4,7 @@ import 'package:custom_mp_app/app/core/plugins/deviceinfoplus/device_info_servic
 import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_theme.dart';
 import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
+import 'package:custom_mp_app/app/modules/user_device/controllers/user_device_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -47,6 +48,11 @@ class _CustomMPAPPState extends State<CustomMPAPP> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
          print('🔁 AppLifecycleState.resumed');
+         // Note: We don't register device here - too frequent!
+         // Device registration happens on:
+         // - Login/Signup
+         // - App startup (autoLogin)
+         // - FCM token refresh
         break;
       case AppLifecycleState.inactive:
          print('🔁 AppLifecycleState.inactive');
