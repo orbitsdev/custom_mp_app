@@ -109,6 +109,16 @@ class TestingPage extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
+            // Messaging Notification
+            _NotificationTestButton(
+              icon: Icons.chat_bubble,
+              label: 'Messaging Notification',
+              description: 'Chat style with multiple messages',
+              color: Colors.indigo,
+              onPressed: controller.testMessagingNotification,
+            ),
+            const SizedBox(height: 16),
+
             // Debug Notification
             _NotificationTestButton(
               icon: Icons.bug_report,
@@ -148,6 +158,7 @@ class TestingPage extends StatelessWidget {
                   const Text(
                     '• Notifications use different channels based on type\n'
                     '• Images are cached to avoid re-downloading\n'
+                    '• Messaging style shows conversation with multiple messages\n'
                     '• Tap notifications to test navigation handling\n'
                     '• Check Firebase logs for detailed debugging',
                     style: TextStyle(fontSize: 14),

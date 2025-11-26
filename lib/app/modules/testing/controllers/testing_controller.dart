@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:custom_mp_app/app/config/firebase/local_notification_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
@@ -114,6 +116,44 @@ class TestingController extends GetxController {
         'type': 'product',
         'product_id': '000',
         'image': 'https://invalid-url-that-will-fail.com/image.jpg',
+      },
+    );
+
+    await LocalNotificationService.showNotification(message);
+  }
+
+  /// Test messaging-style notification (chat conversation)
+  Future<void> testMessagingNotification() async {
+    final now = DateTime.now().millisecondsSinceEpoch;
+
+    // Create a conversation with multiple messages
+    final messages = [
+      {
+        'text': 'Hey! Are you available?',
+        'timestamp': now - 120000, // 2 minutes ago
+        'sender': 'John Doe',
+      },
+      {
+        'text': 'I have a question about my order',
+        'timestamp': now - 60000, // 1 minute ago
+        'sender': 'John Doe',
+      },
+      {
+        'text': 'Can you help me?',
+        'timestamp': now, // Just now
+        'sender': 'John Doe',
+      },
+    ];
+
+    final message = RemoteMessage(
+      notification: const RemoteNotification(
+        title: 'John Doe',
+        body: 'Can you help me?',
+      ),
+      data: {
+        'type': 'message',
+        'conversation_id': '123',
+        'messages': jsonEncode(messages),
       },
     );
 

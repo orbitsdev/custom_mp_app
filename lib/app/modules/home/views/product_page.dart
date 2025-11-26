@@ -1,5 +1,7 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/sliver_v_gap.dart';
+import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
 import 'package:custom_mp_app/app/modules/category/controllers/category_controller.dart';
 import 'package:custom_mp_app/app/modules/home/widgets/all_products_section.dart';
 import 'package:custom_mp_app/app/modules/home/widgets/home_drawer.dart';
@@ -66,6 +68,28 @@ class _ProductPageState extends State<ProductPage> {
           slivers: [
             // Search Bar
             ProductSearchAppBar(scaffoldKey: scaffoldKey),
+
+             SliverVGap(16),
+
+            // Test Notification Button
+            ToSliver(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ElevatedButton.icon(
+                  onPressed: () => Get.toNamed(Routes.testingPage),
+                  icon: const Icon(Icons.notifications_active),
+                  label: const Text('Test Notifications'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.brand,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+            ),
 
              SliverVGap(16),
 

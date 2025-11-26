@@ -144,12 +144,14 @@ class LocalNotificationService {
   static Future<void> showNotification(RemoteMessage message) async {
     final type = message.data['type'] as String?;
     final imageUrl = message.data['image'] as String?;
+    final messages = message.data['messages'] as String?; // For messaging style
     final title = message.notification?.title ?? 'Notification';
     final body = message.notification?.body ?? '';
 
     FirebaseLogger.group("📣 Showing Notification");
     FirebaseLogger.log("Type: $type");
     FirebaseLogger.log("Has Image: ${imageUrl != null}");
+    FirebaseLogger.log("Has Messages: ${messages != null}");
 
     // Determine channel based on type
     String channelId;
@@ -178,6 +180,12 @@ class LocalNotificationService {
         channelName = 'New Arrivals';
         channelDescription = 'New product announcements';
         break;
+      case 'message':
+      case 'chat':
+        channelId = 'message_channel';
+        channelName = 'Messages';
+        channelDescription = 'Chat and direct messages';
+        break;
       default:
         channelId = 'default_channel';
         channelName = 'General';
@@ -187,7 +195,17 @@ class LocalNotificationService {
     // Build Android notification with all features
     AndroidNotificationDetails androidDetails;
 
-    if (imageUrl != null && imageUrl.isNotEmpty) {
+    // Check if this is a messaging notification
+    if (messages != null && messages.isNotEmpty) {
+      // Show MessagingStyle notification (chat conversation)
+      androidDetails = _buildMessagingNotification(
+        channelId,
+        channelName,
+        channelDescription,
+        title,
+        messages,
+      );
+    } else if (imageUrl != null && imageUrl.isNotEmpty) {
       // Download image for notification
       final image = await _downloadImage(imageUrl);
 
@@ -274,6 +292,71 @@ class LocalNotificationService {
       showWhen: true,
       enableVibration: true,
     );
+  }
+
+  /// Build messaging-style notification (chat conversation)
+  /// Expected messages format: JSON array of message objects
+  /// [{"text": "Hello!", "timestamp": 1234567890, "sender": "John"}]
+  static AndroidNotificationDetails _buildMessagingNotification(
+    String channelId,
+    String channelName,
+    String channelDescription,
+    String conversationTitle,
+    String messagesJson,
+  ) {
+    try {
+      // Parse messages JSON
+      final List<dynamic> messagesList = jsonDecode(messagesJson);
+
+      // Create messaging style
+      final messagingStyle = MessagingStyleInformation(
+        Person(
+          name: 'You', // The current user
+          key: 'user_key',
+          // Note: Person icon requires AndroidIcon type, not ByteArrayAndroidBitmap
+          // We'll use the default icon instead
+        ),
+        conversationTitle: conversationTitle,
+        groupConversation: messagesList.length > 1,
+        messages: messagesList.map((msg) {
+          return Message(
+            msg['text'] ?? '',
+            DateTime.fromMillisecondsSinceEpoch(
+              msg['timestamp'] ?? DateTime.now().millisecondsSinceEpoch,
+            ),
+            Person(
+              name: msg['sender'] ?? 'Unknown',
+              key: 'sender_${msg['sender']}',
+            ),
+          );
+        }).toList(),
+      );
+
+      return AndroidNotificationDetails(
+        channelId,
+        channelName,
+        channelDescription: channelDescription,
+        importance: Importance.max,
+        priority: Priority.high,
+        playSound: true,
+        icon: '@mipmap/ic_launcher',
+        largeIcon: _appLogoIcon,
+        styleInformation: messagingStyle,
+        showWhen: true,
+        enableVibration: true,
+        category: AndroidNotificationCategory.message,
+      );
+    } catch (e) {
+      FirebaseLogger.log("⚠️ Failed to parse messages: $e");
+      // Fallback to text-only notification
+      return _buildTextOnlyNotification(
+        channelId,
+        channelName,
+        channelDescription,
+        conversationTitle,
+        'New messages received',
+      );
+    }
   }
 
   /// Download image from URL for notification using DioClient
