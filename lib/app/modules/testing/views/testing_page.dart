@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/modules/testing/controllers/testing_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,6 +39,100 @@ class TestingPage extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
+
+            // Product Navigation Tests Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.science, color: Colors.green.shade700),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Product Navigation Tests',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Sends real notification to notification tray.\n'
+                    'Tap notification to test navigation flow.',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Test Product ID 1
+                  ElevatedButton.icon(
+                    onPressed: controller.testProductId1Notification,
+                    icon: const Icon(Icons.shopping_bag),
+                    label: const Text('Send Notification: Product ID 1'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Test Product ID 2
+                  ElevatedButton.icon(
+                    onPressed: controller.testProductId2Notification,
+                    icon: const Icon(Icons.shopping_bag),
+                    label: const Text('Send Notification: Product ID 2'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  Text(
+                    '✓ Tests notification tap handler\n'
+                    '✓ Tests skeleton loader\n'
+                    '✓ Tests API fetch by ID',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.green.shade700,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
+            // Notification Tests Header
+            Text(
+              'Notification Tests',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Test different notification types and tap handlers',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 16),
 
             // Promo Notification
             _NotificationTestButton(

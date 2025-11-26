@@ -17,6 +17,7 @@ import 'package:custom_mp_app/app/modules/products/widgets/details/details_galle
 import 'package:custom_mp_app/app/modules/products/widgets/details/details_info_section.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/details/details_tabs.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/details/details_tab_content.dart';
+import 'package:custom_mp_app/app/modules/products/widgets/details/product_details_skeleton.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   const ProductDetailsPage({super.key});
@@ -69,11 +70,9 @@ class ProductDetailsPage extends StatelessWidget {
         final product = controller.selectedProduct.value;
         final isLoading = controller.isLoading.value;
 
-        // Show loading spinner while fetching product
+        // Show skeleton loader while fetching product
         if (isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const ProductDetailsSkeleton();
         }
 
         // Show error if product not found

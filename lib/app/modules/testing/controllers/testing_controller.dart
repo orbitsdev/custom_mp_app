@@ -167,4 +167,38 @@ class TestingController extends GetxController {
       body: 'This is a simple debug notification for testing purposes.',
     );
   }
+
+  /// Test product ID 1 notification (sends actual notification)
+  Future<void> testProductId1Notification() async {
+    final message = RemoteMessage(
+      notification: const RemoteNotification(
+        title: '🛍️ Product #1 Available',
+        body: 'Tap to view product details',
+      ),
+      data: {
+        'type': 'product',
+        'product_id': '1',
+        'image': 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=800',
+      },
+    );
+
+    await LocalNotificationService.showNotification(message);
+  }
+
+  /// Test product ID 2 notification (sends actual notification)
+  Future<void> testProductId2Notification() async {
+    final message = RemoteMessage(
+      notification: const RemoteNotification(
+        title: '🛍️ Product #2 Available',
+        body: 'Tap to view product details',
+      ),
+      data: {
+        'type': 'product',
+        'product_id': '2',
+        'image': 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=800',
+      },
+    );
+
+    await LocalNotificationService.showNotification(message);
+  }
 }
