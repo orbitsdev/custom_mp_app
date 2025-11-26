@@ -40,93 +40,40 @@ class LocalNotificationService {
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
 
-    // Create notification channels with sound
-    await _createNotificationChannels();
+    // CRITICAL: Create channel with sound BEFORE any notifications
+    await _createNotificationChannel();
 
     // Pre-load app logo for notifications
     await _loadAppLogo();
 
     FirebaseLogger.group("🔔 Local Notifications Initialized");
     FirebaseLogger.log("Plugin ready");
-    FirebaseLogger.log("Channels created with sound");
+    FirebaseLogger.log("Channel created with sound");
     FirebaseLogger.log("App logo loaded: ${_appLogoIcon != null}");
     FirebaseLogger.endGroup();
   }
 
-  /// Create all notification channels with sound configuration
-  static Future<void> _createNotificationChannels() async {
-    FirebaseLogger.log('🔊 Creating channels with sound: $_notificationSound');
-    FirebaseLogger.log('🔊 Sound object: RawResourceAndroidNotificationSound($_notificationSound)');
+  /// Create notification channel with sound configuration
+  /// CRITICAL: Must create channel BEFORE showing notifications
+  static Future<void> _createNotificationChannel() async {
+    FirebaseLogger.log('🔊 Creating channel_id_10 with sound: $_notificationSound');
 
-    final sound = RawResourceAndroidNotificationSound(_notificationSound);
-
-    // Define all channels
-    final channels = [
-      AndroidNotificationChannel(
-        'promo_channel',
-        'Promotions',
-        description: 'Special offers and promotions',
-        importance: Importance.max,
-        playSound: true,
-        sound: sound,
-        enableVibration: true,
-      ),
-      AndroidNotificationChannel(
-        'product_channel',
-        'Products',
-        description: 'Product updates and new arrivals',
-        importance: Importance.max,
-        playSound: true,
-        sound: sound,
-        enableVibration: true,
-      ),
-      AndroidNotificationChannel(
-        'order_channel',
-        'Orders',
-        description: 'Order status updates',
-        importance: Importance.max,
-        playSound: true,
-        sound: sound,
-        enableVibration: true,
-      ),
-      AndroidNotificationChannel(
-        'new_product_channel',
-        'New Arrivals',
-        description: 'New product announcements',
-        importance: Importance.max,
-        playSound: true,
-        sound: sound,
-        enableVibration: true,
-      ),
-      AndroidNotificationChannel(
-        'message_channel',
-        'Messages',
-        description: 'Chat and direct messages',
-        importance: Importance.max,
-        playSound: true,
-        sound: sound,
-        enableVibration: true,
-      ),
-      AndroidNotificationChannel(
-        'default_channel',
-        'General',
-        description: 'General notifications',
-        importance: Importance.max,
-        playSound: true,
-        sound: sound,
-        enableVibration: true,
-      ),
-    ];
-
-    // Create all channels
     final androidPlugin = _notificationsPlugin
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
     if (androidPlugin != null) {
-      for (final channel in channels) {
-        await androidPlugin.createNotificationChannel(channel);
-        FirebaseLogger.log("📢 Created channel: ${channel.id}");
-      }
+      final channel = AndroidNotificationChannel(
+        'channel_id_10',
+        'Avante Foods',
+        description: 'All Avante Foods notifications',
+        importance: Importance.max,
+        playSound: true,
+        sound: RawResourceAndroidNotificationSound(_notificationSound),
+        enableVibration: true,
+      );
+
+      await androidPlugin.createNotificationChannel(channel);
+      FirebaseLogger.log("📢 Channel created: ${channel.id} with sound enabled");
     }
   }
 
@@ -212,8 +159,15 @@ class LocalNotificationService {
 
   static void _handleOrderTap(Map<String, dynamic> data) {
     FirebaseLogger.log("📍 Navigate to Order: ${data['order_id']}");
-    // TODO: Uncomment when ready
-    // Get.toNamed(Routes.orderDetailPage, arguments: data['order_id']);
+
+    final orderId = data['order_id'];
+    if (orderId != null) {
+      // Convert to int if it's a string
+      final id = orderId is int ? orderId : int.tryParse(orderId.toString());
+      if (id != null) {
+        Get.toNamed(Routes.orderDetailPage, arguments: id);
+      }
+    }
   }
 
   static void _handleNewProductTap(Map<String, dynamic> data) {
@@ -253,44 +207,10 @@ class LocalNotificationService {
     FirebaseLogger.log("Has Image: ${imageUrl != null}");
     FirebaseLogger.log("Has Messages: ${messages != null}");
 
-    // Determine channel based on type
-    String channelId;
-    String channelName;
-    String channelDescription;
-
-    switch (type) {
-      case 'promo':
-        channelId = 'promo_channel';
-        channelName = 'Promotions';
-        channelDescription = 'Special offers and promotions';
-        break;
-      case 'product':
-        channelId = 'product_channel';
-        channelName = 'Products';
-        channelDescription = 'Product updates and new arrivals';
-        break;
-      case 'order':
-      case 'order_notification':
-        channelId = 'order_channel';
-        channelName = 'Orders';
-        channelDescription = 'Order status updates';
-        break;
-      case 'new_product':
-        channelId = 'new_product_channel';
-        channelName = 'New Arrivals';
-        channelDescription = 'New product announcements';
-        break;
-      case 'message':
-      case 'chat':
-        channelId = 'message_channel';
-        channelName = 'Messages';
-        channelDescription = 'Chat and direct messages';
-        break;
-      default:
-        channelId = 'default_channel';
-        channelName = 'General';
-        channelDescription = 'General notifications';
-    }
+    // Use single channel for all notifications (like old working project)
+    const channelId = 'channel_id_10';
+    const channelName = 'Avante Foods';
+    const channelDescription = 'All Avante Foods notifications';
 
     // Build Android notification with all features
     AndroidNotificationDetails androidDetails;
@@ -482,10 +402,7 @@ class LocalNotificationService {
   /// Android 13+ permission for local notifications
   static Future<bool?> requestPermission() async {
     if (await _isAndroid13OrHigher()) {
-      return await _notificationsPlugin
-          .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
-          ?.requestNotificationsPermission();
+      return await _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
     }
     return true;
   }

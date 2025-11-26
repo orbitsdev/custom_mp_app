@@ -29,7 +29,6 @@ class _ProductPageState extends State<ProductPage> {
     await Future.wait([
       categoryController.fetchCategories(),
       productController.fetchProducts(),
-     
     ]);
   }
 
@@ -56,7 +55,7 @@ class _ProductPageState extends State<ProductPage> {
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: AppColors.brandBackground,
-      drawer:  HomeDrawer(),
+      drawer: HomeDrawer(),
       body: RefreshIndicator(
         color: AppColors.brand,
         backgroundColor: Colors.white,
@@ -66,40 +65,11 @@ class _ProductPageState extends State<ProductPage> {
           controller: scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            // Search Bar
             ProductSearchAppBar(scaffoldKey: scaffoldKey),
-
-             SliverVGap(16),
-
-            // Test Notification Button
-            ToSliver(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ElevatedButton.icon(
-                  onPressed: () => Get.toNamed(Routes.testingPage),
-                  icon: const Icon(Icons.notifications_active),
-                  label: const Text('Test Notifications'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.brand,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-             SliverVGap(16),
-
-            // Shop by Category Section
-            const ShopByCategorySection(),
-
-             SliverVGap(24),
-
-            // All Products Section
-            const AllProductsSection(),
+            SliverVGap(16),
+            ShopByCategorySection(),
+            SliverVGap(24),
+            AllProductsSection(),
           ],
         ),
       ),

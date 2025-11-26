@@ -10,7 +10,8 @@
       "Bash(flutter pub get:*)",
       "Bash(convert:*)",
       "Bash(find:*)",
-      "Bash(flutter doctor:*)"
+      "Bash(flutter doctor:*)",
+      "Bash(nul)"
     ],
     "deny": [],
     "ask": []

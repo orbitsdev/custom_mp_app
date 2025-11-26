@@ -115,6 +115,95 @@ class TestingPage extends StatelessWidget {
 
             const SizedBox(height: 32),
 
+            // Order Navigation Tests Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.receipt_long, color: Colors.blue.shade700),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Order Navigation Tests',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Sends real notification to notification tray.\n'
+                    'Tap notification to test order details navigation.',
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Test Order ID 43 - Out for Delivery
+                  ElevatedButton.icon(
+                    onPressed: controller.testOrderId43Notification,
+                    icon: const Icon(Icons.local_shipping),
+                    label: const Text('Order #43 - Out for Delivery'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Test Order Placed
+                  ElevatedButton.icon(
+                    onPressed: controller.testOrderPlacedNotification,
+                    icon: const Icon(Icons.check_circle),
+                    label: const Text('Order #43 - Placed'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Test Order Delivered
+                  ElevatedButton.icon(
+                    onPressed: controller.testOrderDeliveredNotification,
+                    icon: const Icon(Icons.celebration),
+                    label: const Text('Order #43 - Delivered'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple.shade600,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  Text(
+                    '✓ Tests notification tap handler\n'
+                    '✓ Tests order detail loading by ID\n'
+                    '✓ Tests skeleton loader\n'
+                    '✓ Tests deep link navigation',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blue.shade700,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 32),
+
             // Notification Tests Header
             Text(
               'Notification Tests',
@@ -251,9 +340,10 @@ class TestingPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    '• Notifications use different channels based on type\n'
+                    '• Single channel approach (avante_channel_v2)\n'
+                    '• All notifications use same channel with sound\n'
+                    '• V2 bypasses old locked channel settings\n'
                     '• Images are cached to avoid re-downloading\n'
-                    '• Messaging style shows conversation with multiple messages\n'
                     '• Tap notifications to test navigation handling\n'
                     '• Check Firebase logs for detailed debugging',
                     style: TextStyle(fontSize: 14),

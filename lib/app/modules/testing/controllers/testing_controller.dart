@@ -74,6 +74,22 @@ class TestingController extends GetxController {
     await LocalNotificationService.showNotification(message);
   }
 
+  /// Test avante_channel_v2 notification (default channel)
+  Future<void> testAvanteChannelNotification() async {
+    final message = RemoteMessage(
+      notification: const RemoteNotification(
+        title: '🍽️ Avante Foods',
+        body: 'Welcome to Avante Foods! This uses avante_channel_v2 (fresh channel with sound).',
+      ),
+      data: {
+        // No type = defaults to avante_channel_v2
+        'screen': 'home',
+      },
+    );
+
+    await LocalNotificationService.showNotification(message);
+  }
+
   /// Test default notification (text only)
   Future<void> testDefaultNotification() async {
     final message = RemoteMessage(
@@ -196,6 +212,54 @@ class TestingController extends GetxController {
         'type': 'product',
         'product_id': '2',
         'image': 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=800',
+      },
+    );
+
+    await LocalNotificationService.showNotification(message);
+  }
+
+  /// Test order ID 43 notification (order out for delivery)
+  Future<void> testOrderId43Notification() async {
+    final message = RemoteMessage(
+      notification: const RemoteNotification(
+        title: '📦 Order Out for Delivery',
+        body: 'Your order #ORD-43 is on the way! Tap to track.',
+      ),
+      data: {
+        'type': 'order',
+        'order_id': '43',
+      },
+    );
+
+    await LocalNotificationService.showNotification(message);
+  }
+
+  /// Test order placed notification
+  Future<void> testOrderPlacedNotification() async {
+    final message = RemoteMessage(
+      notification: const RemoteNotification(
+        title: '✅ Order Placed Successfully',
+        body: 'Your order #ORD-43 has been placed. Tap to view details.',
+      ),
+      data: {
+        'type': 'order',
+        'order_id': '43',
+      },
+    );
+
+    await LocalNotificationService.showNotification(message);
+  }
+
+  /// Test order delivered notification
+  Future<void> testOrderDeliveredNotification() async {
+    final message = RemoteMessage(
+      notification: const RemoteNotification(
+        title: '🎉 Order Delivered',
+        body: 'Your order #ORD-43 has been delivered. Enjoy your purchase!',
+      ),
+      data: {
+        'type': 'order_notification',
+        'order_id': '43',
       },
     );
 

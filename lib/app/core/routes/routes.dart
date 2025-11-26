@@ -1,4 +1,4 @@
-import 'package:custom_mp_app/app/global/widgets/image/online_image_full_screen_display.dart';
+
 import 'package:custom_mp_app/app/modules/auth/bindings/auth_binding.dart';
 import 'package:custom_mp_app/app/modules/auth/middleware/auth_middleware.dart';
 import 'package:custom_mp_app/app/modules/auth/middleware/guest_middleware.dart';
@@ -10,6 +10,7 @@ import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
 import 'package:custom_mp_app/app/modules/orders/views/orders_page.dart';
 import 'package:custom_mp_app/app/modules/orders/views/order_detail_page.dart';
+import 'package:custom_mp_app/app/modules/orders/bindings/order_detail_binding.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/bindings/order_preparation_binding.dart';
 import 'package:custom_mp_app/app/modules/orderpreparation/views/order_preparation_page.dart';
 import 'package:custom_mp_app/app/modules/payment/bindings/payment_binding.dart';
@@ -39,6 +40,7 @@ import 'package:custom_mp_app/app/modules/myprofile/views/upload_avatar_page.dar
 import 'package:custom_mp_app/app/modules/testing/views/modal_page.dart';
 import 'package:custom_mp_app/app/modules/testing/bindings/testing_binding.dart';
 import 'package:custom_mp_app/app/modules/testing/views/testing_page.dart';
+
 import 'package:get/route_manager.dart';
 
 class Routes {
@@ -97,6 +99,7 @@ class Routes {
   //TESTING
   static const String modalPage = '/modal';
   static const String testingPage = '/testing';
+
 
   static List<GetPage> pages = [
     GetPage(name: Routes.splashPage, page: () => const SplashPage()),
@@ -232,6 +235,7 @@ class Routes {
       name: Routes.orderDetailPage,
       middlewares: [AuthMiddleware()],
       page: () => const OrderDetailPage(),
+      binding: OrderDetailBinding(),
       transition: Transition.cupertino,
     ),
     GetPage(
@@ -273,6 +277,8 @@ class Routes {
       binding: TestingBinding(),
       transition: Transition.cupertino,
     ),
-   
+
+    
+
   ];
 }
