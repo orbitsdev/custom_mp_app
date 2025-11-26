@@ -1,3 +1,5 @@
+import 'package:custom_mp_app/app/data/models/user_device/timestamp_model.dart';
+
 class UserDeviceModel {
   final int id;
   final int userId;
@@ -7,9 +9,9 @@ class UserDeviceModel {
   final String? deviceModel;
   final String? appVersion;
   final bool isActive;
-  final String? lastUsedAt;
-  final String createdAt;
-  final String updatedAt;
+  final TimestampModel? lastUsedAt;
+  final TimestampModel createdAt;
+  final TimestampModel? updatedAt;
 
   UserDeviceModel({
     required this.id,
@@ -22,7 +24,7 @@ class UserDeviceModel {
     required this.isActive,
     this.lastUsedAt,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 
   factory UserDeviceModel.fromMap(Map<String, dynamic> map) {
@@ -35,9 +37,13 @@ class UserDeviceModel {
       deviceModel: map['device_model'],
       appVersion: map['app_version'],
       isActive: map['is_active'] ?? false,
-      lastUsedAt: map['last_used_at'],
-      createdAt: map['created_at'] ?? '',
-      updatedAt: map['updated_at'] ?? '',
+      lastUsedAt: map['last_used_at'] != null
+          ? TimestampModel.fromMap(map['last_used_at'])
+          : null,
+      createdAt: TimestampModel.fromMap(map['created_at']),
+      updatedAt: map['updated_at'] != null
+          ? TimestampModel.fromMap(map['updated_at'])
+          : null,
     );
   }
 
@@ -51,9 +57,9 @@ class UserDeviceModel {
       'device_model': deviceModel,
       'app_version': appVersion,
       'is_active': isActive,
-      'last_used_at': lastUsedAt,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
+      'last_used_at': lastUsedAt?.toMap(),
+      'created_at': createdAt.toMap(),
+      'updated_at': updatedAt?.toMap(),
     };
   }
 }
