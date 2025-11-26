@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/config/firebase/firebase_initializer.dart';
 import 'package:custom_mp_app/app/core/bindings/app_binding.dart';
 import 'package:custom_mp_app/app/core/plugins/deviceinfoplus/device_info_service.dart';
 import 'package:custom_mp_app/app/core/routes/routes.dart';
@@ -10,13 +11,11 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 Future<void> main() async {
-  
+
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await FirebaseInitializer.init();
   await GetStorage.init();
-  await DeviceInfoService.init();    
+  await DeviceInfoService.init();
   AppBinding().dependencies();
   await AuthController.instance.autoLogin();
   runApp(const CustomMPAPP());
