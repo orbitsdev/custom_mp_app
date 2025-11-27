@@ -110,7 +110,7 @@ class LocalNotificationService {
         case 'product':
           _handleProductTap(data);
           break;
-        case 'order':
+        case 'order_status_update':
           _handleOrderTap(data);
           break;
         default:
@@ -129,11 +129,10 @@ class LocalNotificationService {
 
     final productId = data['product_id'];
     if (productId != null) {
-      final id =
-          productId is int ? productId : int.tryParse(productId.toString());
+      final id = productId is int ? productId : int.tryParse(productId.toString());
       if (id != null) {
        
-        AppToast.info("🛍️ Product notification tapped: ID $id");
+        Get.toNamed(Routes.productDetailsPage, arguments: id);
        
       }
     }
@@ -146,10 +145,8 @@ class LocalNotificationService {
     if (orderId != null) {
       final id = orderId is int ? orderId : int.tryParse(orderId.toString());
       if (id != null) {
-        // Testing: Show toast instead of navigation
-        AppToast.info("📦 Order notification tapped: ID $id");
-        // TODO: Uncomment when ready for production
-        // Get.toNamed(Routes.orderDetailPage, arguments: id);
+      
+        Get.toNamed(Routes.orderDetailPage, arguments: id);
       }
     }
   }
@@ -385,7 +382,7 @@ class LocalNotificationService {
         _handleProductTap(data);
         break;
 
-      case 'order':
+      case 'order_status_update':
         _handleOrderTap(data);
         break;
 

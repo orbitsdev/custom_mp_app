@@ -68,9 +68,8 @@ class FirebaseInitializer {
  
   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
     FirebaseLogger.group("📩 Foreground Message");
-    FirebaseLogger.log("Title: ${message.notification?.title}");
-    FirebaseLogger.log("Body: ${message.notification?.body}");
-    FirebaseLogger.log("Data: ${message.data}");
+    print( "📩 Foreground Message ${message.toString()}" );
+ 
     FirebaseLogger.endGroup();
 
     if (message.notification != null) {
