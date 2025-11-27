@@ -4,6 +4,7 @@ import 'package:custom_mp_app/app/modules/user_device/controllers/user_device_co
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:custom_mp_app/firebase_options.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'firebase_logger.dart';
@@ -11,83 +12,110 @@ import 'local_notification_service.dart';
 
 class FirebaseInitializer {
   static Future<void> init() async {
-    // 📌 1. Register background handler FIRST!
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+    
+     // 1. Background handler (already correct)
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
 
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  RemoteMessage? initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
 
-    FirebaseLogger.group("🔥 Firebase Initialized");
-    FirebaseLogger.log("Project: ${DefaultFirebaseOptions.currentPlatform.projectId}");
-    FirebaseLogger.endGroup();
-
-    // 📌 2. Initialize local notifications
-    await LocalNotificationService.init();
-
-    // 📌 3. Request notification permission (Android 13+ + iOS)
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    FirebaseLogger.group("🔐 Notification Permission");
-    FirebaseLogger.log("Status: ${settings.authorizationStatus}");
-    FirebaseLogger.endGroup();
-
-    // Request Android 13+ local notification permission
-    await LocalNotificationService.requestPermission();
-
-    // 📌 4. Get FCM Token
-    final token = await messaging.getToken();
-    FirebaseLogger.group("📱 FCM TOKEN");
-    FirebaseLogger.log(token ?? "No token found");
-    FirebaseLogger.endGroup();
-
-    // 📌 5. Foreground message listener - Display notification
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      FirebaseLogger.group("📩 Foreground Message");
-      FirebaseLogger.log("Title: ${message.notification?.title}");
-      FirebaseLogger.log("Body: ${message.notification?.body}");
-      FirebaseLogger.log("Data: ${message.data}");
-      FirebaseLogger.endGroup();
-
-      // Show notification when app is in foreground
-      if (message.notification != null) {
-        LocalNotificationService.showNotification(message);
-      }
+  if (initialMessage != null) {
+   
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FirebaseLogger.log("🚀 Handling initial message navigation");
+      LocalNotificationService.handleFCMTap(initialMessage.data);
     });
+  }
 
-    // 📌 6. User tapped notification
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      FirebaseLogger.group("📬 Notification Clicked");
-      FirebaseLogger.log("Data: ${message.data}");
-      FirebaseLogger.endGroup();
-    });
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    LocalNotificationService.handleFCMTap(message.data);
+  });
 
-    // 📌 7. FCM Token Refresh Listener
-    // CRITICAL: Firebase can refresh tokens anytime - must update backend
+
+
+  FirebaseLogger.group("🔥 Firebase Initialized");
+  FirebaseLogger.log("Project: ${DefaultFirebaseOptions.currentPlatform.projectId}");
+  FirebaseLogger.endGroup();
+
+
+  await LocalNotificationService.init();
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  FirebaseLogger.group("🔐 Notification Permission");
+  FirebaseLogger.log("Status: ${settings.authorizationStatus}");
+  FirebaseLogger.endGroup();
+
+  await LocalNotificationService.requestPermission();
+
+
+  final token = await messaging.getToken();
+  FirebaseLogger.group("📱 FCM TOKEN");
+  FirebaseLogger.log(token ?? "No token found");
+  FirebaseLogger.endGroup();
+
+ 
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseLogger.group("📩 Foreground Message");
+    FirebaseLogger.log("Title: ${message.notification?.title}");
+    FirebaseLogger.log("Body: ${message.notification?.body}");
+    FirebaseLogger.log("Data: ${message.data}");
+    FirebaseLogger.endGroup();
+
+    if (message.notification != null) {
+      LocalNotificationService.showNotification(message);
+    }
+  });
+
+   
     FirebaseMessaging.instance.onTokenRefresh.listen((String newToken) async {
       FirebaseLogger.group("🔄 FCM Token Refreshed");
       FirebaseLogger.log("New Token: ${newToken.substring(0, 20)}...");
       FirebaseLogger.endGroup();
 
-      // Only re-register if user is authenticated
+      
       try {
-        if (Get.isRegistered<AuthController>()) {
-          final authController = AuthController.instance;
-          if (authController.isAuthenticated.value) {
-            print('📱 [FirebaseInitializer] Auto-registering device with new FCM token...');
-            await UserDeviceController.instance.registerDevice();
-            print('✅ [FirebaseInitializer] Device re-registered successfully');
-          }
+        if (!Get.isRegistered<AuthController>()) {
+          FirebaseLogger.log(
+            "⏳ AuthController not registered yet - skipping device registration",
+          );
+          return;
         }
-      } catch (e) {
-        print('⚠️ [FirebaseInitializer] Failed to re-register device: $e');
+
+        final authController = AuthController.instance;
+        if (!authController.isAuthenticated.value) {
+          FirebaseLogger.log(
+            "🔓 User not authenticated - skipping device registration",
+          );
+          return;
+        }
+
+        if (!Get.isRegistered<UserDeviceController>()) {
+          FirebaseLogger.log(
+            "⏳ UserDeviceController not registered yet - skipping device registration",
+          );
+          return;
+        }
+
+        FirebaseLogger.log(
+          '📱 Auto-registering device with new FCM token...',
+        );
+        await UserDeviceController.instance.registerDevice();
+        FirebaseLogger.log('✅ Device re-registered successfully');
+      } catch (e, stackTrace) {
+        FirebaseLogger.log('❌ Failed to re-register device: $e');
+        FirebaseLogger.log('Stack trace: $stackTrace');
       }
     });
   }

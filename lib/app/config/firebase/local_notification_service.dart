@@ -13,10 +13,8 @@ class LocalNotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // Cache for app logo to avoid loading it multiple times
   static ByteArrayAndroidBitmap? _appLogoIcon;
 
-  // Notification sound file (must exist in android/app/src/main/res/raw/)
   static const String _notificationSound = 'notification';
 
   static Future<void> init() async {
@@ -25,10 +23,10 @@ class LocalNotificationService {
 
     const DarwinInitializationSettings iosSettings =
         DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
@@ -40,10 +38,8 @@ class LocalNotificationService {
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
 
-    // CRITICAL: Create channel with sound BEFORE any notifications
     await _createNotificationChannel();
 
-    // Pre-load app logo for notifications
     await _loadAppLogo();
 
     FirebaseLogger.group("🔔 Local Notifications Initialized");
@@ -53,13 +49,16 @@ class LocalNotificationService {
     FirebaseLogger.endGroup();
   }
 
-  /// Create notification channel with sound configuration
-  /// CRITICAL: Must create channel BEFORE showing notifications
   static Future<void> _createNotificationChannel() async {
-    FirebaseLogger.log('🔊 Creating channel_id_10 with sound: $_notificationSound');
+    FirebaseLogger.log(
+      '🔊 Creating channel_id_10 with sound: $_notificationSound',
+    );
 
-    final androidPlugin = _notificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin =
+        _notificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
 
     if (androidPlugin != null) {
       final channel = AndroidNotificationChannel(
@@ -73,25 +72,23 @@ class LocalNotificationService {
       );
 
       await androidPlugin.createNotificationChannel(channel);
-      FirebaseLogger.log("📢 Channel created: ${channel.id} with sound enabled");
+      FirebaseLogger.log(
+        "📢 Channel created: ${channel.id} with sound enabled",
+      );
     }
   }
 
-  /// Load app logo from assets for use as large icon
   static Future<void> _loadAppLogo() async {
     try {
-      // Try to load custom logo first (if you have it)
       final ByteData bytes = await rootBundle.load('assets/images/logo.png');
       final Uint8List byteArray = bytes.buffer.asUint8List();
       _appLogoIcon = ByteArrayAndroidBitmap(byteArray);
     } catch (e) {
-      // If no custom logo, that's okay - will use default launcher icon
       FirebaseLogger.log("⚠️ No custom logo found, using launcher icon");
       _appLogoIcon = null;
     }
   }
 
-  /// Handle notification tap - Navigate based on type and data
   static void _onNotificationTapped(NotificationResponse response) {
     FirebaseLogger.group("👆 Notification Tapped");
     FirebaseLogger.log("Payload: ${response.payload}");
@@ -110,7 +107,6 @@ class LocalNotificationService {
       FirebaseLogger.log("Screen: $screen");
       FirebaseLogger.endGroup();
 
-      // Route based on notification type
       switch (type) {
         case 'promo':
           _handlePromoTap(data);
@@ -119,7 +115,8 @@ class LocalNotificationService {
           _handleProductTap(data);
           break;
         case 'order':
-        case 'order_notification':  // Support old format too
+        case 'order_notification':
+        case 'order_status_update':
           _handleOrderTap(data);
           break;
         case 'new_product':
@@ -134,14 +131,8 @@ class LocalNotificationService {
     }
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // TAP HANDLERS - Customize navigation for each type
-  // ═══════════════════════════════════════════════════════════
-
   static void _handlePromoTap(Map<String, dynamic> data) {
     FirebaseLogger.log("📍 Navigate to Promo: ${data['promo_id']}");
-    // TODO: Uncomment when route is ready
-    // Get.toNamed(Routes.promoDetail, arguments: data['promo_id']);
   }
 
   static void _handleProductTap(Map<String, dynamic> data) {
@@ -149,8 +140,8 @@ class LocalNotificationService {
 
     final productId = data['product_id'];
     if (productId != null) {
-      // Convert to int if it's a string
-      final id = productId is int ? productId : int.tryParse(productId.toString());
+      final id =
+          productId is int ? productId : int.tryParse(productId.toString());
       if (id != null) {
         Get.toNamed(Routes.productDetailsPage, arguments: id);
       }
@@ -162,7 +153,6 @@ class LocalNotificationService {
 
     final orderId = data['order_id'];
     if (orderId != null) {
-      // Convert to int if it's a string
       final id = orderId is int ? orderId : int.tryParse(orderId.toString());
       if (id != null) {
         Get.toNamed(Routes.orderDetailPage, arguments: id);
@@ -175,8 +165,8 @@ class LocalNotificationService {
 
     final productId = data['product_id'];
     if (productId != null) {
-      // Convert to int if it's a string
-      final id = productId is int ? productId : int.tryParse(productId.toString());
+      final id =
+          productId is int ? productId : int.tryParse(productId.toString());
       if (id != null) {
         Get.toNamed(Routes.productDetailsPage, arguments: id);
       }
@@ -186,19 +176,12 @@ class LocalNotificationService {
   static void _handleDefaultTap(Map<String, dynamic> data) {
     final screen = data['screen'] as String?;
     FirebaseLogger.log("📍 Navigate to: $screen");
-    // Handle custom screen navigation if provided
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // MAIN SHOW NOTIFICATION - Handles all types
-  // ═══════════════════════════════════════════════════════════
-
-  /// Show notification triggered by Firebase
-  /// Automatically adapts style based on data.type and data.image
   static Future<void> showNotification(RemoteMessage message) async {
     final type = message.data['type'] as String?;
     final imageUrl = message.data['image'] as String?;
-    final messages = message.data['messages'] as String?; // For messaging style
+    final messages = message.data['messages'] as String?;
     final title = message.notification?.title ?? 'Notification';
     final body = message.notification?.body ?? '';
 
@@ -207,17 +190,13 @@ class LocalNotificationService {
     FirebaseLogger.log("Has Image: ${imageUrl != null}");
     FirebaseLogger.log("Has Messages: ${messages != null}");
 
-    // Use single channel for all notifications (like old working project)
     const channelId = 'channel_id_10';
     const channelName = 'Avante Foods';
     const channelDescription = 'All Avante Foods notifications';
 
-    // Build Android notification with all features
     AndroidNotificationDetails androidDetails;
 
-    // Check if this is a messaging notification
     if (messages != null && messages.isNotEmpty) {
-      // Show MessagingStyle notification (chat conversation)
       androidDetails = _buildMessagingNotification(
         channelId,
         channelName,
@@ -226,11 +205,9 @@ class LocalNotificationService {
         messages,
       );
     } else if (imageUrl != null && imageUrl.isNotEmpty) {
-      // Download image for notification
       final image = await _downloadImage(imageUrl);
 
       if (image != null) {
-        // Show with image (Big Picture Style)
         androidDetails = AndroidNotificationDetails(
           channelId,
           channelName,
@@ -240,7 +217,7 @@ class LocalNotificationService {
           playSound: true,
           sound: RawResourceAndroidNotificationSound(_notificationSound),
           icon: '@mipmap/ic_launcher',
-          largeIcon: _appLogoIcon,  // App logo on the side
+          largeIcon: _appLogoIcon,
           styleInformation: BigPictureStyleInformation(
             image,
             contentTitle: title,
@@ -253,7 +230,6 @@ class LocalNotificationService {
           enableVibration: true,
         );
       } else {
-        // Image download failed, show text-only
         androidDetails = _buildTextOnlyNotification(
           channelId,
           channelName,
@@ -263,7 +239,6 @@ class LocalNotificationService {
         );
       }
     } else {
-      // No image, show text-only with BigTextStyle (expandable)
       androidDetails = _buildTextOnlyNotification(
         channelId,
         channelName,
@@ -285,7 +260,6 @@ class LocalNotificationService {
     FirebaseLogger.endGroup();
   }
 
-  /// Build text-only notification with BigTextStyle (expandable)
   static AndroidNotificationDetails _buildTextOnlyNotification(
     String channelId,
     String channelName,
@@ -302,7 +276,7 @@ class LocalNotificationService {
       playSound: true,
       sound: RawResourceAndroidNotificationSound(_notificationSound),
       icon: '@mipmap/ic_launcher',
-      largeIcon: _appLogoIcon,  // App logo on the side
+      largeIcon: _appLogoIcon,
       styleInformation: BigTextStyleInformation(
         body,
         contentTitle: title,
@@ -314,9 +288,6 @@ class LocalNotificationService {
     );
   }
 
-  /// Build messaging-style notification (chat conversation)
-  /// Expected messages format: JSON array of message objects
-  /// [{"text": "Hello!", "timestamp": 1234567890, "sender": "John"}]
   static AndroidNotificationDetails _buildMessagingNotification(
     String channelId,
     String channelName,
@@ -325,31 +296,25 @@ class LocalNotificationService {
     String messagesJson,
   ) {
     try {
-      // Parse messages JSON
       final List<dynamic> messagesList = jsonDecode(messagesJson);
 
-      // Create messaging style
       final messagingStyle = MessagingStyleInformation(
-        Person(
-          name: 'You', // The current user
-          key: 'user_key',
-          // Note: Person icon requires AndroidIcon type, not ByteArrayAndroidBitmap
-          // We'll use the default icon instead
-        ),
+        Person(name: 'You', key: 'user_key'),
         conversationTitle: conversationTitle,
         groupConversation: messagesList.length > 1,
-        messages: messagesList.map((msg) {
-          return Message(
-            msg['text'] ?? '',
-            DateTime.fromMillisecondsSinceEpoch(
-              msg['timestamp'] ?? DateTime.now().millisecondsSinceEpoch,
-            ),
-            Person(
-              name: msg['sender'] ?? 'Unknown',
-              key: 'sender_${msg['sender']}',
-            ),
-          );
-        }).toList(),
+        messages:
+            messagesList.map((msg) {
+              return Message(
+                msg['text'] ?? '',
+                DateTime.fromMillisecondsSinceEpoch(
+                  msg['timestamp'] ?? DateTime.now().millisecondsSinceEpoch,
+                ),
+                Person(
+                  name: msg['sender'] ?? 'Unknown',
+                  key: 'sender_${msg['sender']}',
+                ),
+              );
+            }).toList(),
       );
 
       return AndroidNotificationDetails(
@@ -369,7 +334,7 @@ class LocalNotificationService {
       );
     } catch (e) {
       FirebaseLogger.log("⚠️ Failed to parse messages: $e");
-      // Fallback to text-only notification
+
       return _buildTextOnlyNotification(
         channelId,
         channelName,
@@ -380,14 +345,11 @@ class LocalNotificationService {
     }
   }
 
-  /// Download image from URL for notification using DioClient
   static Future<ByteArrayAndroidBitmap?> _downloadImage(String url) async {
     try {
       final response = await DioClient.public.get(
         url,
-        options: Options(
-          responseType: ResponseType.bytes, // Get raw bytes for image
-        ),
+        options: Options(responseType: ResponseType.bytes),
       );
 
       if (response.statusCode == 200 && response.data != null) {
@@ -399,22 +361,26 @@ class LocalNotificationService {
     return null;
   }
 
-  /// Android 13+ permission for local notifications
   static Future<bool?> requestPermission() async {
     if (await _isAndroid13OrHigher()) {
-      return await _notificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()?.requestNotificationsPermission();
+      return await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >()
+          ?.requestNotificationsPermission();
     }
     return true;
   }
 
   static Future<bool> _isAndroid13OrHigher() async {
-    final plugin = _notificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final plugin =
+        _notificationsPlugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
     return plugin != null;
   }
 
-  /// DEBUG NOTIFICATION FOR DEVELOPMENT
   static Future<void> showDebugNotification({
     required String title,
     required String body,
@@ -428,11 +394,37 @@ class LocalNotificationService {
       ),
     );
 
-    await _notificationsPlugin.show(
-      999,
-      title,
-      body,
-      details,
-    );
+    await _notificationsPlugin.show(999, title, body, details);
+  }
+
+  static void handleFCMTap(Map<String, dynamic> data) {
+    FirebaseLogger.group("📬 FCM Notification Tapped");
+    FirebaseLogger.log("Data: $data");
+    FirebaseLogger.endGroup();
+
+    final type = data['type'];
+
+    switch (type) {
+      case 'promo':
+        _handlePromoTap(data);
+        break;
+
+      case 'product':
+        _handleProductTap(data);
+        break;
+
+      case 'order':
+      case 'order_status_update':
+      case 'order_notification':
+        _handleOrderTap(data);
+        break;
+
+      case 'new_product':
+        _handleNewProductTap(data);
+        break;
+
+      default:
+        _handleDefaultTap(data);
+    }
   }
 }
