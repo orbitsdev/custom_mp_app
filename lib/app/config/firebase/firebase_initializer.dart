@@ -28,12 +28,12 @@ class FirebaseInitializer {
    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       FirebaseLogger.log("🚀 Handling initial message navigation");
-      LocalNotificationService.handleFCMTap(initialMessage.data);
+      LocalNotificationService.onSystemNotificationTap(initialMessage.data);
     });
   }
 
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    LocalNotificationService.handleFCMTap(message.data);
+    LocalNotificationService.onSystemNotificationTap(message.data);
   });
 
 

@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:dio/dio.dart';
 
 import 'package:custom_mp_app/app/core/plugins/dio/dio_client.dart';
+import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
 import 'package:get/get.dart';
 import 'firebase_logger.dart';
 
@@ -35,7 +36,7 @@ class LocalNotificationService {
 
     await _notificationsPlugin.initialize(
       initSettings,
-      onDidReceiveNotificationResponse: _onNotificationTapped,
+      onDidReceiveNotificationResponse: onLocalNotificationTap,
     );
 
     await _createNotificationChannel();
@@ -89,7 +90,7 @@ class LocalNotificationService {
     }
   }
 
-  static void _onNotificationTapped(NotificationResponse response) {
+  static void onLocalNotificationTap(NotificationResponse response) {
     FirebaseLogger.group("👆 Notification Tapped");
     FirebaseLogger.log("Payload: ${response.payload}");
 
@@ -101,29 +102,19 @@ class LocalNotificationService {
     try {
       final data = jsonDecode(response.payload!);
       final type = data['type'] as String?;
-      final screen = data['screen'] as String?;
 
       FirebaseLogger.log("Type: $type");
-      FirebaseLogger.log("Screen: $screen");
       FirebaseLogger.endGroup();
 
       switch (type) {
-        case 'promo':
-          _handlePromoTap(data);
-          break;
         case 'product':
           _handleProductTap(data);
           break;
         case 'order':
-        case 'order_notification':
-        case 'order_status_update':
           _handleOrderTap(data);
           break;
-        case 'new_product':
-          _handleNewProductTap(data);
-          break;
         default:
-          _handleDefaultTap(data);
+          FirebaseLogger.log("⚠️ Unknown notification type: $type");
       }
     } catch (e) {
       FirebaseLogger.log("❌ Error parsing payload: $e");
@@ -131,9 +122,7 @@ class LocalNotificationService {
     }
   }
 
-  static void _handlePromoTap(Map<String, dynamic> data) {
-    FirebaseLogger.log("📍 Navigate to Promo: ${data['promo_id']}");
-  }
+  
 
   static void _handleProductTap(Map<String, dynamic> data) {
     FirebaseLogger.log("📍 Navigate to Product: ${data['product_id']}");
@@ -143,7 +132,9 @@ class LocalNotificationService {
       final id =
           productId is int ? productId : int.tryParse(productId.toString());
       if (id != null) {
-        Get.toNamed(Routes.productDetailsPage, arguments: id);
+       
+        AppToast.info("🛍️ Product notification tapped: ID $id");
+       
       }
     }
   }
@@ -155,27 +146,12 @@ class LocalNotificationService {
     if (orderId != null) {
       final id = orderId is int ? orderId : int.tryParse(orderId.toString());
       if (id != null) {
-        Get.toNamed(Routes.orderDetailPage, arguments: id);
+        // Testing: Show toast instead of navigation
+        AppToast.info("📦 Order notification tapped: ID $id");
+        // TODO: Uncomment when ready for production
+        // Get.toNamed(Routes.orderDetailPage, arguments: id);
       }
     }
-  }
-
-  static void _handleNewProductTap(Map<String, dynamic> data) {
-    FirebaseLogger.log("📍 Navigate to New Product: ${data['product_id']}");
-
-    final productId = data['product_id'];
-    if (productId != null) {
-      final id =
-          productId is int ? productId : int.tryParse(productId.toString());
-      if (id != null) {
-        Get.toNamed(Routes.productDetailsPage, arguments: id);
-      }
-    }
-  }
-
-  static void _handleDefaultTap(Map<String, dynamic> data) {
-    final screen = data['screen'] as String?;
-    FirebaseLogger.log("📍 Navigate to: $screen");
   }
 
   static Future<void> showNotification(RemoteMessage message) async {
@@ -397,7 +373,7 @@ class LocalNotificationService {
     await _notificationsPlugin.show(999, title, body, details);
   }
 
-  static void handleFCMTap(Map<String, dynamic> data) {
+  static void onSystemNotificationTap(Map<String, dynamic> data) {
     FirebaseLogger.group("📬 FCM Notification Tapped");
     FirebaseLogger.log("Data: $data");
     FirebaseLogger.endGroup();
@@ -405,26 +381,16 @@ class LocalNotificationService {
     final type = data['type'];
 
     switch (type) {
-      case 'promo':
-        _handlePromoTap(data);
-        break;
-
       case 'product':
         _handleProductTap(data);
         break;
 
       case 'order':
-      case 'order_status_update':
-      case 'order_notification':
         _handleOrderTap(data);
         break;
 
-      case 'new_product':
-        _handleNewProductTap(data);
-        break;
-
       default:
-        _handleDefaultTap(data);
+        FirebaseLogger.log("⚠️ Unknown notification type: $type");
     }
   }
 }
