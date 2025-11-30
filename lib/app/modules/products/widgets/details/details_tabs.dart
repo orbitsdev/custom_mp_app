@@ -20,9 +20,12 @@ class DetailsTabs extends StatelessWidget {
         child: Container(
           color: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(width: 16),
               isLoading
                   ? ShimmerWidget(height: 26, width: 100)
                   : ProductDetailsTab(
@@ -42,7 +45,20 @@ class DetailsTabs extends StatelessWidget {
                       isSelected: controller.tabIndex.value == 1,
                       function: () => controller.selecTab(1),
                     ),
-            ],
+
+              const SizedBox(width: 24),
+
+              isLoading
+                  ? ShimmerWidget(height: 26, width: 100)
+                  : ProductDetailsTab(
+                      product: controller.selectedProduct.value!,
+                      title: 'Reviews',
+                      isSelected: controller.tabIndex.value == 2,
+                      function: () => controller.selecTab(2),
+                    ),
+                const SizedBox(width: 16),
+              ],
+            ),
           ),
         ),
       );

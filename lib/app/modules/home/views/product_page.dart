@@ -70,7 +70,7 @@ class _ProductPageState extends State<ProductPage> {
             ShopByCategorySection(),
             SliverVGap(24),
             AllProductsSection(),
-          ],
+        ],
         ),
       ),
     );

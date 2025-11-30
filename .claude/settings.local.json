@@ -12,7 +12,8 @@
       "Bash(find:*)",
       "Bash(flutter doctor:*)",
       "Bash(nul)",
-      "Bash(flutter upgrade:*)"
+      "Bash(flutter upgrade:*)",
+      "Bash(done)"
     ],
     "deny": [],
     "ask": []

@@ -40,8 +40,15 @@ class SelectProductController extends GetxController {
 
     // Pattern A: Full ProductModel (from product list - existing behavior)
     if (arg is ProductModel) {
+      // Set product immediately for fast UI display
       selectedProduct.value = arg;
       print('✅ Product loaded from argument: ${arg.name}');
+
+      // Fetch fresh data with full includes (including reviews) in background
+      if (arg.slug.isNotEmpty) {
+        print('🔄 Fetching fresh data with reviews...');
+        _loadProductBySlug(arg.slug);
+      }
       return;
     }
 

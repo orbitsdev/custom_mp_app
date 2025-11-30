@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:custom_mp_app/app/data/models/category/category_model.dart';
-
+import 'package:custom_mp_app/app/data/models/reviews/review_model.dart';
+import 'package:custom_mp_app/app/data/models/reviews/review_summary_model.dart';
 
 import 'variant_model.dart';
 
@@ -27,6 +28,8 @@ class ProductModel {
   final List<String> gallery;
   final List<CategoryModel> categories;
   final List<VariantModel> variants;
+  final ReviewSummaryModel? reviewSummary;
+  final List<ReviewModel> reviews;
 
 
   const ProductModel({
@@ -52,7 +55,8 @@ class ProductModel {
     required this.gallery,
     required this.categories,
     required this.variants,
-     
+    this.reviewSummary,
+    required this.reviews,
   });
 
   /// ✅ Safe, type-flexible factory that avoids any runtime cast errors.
@@ -77,7 +81,9 @@ class ProductModel {
 
     final rawCats = map['categories'];
     final rawVars = map['variants'];
-        final rawAttrs = map['attributes'];
+    final rawAttrs = map['attributes'];
+    final rawReviewSummary = map['review_summary'];
+    final rawReviews = map['reviews'];
 
     return ProductModel(
       id: _asInt(map['id']),
@@ -110,9 +116,14 @@ class ProductModel {
               .map((e) => VariantModel.fromMap(e as Map<String, dynamic>))
               .toList()
           : const [],
-          
-     
-          
+      reviewSummary: (rawReviewSummary is Map<String, dynamic>)
+          ? ReviewSummaryModel.fromMap(rawReviewSummary)
+          : null,
+      reviews: (rawReviews is List)
+          ? rawReviews
+              .map((e) => ReviewModel.fromMap(e as Map<String, dynamic>))
+              .toList()
+          : const [],
     );
     
   }
@@ -140,11 +151,12 @@ class ProductModel {
         'gallery': gallery,
         'categories': categories.map((e) => e.toMap()).toList(),
         'variants': variants.map((e) => e.toMap()).toList(),
-      
+        'review_summary': reviewSummary?.toMap(),
+        'reviews': reviews.map((e) => e.toMap()).toList(),
       };
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, name: $name, slug: $slug, shortDescription: $shortDescription, description: $description, nutritionFacts: $nutritionFacts,  isDefaultVariant: $isDefaultVariant, price: $price, compareAtPrice: $compareAtPrice, isFeatured: $isFeatured, isBestSeller: $isBestSeller, newArrivalEndsAt: $newArrivalEndsAt, views: $views, sold: $sold, minPrepTime: $minPrepTime, minPrepTimeUnit: $minPrepTimeUnit, maxPrepTime: $maxPrepTime, maxPrepTimeUnit: $maxPrepTimeUnit, thumbnail: $thumbnail, gallery: $gallery, categories: $categories, variants: $variants )';
+    return 'ProductModel(id: $id, name: $name, slug: $slug, shortDescription: $shortDescription, description: $description, nutritionFacts: $nutritionFacts,  isDefaultVariant: $isDefaultVariant, price: $price, compareAtPrice: $compareAtPrice, isFeatured: $isFeatured, isBestSeller: $isBestSeller, newArrivalEndsAt: $newArrivalEndsAt, views: $views, sold: $sold, minPrepTime: $minPrepTime, minPrepTimeUnit: $minPrepTimeUnit, maxPrepTime: $maxPrepTime, maxPrepTimeUnit: $maxPrepTimeUnit, thumbnail: $thumbnail, gallery: $gallery, categories: $categories, variants: $variants, reviewSummary: $reviewSummary, reviews: ${reviews.length} reviews)';
   }
 }

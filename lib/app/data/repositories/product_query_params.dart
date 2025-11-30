@@ -317,6 +317,9 @@ class ProductIncludes {
     'variants.options.attribute',
     'attributes',
     'attributes.options',
+    'reviews',
+    'reviews.user',
+    'reviews.media',
   ];
 
   /// Minimal (no relations)

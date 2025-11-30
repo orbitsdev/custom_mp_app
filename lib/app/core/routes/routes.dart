@@ -38,6 +38,8 @@ import 'package:custom_mp_app/app/modules/myprofile/views/update_field_page.dart
 import 'package:custom_mp_app/app/modules/myprofile/views/update_password_page.dart';
 import 'package:custom_mp_app/app/modules/myprofile/views/update_account_info_page.dart';
 import 'package:custom_mp_app/app/modules/myprofile/views/upload_avatar_page.dart';
+import 'package:custom_mp_app/app/modules/reviews/bindings/all_reviews_binding.dart';
+import 'package:custom_mp_app/app/modules/reviews/views/all_reviews_page.dart';
 import 'package:custom_mp_app/app/modules/testing/views/modal_page.dart';
 import 'package:custom_mp_app/app/modules/testing/bindings/testing_binding.dart';
 import 'package:custom_mp_app/app/modules/testing/views/testing_page.dart';
@@ -55,6 +57,9 @@ class Routes {
   //PRODUCTS
   static const String productSearchPage = '/product-search';
   static const String productDetailsPage = '/product-details';
+
+  //REVIEWS
+  static const String allReviewsPage = '/all-reviews';
 
   //CATEGORY
   static const String categoryProductsPage = '/category-products';
@@ -280,7 +285,14 @@ class Routes {
       transition: Transition.cupertino,
     ),
 
-    
+    // Reviews
+    GetPage(
+      name: Routes.allReviewsPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const AllReviewsPage(),
+      binding: AllReviewsBinding(),
+      transition: Transition.cupertino,
+    ),
 
   ];
 }

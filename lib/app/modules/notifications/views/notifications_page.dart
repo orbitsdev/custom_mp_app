@@ -27,36 +27,33 @@ class NotificationsPage extends StatelessWidget {
         final isRefreshing = controller.isRefreshing.value;
         final notifications = controller.notifications;
         final isEmpty = notifications.isEmpty;
-
-        // Show skeleton during initial load or when refreshing
         final showSkeleton = (isLoading && isEmpty) || isRefreshing;
-
         return RefreshIndicator(
           onRefresh: controller.refresh,
           color: AppColors.brand,
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: [
-              // App Bar
+            
               const NotificationsAppBar(),
 
-              // Loading skeleton (initial load or refreshing)
+             
               if (showSkeleton) const NotificationSkeletonSliver(),
 
-              // Empty state (only when not loading/refreshing)
+             
               if (!showSkeleton && isEmpty)
                 const SliverFillRemaining(
                   hasScrollBody: false,
                   child: NotificationEmptyStateWidget(),
                 ),
 
-              // Notifications list (hide during refresh)
+             
               if (!showSkeleton && !isEmpty) const NotificationListSection(),
 
-              // Loading more indicator
+            
                const NotificationLoadingMore(),
 
-              // Bottom spacing
+              
               if (!showSkeleton && !isEmpty) SliverVGap(24),
             ],
           ),
