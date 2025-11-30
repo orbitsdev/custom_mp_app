@@ -29,7 +29,7 @@ class CustomMPAPP extends StatefulWidget {
 
 class _CustomMPAPPState extends State<CustomMPAPP> with WidgetsBindingObserver {
   @override
-  void initState() {
+  void initState() {  
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     print('-------------------------------- DEVICE INFO --------------------------------');
