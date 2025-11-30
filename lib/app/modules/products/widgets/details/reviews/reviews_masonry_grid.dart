@@ -20,8 +20,8 @@ class ReviewsMasonryGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 1,
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
+      mainAxisSpacing: 8,
+      crossAxisSpacing: 8,
       itemCount: reviews.length,
       itemBuilder: (context, index) {
         return ReviewCardWidget(review: reviews[index]);

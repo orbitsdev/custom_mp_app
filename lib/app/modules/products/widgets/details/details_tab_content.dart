@@ -103,7 +103,7 @@ class DetailsTabContent extends StatelessWidget {
   Widget _buildEmptyReviews() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 32),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
             Icon(

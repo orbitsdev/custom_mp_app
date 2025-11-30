@@ -5,6 +5,7 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/modules/reviews/controllers/all_reviews_controller.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/details/reviews/reviews_masonry_grid.dart';
+import 'package:custom_mp_app/app/modules/products/widgets/details/reviews/reviews_list_skeleton.dart';
 
 /// All Reviews Page - Shows all product reviews in paginated masonry grid
 class AllReviewsPage extends StatelessWidget {
@@ -46,7 +47,7 @@ class AllReviewsPage extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.reviews.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const ReviewsListSkeleton();
         }
 
         if (controller.reviews.isEmpty) {
