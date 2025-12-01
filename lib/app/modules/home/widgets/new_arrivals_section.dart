@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/sliver_v_gap.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
@@ -21,13 +22,7 @@ class NewArrivalsSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                // ⚡ Icon and title
-                Icon(
-                  Icons.bolt,
-                  color: Colors.blue.shade700,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
+                
                 Text(
                   'New Arrivals',
                   style: TextStyle(
@@ -37,7 +32,7 @@ class NewArrivalsSection extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                // See All button (for future dedicated page)
+               
                 // TextButton.icon(
                 //   onPressed: () => Get.toNamed(Routes.newArrivalsPage),
                 //   icon: Text(

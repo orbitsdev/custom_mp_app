@@ -1,4 +1,5 @@
 
+import 'package:custom_mp_app/app/modules/about/views/about_page.dart';
 import 'package:custom_mp_app/app/modules/auth/bindings/auth_binding.dart';
 import 'package:custom_mp_app/app/modules/auth/middleware/auth_middleware.dart';
 import 'package:custom_mp_app/app/modules/auth/middleware/guest_middleware.dart';
@@ -42,6 +43,8 @@ import 'package:custom_mp_app/app/modules/myprofile/views/update_account_info_pa
 import 'package:custom_mp_app/app/modules/myprofile/views/upload_avatar_page.dart';
 import 'package:custom_mp_app/app/modules/reviews/bindings/all_reviews_binding.dart';
 import 'package:custom_mp_app/app/modules/reviews/views/all_reviews_page.dart';
+import 'package:custom_mp_app/app/modules/reviews/bindings/write_review_binding.dart';
+import 'package:custom_mp_app/app/modules/reviews/views/write_review_page.dart';
 import 'package:custom_mp_app/app/modules/testing/views/modal_page.dart';
 import 'package:custom_mp_app/app/modules/testing/bindings/testing_binding.dart';
 import 'package:custom_mp_app/app/modules/testing/views/testing_page.dart';
@@ -63,6 +66,7 @@ class Routes {
 
   //REVIEWS
   static const String allReviewsPage = '/all-reviews';
+  static const String writeReviewPage = '/write-review';
 
   //CATEGORY
   static const String categoryProductsPage = '/category-products';
@@ -105,6 +109,7 @@ class Routes {
   static const String updateAccountInfoPage = '/update-account-info';
   static const String uploadAvatarPage = '/upload-avatar';
 
+  static const String aboutUsPage = '/about-us';
   //TESTING
   static const String modalPage = '/modal';
   static const String testingPage = '/testing';
@@ -301,6 +306,21 @@ class Routes {
       middlewares: [AuthMiddleware()],
       page: () => const AllReviewsPage(),
       binding: AllReviewsBinding(),
+      transition: Transition.cupertino,
+    ),
+
+    GetPage(
+      name: Routes.writeReviewPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const WriteReviewPage(),
+      binding: WriteReviewBinding(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.aboutUsPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const AboutPage(),
+
       transition: Transition.cupertino,
     ),
 

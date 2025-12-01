@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:gradient_elevated_button/gradient_elevated_button.dart';
 
 import 'package:custom_mp_app/app/modules/products/controllers/select_product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_tab_content_card.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/details/reviews/review_summary_widget.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/details/reviews/reviews_masonry_grid.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/core/theme/buttons.dart';
 import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 
@@ -38,11 +40,15 @@ class DetailsTabContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (reviewSummary == null || !reviewSummary.hasReviews)
-                _buildEmptyReviews()
+                _buildEmptyReviews(product)
               else ...[
+                // Write Review Button (when there are existing reviews)
+                _buildWriteReviewButton(product),
+                const SizedBox(height: 16),
+
                 // Review Summary
                 ReviewSummaryWidget(summary: reviewSummary),
-                
+
 
                 // Reviews Grid
                 if (reviews.isNotEmpty) ...[
@@ -100,10 +106,10 @@ class DetailsTabContent extends StatelessWidget {
     });
   }
 
-  Widget _buildEmptyReviews() {
+  Widget _buildEmptyReviews(product) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Column(
           children: [
             Icon(
@@ -126,7 +132,78 @@ class DetailsTabContent extends StatelessWidget {
                 color: Colors.grey.shade500,
               ),
             ),
+            const SizedBox(height: 20),
+            // Write Review Button
+            SizedBox(
+              width: 200,
+              child: GradientElevatedButton.icon(
+                style: GRADIENT_ELEVATED_BUTTON_STYLE,
+                onPressed: () async {
+                  final result = await Get.toNamed(
+                    Routes.writeReviewPage,
+                    arguments: product,
+                  );
+
+                  // Refresh product if review was submitted
+                  if (result == true) {
+                    final controller = Get.find<SelectProductController>();
+                    controller.refreshProduct();
+                  }
+                },
+                icon: const Icon(
+                  FluentIcons.edit_24_regular,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                label: const Text(
+                  'Write Review',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWriteReviewButton(product) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: () async {
+          final result = await Get.toNamed(
+            Routes.writeReviewPage,
+            arguments: product,
+          );
+
+          // Refresh product if review was submitted
+          if (result == true) {
+            final controller = Get.find<SelectProductController>();
+            controller.refreshProduct();
+          }
+        },
+        icon: Icon(
+          FluentIcons.edit_24_regular,
+          color: AppColors.brand,
+          size: 18,
+        ),
+        label: Text(
+          'Write a Review',
+          style: TextStyle(
+            color: AppColors.brand,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: AppColors.brand, width: 1.5),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       ),
     );

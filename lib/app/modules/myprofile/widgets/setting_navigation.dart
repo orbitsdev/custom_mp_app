@@ -121,12 +121,7 @@ class SettingNavigation extends StatelessWidget {
           content: "App information and legal",
           showIcon: true,
           function: () {
-            // TODO: Navigate to about page
-            Get.snackbar(
-              'Coming Soon',
-              'About page will be available soon',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            Get.toNamed(Routes.aboutUsPage);
           },
         ),
 
