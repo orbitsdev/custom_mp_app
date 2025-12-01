@@ -155,15 +155,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   itemCount: controller.products.length,
                   itemBuilder: (context, index) {
                     final product = controller.products[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Get.toNamed(
-                          Routes.productDetailsPage,
-                          arguments: product,
-                        );
-                      },
-                      child: ProductCard(product: product),
-                    );
+                    return ProductCard(product: product);
                   },
                 ),
               ),

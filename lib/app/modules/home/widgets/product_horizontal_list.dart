@@ -1,9 +1,7 @@
-import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/global/widgets/progress/shimmer_widget.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_card.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:gap/gap.dart';
 
 /// Horizontal scrollable list of products
@@ -74,20 +72,11 @@ class ProductHorizontalList extends StatelessWidget {
           itemBuilder: (context, index) {
             final product = products[index];
 
-            return GestureDetector(
-              onTap: () {
-                // Navigate to product details page
-                Get.toNamed(
-                  Routes.productDetailsPage,
-                  arguments: product,
-                );
-              },
-              child: SizedBox(
-                width: 160,
-                child: ProductCard(
-                  product: product,
-                  borderRadius: 10,
-                ),
+            return SizedBox(
+              width: 160,
+              child: ProductCard(
+                product: product,
+                borderRadius: 10,
               ),
             );
           },

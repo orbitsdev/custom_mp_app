@@ -1,9 +1,7 @@
-import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/core/utils/path_helpers.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/global/widgets/image/local_lottie_image.dart';
-import 'package:custom_mp_app/app/global/widgets/wrapper/ripple_cotainer.dart';
 import 'package:custom_mp_app/app/modules/products/controllers/product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_card.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_loading_card.dart';
@@ -43,15 +41,7 @@ class ProductList extends StatelessWidget {
             itemCount: controller.products.length,
             itemBuilder: (context, index) {
               final product = controller.products[index];
-              return RippleContainer(
-                onTap: () {
-                  Get.toNamed(
-                    Routes.productDetailsPage,
-                    arguments: product, // send the selected product
-                  );
-                },
-                child: ProductCard(product: product, borderRadius: 3),
-              );
+              return ProductCard(product: product, borderRadius: 3);
             },
           ),
         );

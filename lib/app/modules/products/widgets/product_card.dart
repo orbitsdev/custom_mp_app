@@ -1,3 +1,4 @@
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/global/widgets/image/online_image.dart';
@@ -22,7 +23,14 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final br = borderRadius ?? 10.0;
 
-    return Container(
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed(
+          Routes.productDetailsPage,
+          arguments: product,
+        );
+      },
+      child: Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(br),
@@ -120,6 +128,7 @@ class ProductCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     ).animate().fadeIn(duration: 300.ms);
   }
