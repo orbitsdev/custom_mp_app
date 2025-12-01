@@ -4,6 +4,8 @@ import 'package:custom_mp_app/app/modules/auth/controllers/login_controller.dart
 import 'package:custom_mp_app/app/modules/auth/controllers/sign_up_controller.dart';
 import 'package:custom_mp_app/app/modules/auth/widgets/label.dart';
 import 'package:custom_mp_app/app/modules/auth/widgets/logo.dart';
+import 'package:custom_mp_app/app/modules/agreement/views/privacy_policy_page.dart';
+import 'package:custom_mp_app/app/modules/agreement/views/terms_of_use_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -378,10 +380,7 @@ class SignupPage extends StatelessWidget {
                                 Get.textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold,decoration: TextDecoration.underline, decorationColor: Colors.white),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                              // Get.to(()=> AgreementPage(title: 'Terms of use' , url: 'https://staging.avantefood.com/terms-of-use') ,transition: Transition.cupertino );
-
-                                // Get.to(()=> TermsOfUseScreen() ,transition: Transition.cupertino );
-                                // navigate to desired screen
+                                Get.to(() => const TermsOfUsePage(), preventDuplicates: false);
                               }),
                         TextSpan(
                           text: ' and acknowledge you’ve read our',
@@ -392,11 +391,7 @@ class SignupPage extends StatelessWidget {
                             style:Get.textTheme.bodyMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.bold, decoration: TextDecoration.underline, decorationColor: Colors.white),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                // navigate to desired screen
-                                // Get.to(()=> AgreementPage(title: 'Privacy Policy' , url: 'https://staging.avantefood.com/privacy-policy') ,transition: Transition.cupertino );
-
-                                  //  Get.to(()=> PrivacyPolicyScreen() ,transition: Transition.cupertino );
-                                // navigate to desired screen
+                                Get.to(() => const PrivacyPolicyPage(), preventDuplicates: false);
                               }),
                       ]),
                 ),

@@ -3,6 +3,8 @@ import 'package:custom_mp_app/app/core/theme/buttons.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/modules/auth/controllers/login_controller.dart';
 import 'package:custom_mp_app/app/modules/auth/views/signup_page.dart';
+import 'package:custom_mp_app/app/modules/agreement/views/privacy_policy_page.dart';
+import 'package:custom_mp_app/app/modules/agreement/views/terms_of_use_page.dart';
 
 import 'package:custom_mp_app/app/modules/auth/widgets/label.dart';
 import 'package:custom_mp_app/app/modules/auth/widgets/logo.dart';
@@ -306,11 +308,8 @@ class LoginPage extends StatelessWidget {
                                 decorationColor: Colors.white),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                               
-                              
-                              })
-                              
-                              ,
+                                Get.to(() => const TermsOfUsePage(), preventDuplicates: false);
+                              }),
                         TextSpan(
                           text: ' and acknowledge you’ve read our',
                           style: Get.textTheme.bodyMedium
@@ -325,7 +324,7 @@ class LoginPage extends StatelessWidget {
                                 decorationColor: Colors.white),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                     
+                                Get.to(() => const PrivacyPolicyPage(), preventDuplicates: false);
                               }
                               
                               ),

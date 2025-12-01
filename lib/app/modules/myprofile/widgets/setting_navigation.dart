@@ -1,6 +1,7 @@
 import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
+import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
 import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
 import 'package:custom_mp_app/app/modules/myprofile/widgets/settings_card.dart';
 import 'package:flutter/material.dart';
@@ -11,30 +12,19 @@ import 'package:sliver_tools/sliver_tools.dart';
 class SettingNavigation extends StatelessWidget {
   const SettingNavigation({Key? key}) : super(key: key);
 
-  void _showLogoutDialog(BuildContext context) {
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Logout'),
-        content: const Text('Are you sure you want to logout?'),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              final authController = Get.find<AuthController>();
-              authController.logout();
-            },
-            child: Text(
-              'Logout',
-              style: TextStyle(color: Colors.red.shade700),
-            ),
-          ),
-        ],
-      ),
+  Future<void> _showLogoutDialog() async {
+    final confirmed = await AppModal.confirm(
+      title: 'Logout',
+      message: 'Are you sure you want to logout from your account?',
+      confirmText: 'Logout',
+      cancelText: 'Cancel',
+      barrierDismissible: true,
     );
+
+    if (confirmed == true) {
+      final authController = Get.find<AuthController>();
+      authController.logout();
+    }
   }
 
   @override
@@ -121,12 +111,7 @@ class SettingNavigation extends StatelessWidget {
           content: "App information and legal",
           showIcon: true,
           function: () {
-            // TODO: Navigate to about page
-            Get.snackbar(
-              'Coming Soon',
-              'About page will be available soon',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            Get.toNamed(Routes.aboutPage);
           },
         ),
 
@@ -137,7 +122,7 @@ class SettingNavigation extends StatelessWidget {
           title: "Logout",
           content: "Sign out of your account",
           showIcon: false,
-          function: () => _showLogoutDialog(context),
+          function: _showLogoutDialog,
           padding: EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         ),
 

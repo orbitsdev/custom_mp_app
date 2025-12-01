@@ -10,6 +10,9 @@ import 'package:custom_mp_app/app/modules/onboarding/boarding_screen.dart';
 import 'package:custom_mp_app/app/modules/cart/views/cart_page.dart';
 import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
+import 'package:custom_mp_app/app/modules/about/views/about_page.dart';
+import 'package:custom_mp_app/app/modules/agreement/views/privacy_policy_page.dart';
+import 'package:custom_mp_app/app/modules/agreement/views/terms_of_use_page.dart';
 import 'package:custom_mp_app/app/modules/orders/views/orders_page.dart';
 import 'package:custom_mp_app/app/modules/orders/views/order_detail_page.dart';
 import 'package:custom_mp_app/app/modules/orders/bindings/order_detail_binding.dart';
@@ -104,6 +107,13 @@ class Routes {
   static const String updatePasswordPage = '/update-password';
   static const String updateAccountInfoPage = '/update-account-info';
   static const String uploadAvatarPage = '/upload-avatar';
+
+  //ABOUT
+  static const String aboutPage = '/about';
+
+  //AGREEMENT
+  static const String privacyPolicyPage = '/privacy-policy';
+  static const String termsOfUsePage = '/terms-of-use';
 
   //TESTING
   static const String modalPage = '/modal';
@@ -284,6 +294,22 @@ class Routes {
       name: Routes.uploadAvatarPage,
       middlewares: [AuthMiddleware()],
       page: () => const UploadAvatarPage(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.aboutPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const AboutPage(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.privacyPolicyPage,
+      page: () => const PrivacyPolicyPage(),
+      transition: Transition.cupertino,
+    ),
+    GetPage(
+      name: Routes.termsOfUsePage,
+      page: () => const TermsOfUsePage(),
       transition: Transition.cupertino,
     ),
 
