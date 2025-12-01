@@ -18,11 +18,11 @@ class CategoryHorizontalList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 📱 Fixed height for professional appearance (matches Shopee/Lazada)
-    const double listHeight = 140.0;
+    // Clean pill-style buttons height
+    const double listHeight = 50.0;
 
     if (isLoading) {
-      // 🔄 Beautiful shimmer loading state
+      // Loading shimmer for pill buttons
       return SliverToBoxAdapter(
         child: SizedBox(
           height: listHeight,
@@ -30,11 +30,11 @@ class CategoryHorizontalList extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
             itemCount: 4,
-            separatorBuilder: (_, __) => const Gap(12),
+            separatorBuilder: (_, __) => const Gap(8),
             itemBuilder: (context, index) => ShimmerWidget(
-              width: 90,
-              height: 110,
-              borderRadius: BorderRadius.circular(12),
+              width: 80,
+              height: 36,
+              borderRadius: BorderRadius.circular(20),
               margin: const EdgeInsets.symmetric(vertical: 0),
             ),
           ),
@@ -42,7 +42,7 @@ class CategoryHorizontalList extends StatelessWidget {
       );
     }
 
-    // 🟢 Actual content
+    // Pill-style category buttons
     return SliverToBoxAdapter(
       child: SizedBox(
         height: listHeight,
@@ -50,62 +50,65 @@ class CategoryHorizontalList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           scrollDirection: Axis.horizontal,
           itemCount: categories.length,
-          separatorBuilder: (_, __) => const Gap(24),
+          separatorBuilder: (_, __) => const Gap(8),
           itemBuilder: (context, index) {
             final category = categories[index];
-            final hasThumbnail =
-                category.thumbnail != null && category.thumbnail!.isNotEmpty;
+            final isFirst = index == 0;
+            final hasThumbnail = category.thumbnail != null && category.thumbnail!.isNotEmpty;
 
             return GestureDetector(
               onTap: () {
-                // Navigate to category products page
                 Get.toNamed(
                   Routes.categoryProductsPage,
                   arguments: category,
                 );
               },
               child: Container(
-                width: Get.size.width /1.8,
-                decoration: BoxDecoration(
-                  color: hasThumbnail
-                      ? Colors.transparent
-                      : _parseColor(category.bgColor) ??
-                          AppColors.brandLight, // fallback
-                  borderRadius: BorderRadius.circular(12),
-                  image: hasThumbnail
-                      ? DecorationImage(
-                          image: NetworkImage(category.thumbnail!),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                  
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
                 ),
-                child: Stack(
+                decoration: BoxDecoration(
+                  color: isFirst ? AppColors.brand : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isFirst ? AppColors.brand : Colors.grey.shade300,
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 🏷 Category name box
-                    Positioned(
-                      bottom: 10,
-                      left: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 4,
-                        ),
+                    // Category thumbnail/icon
+                    if (hasThumbnail)
+                      Container(
+                        width: 24,
+                        height: 24,
+                        margin: const EdgeInsets.only(right: 8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          category.name,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Get.textTheme.labelMedium?.copyWith(
-                            color: AppColors.textDark,
-                            fontWeight: FontWeight.w600,
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: NetworkImage(category.thumbnail!),
+                            fit: BoxFit.cover,
                           ),
                         ),
+                      )
+                    else if (category.bgColor != null)
+                      Container(
+                        width: 24,
+                        height: 24,
+                        margin: const EdgeInsets.only(right: 8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _parseColor(category.bgColor) ?? AppColors.brandLight,
+                        ),
+                      ),
+                    // Category name
+                    Text(
+                      category.name,
+                      style: Get.textTheme.bodyMedium?.copyWith(
+                        color: isFirst ? Colors.white : Colors.grey[800],
+                        fontWeight: isFirst ? FontWeight.w600 : FontWeight.w500,
                       ),
                     ),
                   ],

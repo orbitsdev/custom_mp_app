@@ -38,29 +38,39 @@ class AllProductsSection extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                OutlinedButton.icon(
-                  onPressed: _showSortOptions,
-                  icon: HeroIcon(
-                    HeroIcons.adjustmentsHorizontal,
-                    size: 18,
-                    color: AppColors.brand,
-                  ),
-                  label: Text(
-                    'Sort',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.brand,
-                    ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: AppColors.brand, width: 1.5),
+                GestureDetector(
+                  onTap: _showSortOptions,
+                  child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
+                      horizontal: 16,
                       vertical: 8,
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: AppColors.brand,
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        HeroIcon(
+                          HeroIcons.adjustmentsHorizontal,
+                          size: 16,
+                          color: AppColors.brand,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Sort',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.brand,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

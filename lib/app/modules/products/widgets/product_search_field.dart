@@ -12,13 +12,13 @@ import 'package:heroicons/heroicons.dart' as h;
 class ProductSearchField extends StatelessWidget {
   final Function? onSearchTap;
   final Function? onFilterTap;
-  final GlobalKey<ScaffoldState> scaffoldKey;
+
 
   ProductSearchField({
     Key? key,
     this.onSearchTap,
     this.onFilterTap,
-    required this.scaffoldKey,
+ 
   }) : super(key: key);
 
   @override
@@ -26,18 +26,15 @@ class ProductSearchField extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Menu Icon wrapped in GestureDetector
-        GestureDetector(
-          onTap: () {
-            // Open the drawer using the scaffoldKey
-            scaffoldKey.currentState?.openDrawer();
-          },
-          child: Icon(
-            Icons.menu,
-            color: Colors.white,
-          ),
+        
+        // Notification Badge
+        NotificationBadge(
+          badgeColor: AppColors.error,
+          textColor: Colors.white,
+          iconColor: Colors.white,
+          onTap: () => Get.toNamed(Routes.notificationsPage),
         ),
-        Gap(16),
+        
         Expanded(
           child: GestureDetector(
             onTap: () {
@@ -90,13 +87,6 @@ class ProductSearchField extends StatelessWidget {
           ),
         ),
 
-        // Notification Badge
-        NotificationBadge(
-          badgeColor: AppColors.error,
-          textColor: Colors.white,
-          iconColor: Colors.white,
-          onTap: () => Get.toNamed(Routes.notificationsPage),
-        ),
 
         // Cart Badge
         CartBadge(

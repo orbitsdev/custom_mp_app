@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
+import 'package:custom_mp_app/app/modules/home/widgets/home_drawer.dart';
 import 'package:custom_mp_app/app/modules/myprofile/controllers/profile_controller.dart';
 import 'package:custom_mp_app/app/modules/myprofile/widgets/account_information.dart';
 import 'package:custom_mp_app/app/modules/myprofile/widgets/orders_status_summary.dart';
@@ -8,13 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MyProfilePage extends StatefulWidget {
-  const MyProfilePage({Key? key}) : super(key: key);
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+
+  const MyProfilePage({Key? key, this.scaffoldKey}) : super(key: key);
 
   @override
   State<MyProfilePage> createState() => _MyProfilePageState();
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -39,10 +44,12 @@ class _MyProfilePageState extends State<MyProfilePage> {
         ]);
       },
       child: Scaffold(
+        key: scaffoldKey,
+        drawer: HomeDrawer(),
         body: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            AccountInformation(),
+            AccountInformation(scaffoldKey: scaffoldKey),
             OrdersStatusSummary(),
             SettingNavigation(),
             ProductThatYouMightAlsoLike(),

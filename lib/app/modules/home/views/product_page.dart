@@ -22,7 +22,6 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   final scrollController = ScrollController();
-  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   final productController = Get.find<ProductController>();
   final categoryController = Get.find<CategoryController>();
@@ -57,9 +56,8 @@ class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
       backgroundColor: AppColors.brandBackground,
-      drawer: HomeDrawer(),
+
       body: RefreshIndicator(
         color: AppColors.brand,
         backgroundColor: Colors.white,
@@ -69,16 +67,13 @@ class _ProductPageState extends State<ProductPage> {
           controller: scrollController,
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            ProductSearchAppBar(scaffoldKey: scaffoldKey),
+            ProductSearchAppBar(),
             SliverVGap(16),
+
             ShopByCategorySection(),
-            SliverVGap(24),
-            BestSellersSection(),
-            SliverVGap(24),
-            NewArrivalsSection(),
-            SliverVGap(24),
+            SliverVGap(20),
             AllProductsSection(),
-        ],
+          ],
         ),
       ),
     );

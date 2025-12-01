@@ -30,23 +30,25 @@ class ShopByCategorySection extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                TextButton.icon(
-                  onPressed: () => Get.toNamed(Routes.allCategoriesPage),
-                  icon: Text(
-                    'See All',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.brand,
-                    ),
-                  ),
-                  label: Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: AppColors.brand,
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                GestureDetector(
+                  onTap: () => Get.toNamed(Routes.allCategoriesPage),
+                  child: Row(
+                    children: [
+                      Text(
+                        'See All',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.brand,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: 14,
+                        color: AppColors.brand,
+                      ),
+                    ],
                   ),
                 ),
               ],

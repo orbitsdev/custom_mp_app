@@ -11,7 +11,9 @@ import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart';
 
 class AccountInformation extends StatelessWidget {
-  const AccountInformation({Key? key}) : super(key: key);
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+
+  const AccountInformation({Key? key, this.scaffoldKey}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,12 @@ class AccountInformation extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Get.toNamed(Routes.profileUpdatePage);
+                            // Open drawer if scaffoldKey is provided, otherwise go to profile update
+                            if (scaffoldKey != null) {
+                              scaffoldKey!.currentState?.openDrawer();
+                            } else {
+                              Get.toNamed(Routes.profileUpdatePage);
+                            }
                           },
                           child: Container(
                             height: 60,

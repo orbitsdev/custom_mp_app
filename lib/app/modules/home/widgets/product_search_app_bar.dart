@@ -3,11 +3,11 @@ import 'package:custom_mp_app/app/modules/products/widgets/product_search_field.
 import 'package:flutter/material.dart';
 
 class ProductSearchAppBar extends StatelessWidget {
-  final GlobalKey<ScaffoldState> scaffoldKey;
+
 
   const ProductSearchAppBar({
     super.key,
-    required this.scaffoldKey,
+   
   });
 
   @override
@@ -16,7 +16,7 @@ class ProductSearchAppBar extends StatelessWidget {
       pinned: true,
       backgroundColor: AppColors.brand,
       automaticallyImplyLeading: false,
-      title: ProductSearchField(scaffoldKey: scaffoldKey),
+      title: ProductSearchField(),
     );
   }
 }

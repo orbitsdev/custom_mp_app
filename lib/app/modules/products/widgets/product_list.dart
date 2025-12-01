@@ -41,7 +41,7 @@ class ProductList extends StatelessWidget {
             itemCount: controller.products.length,
             itemBuilder: (context, index) {
               final product = controller.products[index];
-              return ProductCard(product: product, borderRadius: 3);
+              return ProductCard(product: product, borderRadius: 12);
             },
           ),
         );

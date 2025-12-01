@@ -1,7 +1,6 @@
-import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/modules/home/views/product_page.dart';
+import 'package:custom_mp_app/app/modules/home/views/wishlist_coming_soon_page.dart';
 import 'package:custom_mp_app/app/modules/myprofile/views/my_profile_page.dart';
-import 'package:custom_mp_app/app/modules/notifications/views/notifications_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:heroicons/heroicons.dart' as hero;
@@ -13,25 +12,29 @@ import 'my_order_page.dart';
 class HomePage extends GetView<HomeController> {
    HomePage({super.key});
 
-  final List<Widget> _pages = const [
-    ProductPage(),
-    MyOrderPage(),
-    NotificationsPage(),
-    MyProfilePage(),
-  ];
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages = [
+      const ProductPage(),
+      const MyOrderPage(),
+      const WishlistComingSoonPage(),
+      MyProfilePage(scaffoldKey: scaffoldKey),
+    ];
+
     return Scaffold(
+      key: scaffoldKey,
       backgroundColor: Colors.white,
-      body: Obx(() => _pages[controller.selectedIndex.value]),
+      body: Obx(() => pages[controller.selectedIndex.value]),
       bottomNavigationBar: Obx(() => BottomNavigationBar(
             elevation: 0,
-            backgroundColor: AppColors.brandDark,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white.withValues(alpha: 0.7),
+            backgroundColor: Colors.white,
+            selectedItemColor: const Color(0xFFEFAF33),
+            unselectedItemColor: const Color(0xFF8B8B8B),
             type: BottomNavigationBarType.fixed,
-            selectedFontSize: 12,
+            selectedFontSize: 11,
+            unselectedFontSize: 11,
             currentIndex: controller.selectedIndex.value,
             onTap: controller.onItemTapped,
             items: const [
@@ -43,17 +46,17 @@ class HomePage extends GetView<HomeController> {
               BottomNavigationBarItem(
                 activeIcon: hero.HeroIcon(hero.HeroIcons.shoppingBag, style: hero.HeroIconStyle.solid, size: 24),
                 icon: hero.HeroIcon(hero.HeroIcons.shoppingBag, style: hero.HeroIconStyle.outline, size: 24),
-                label: 'Orders',
+                label: 'My Orders',
               ),
               BottomNavigationBarItem(
-                activeIcon: hero.HeroIcon(hero.HeroIcons.bell, style: hero.HeroIconStyle.solid, size: 24),
-                icon: hero.HeroIcon(hero.HeroIcons.bell, style: hero.HeroIconStyle.outline, size: 24),
-                label: 'Notifications',
+                activeIcon: hero.HeroIcon(hero.HeroIcons.heart, style: hero.HeroIconStyle.solid, size: 24),
+                icon: hero.HeroIcon(hero.HeroIcons.heart, style: hero.HeroIconStyle.outline, size: 24),
+                label: 'Wishlist',
               ),
               BottomNavigationBarItem(
                 activeIcon: hero.HeroIcon(hero.HeroIcons.user, style: hero.HeroIconStyle.solid, size: 24),
                 icon: hero.HeroIcon(hero.HeroIcons.user, style: hero.HeroIconStyle.outline, size: 24),
-                label: 'My Profile',
+                label: 'Account',
               ),
             ],
           )),

@@ -22,7 +22,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final br = borderRadius ?? 10.0;
+    final br = borderRadius ?? 16.0;
 
     return GestureDetector(
       onTap: () {
@@ -149,7 +149,7 @@ class ProductCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Icon(
-                          Icons.add_shopping_cart,
+                          Icons.add,
                           color: Colors.white,
                           size: 18,
                         ),
