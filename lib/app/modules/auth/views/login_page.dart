@@ -252,30 +252,37 @@ class LoginPage extends StatelessWidget {
                       ),
                     ),
                     GetBuilder<LoginController>(builder: (controller) {
-                      return SizedBox(
-                        height: 50,
-                        width: Get.size.width,
-                        child: ElevatedButton.icon(
-                          style: ELEVATED_BUTTON_SOCIALITE_STYLE,
-                          onPressed: () {
-                            // controller.signInWithGoogle(context);
-                          },
-                          icon: Container(
-                            child: SvgPicture.asset(
-                              height: 24,
-                              width: 24,
-                              'assets/images/google-logo.svg', // Added ".svg" extension
-                              semanticsLabel:
-                                  'Google Logo', // Adjusted semantics label
+                      return Obx(() => SizedBox(
+                            height: 50,
+                            width: Get.size.width,
+                            child: ElevatedButton.icon(
+                              style: ELEVATED_BUTTON_SOCIALITE_STYLE,
+                              onPressed: controller.isGoogleLoading.value
+                                  ? null
+                                  : () => controller.signInWithGoogle(),
+                              icon: controller.isGoogleLoading.value
+                                  ? const SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : SvgPicture.asset(
+                                      height: 24,
+                                      width: 24,
+                                      'assets/images/google-logo.svg',
+                                      semanticsLabel: 'Google Logo',
+                                    ),
+                              label: Text(
+                                controller.isGoogleLoading.value
+                                    ? 'Signing in...'
+                                    : 'Continue with Google',
+                                style: Get.textTheme.bodyMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          ),
-                          label: Text(
-                            'Continue with Google',
-                            style: Get.textTheme.bodyMedium!
-                                .copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      );
+                          ));
                     }),
                   ],
                 ),

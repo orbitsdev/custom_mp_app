@@ -12,7 +12,20 @@
           "package_name": "com.avantefoods.customer"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "807229341646-3vah2c0mequ3kg0tru44u394us5rudqg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.avantefoods.customer",
+            "certificate_hash": "07567eed4d7773265e80970c91386480df39c437"
+          }
+        },
+        {
+          "client_id": "807229341646-4nsmpi8mf53jikvl4h6d88461e68tju6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAzwSyRATqUQnY6cR4XOYtRY8e7uHyZHec"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807229341646-4nsmpi8mf53jikvl4h6d88461e68tju6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "807229341646-atu5g8sa6baqpqfotft5q5cbdb8f051s.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.customMpApp"
+              }
+            }
+          ]
         }
       }
     }

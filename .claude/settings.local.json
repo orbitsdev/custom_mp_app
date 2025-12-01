@@ -13,7 +13,12 @@
       "Bash(flutter doctor:*)",
       "Bash(nul)",
       "Bash(flutter upgrade:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "WebFetch(domain:pub.dev)",
+      "Bash(dart test_sorting.dart:*)",
+      "Bash(flutter pub run:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(del test_sorting.dart)"
     ],
     "deny": [],
     "ask": []

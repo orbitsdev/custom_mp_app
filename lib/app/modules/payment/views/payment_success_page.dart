@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/core/routes/routes.dart';
+import 'package:custom_mp_app/app/core/enums/order_status.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,6 +9,7 @@ class PaymentSuccessPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final orderReferenceId = Get.arguments?['order_reference_id'] ?? '';
+    final orderStatus = Get.arguments?['order_status'] as String?;
 
     return Scaffold(
       body: SafeArea(
@@ -71,7 +73,7 @@ class PaymentSuccessPage extends StatelessWidget {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: () => _goToOrderPage(),
+                  onPressed: () => _goToOrderPage(orderStatus),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
@@ -122,10 +124,42 @@ class PaymentSuccessPage extends StatelessWidget {
     );
   }
 
-  void _goToOrderPage() {
+  void _goToOrderPage(String? orderStatus) {
+    // Map order status to tab index
+    // Tab 0: To Pay (placed)
+    // Tab 1: To Ship (processing)
+    // Tab 2: To Receive (out_for_delivery)
+    // Tab 3: Completed (delivered)
+    // Tab 4: Cancelled (canceled)
+
+    int initialTab = 1; // Default to "To Ship" tab after payment success
+
+    if (orderStatus != null) {
+      switch (orderStatus) {
+        case 'placed':
+          initialTab = 0; // To Pay
+          break;
+        case 'processing':
+          initialTab = 1; // To Ship (most common after payment)
+          break;
+        case 'out_for_delivery':
+          initialTab = 2; // To Receive
+          break;
+        case 'delivered':
+          initialTab = 3; // Completed
+          break;
+        case 'canceled':
+          initialTab = 4; // Cancelled
+          break;
+        default:
+          initialTab = 1; // Default to To Ship
+      }
+    }
+
     Get.offNamedUntil(
       Routes.ordesrPage,
       (route) => route.settings.name == Routes.homePage,
+      arguments: {'initialTab': initialTab},
     );
   }
 

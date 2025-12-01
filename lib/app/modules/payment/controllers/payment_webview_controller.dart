@@ -172,9 +172,13 @@ class PaymentWebviewController extends GetxController {
     _refreshData();
 
     // Navigate to success page IMMEDIATELY (no verification, no dialog)
+    // After successful payment, order status is typically "processing" (To Ship tab)
     Get.offNamed(
       Routes.paymentSuccessPage,
-      arguments: {'order_reference_id': orderReferenceId},
+      arguments: {
+        'order_reference_id': orderReferenceId,
+        'order_status': 'processing', // Default to "To Ship" tab after payment
+      },
     );
   }
 

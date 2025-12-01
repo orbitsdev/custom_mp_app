@@ -27,12 +27,20 @@ class ProductController extends GetxController {
   // Current query parameters
   ProductQueryParams _currentParams = ProductQueryParams.all();
 
+  // Best Sellers & New Arrivals preview sections
+  final bestSellers = <ProductModel>[].obs;
+  final newArrivals = <ProductModel>[].obs;
+  final isLoadingBestSellers = false.obs;
+  final isLoadingNewArrivals = false.obs;
+
   bool get hasMore => currentPage < lastPage;
 
   @override
   void onReady() {
     super.onReady();
     fetchProducts();
+    fetchBestSellersPreview();
+    fetchNewArrivalsPreview();
   }
 
   /// Fetch products with optional filters
@@ -188,6 +196,48 @@ class ProductController extends GetxController {
   /// Clear all filters and get all products
   Future<void> clearFilters() async {
     await fetchProducts(params: ProductQueryParams.all());
+  }
+
+  // ==================== Preview Sections ====================
+
+  /// Fetch best sellers preview (10 items for horizontal section)
+  Future<void> fetchBestSellersPreview() async {
+    isLoadingBestSellers.value = true;
+
+    final result = await _repo.fetchBestSellers(page: 1, perPage: 10);
+
+    result.fold(
+      (failure) {
+        print('❌ Failed to fetch best sellers: ${failure.message}');
+        bestSellers.clear();
+      },
+      (response) {
+        bestSellers.value = response.items;
+        print('✅ Loaded ${response.items.length} best sellers');
+      },
+    );
+
+    isLoadingBestSellers.value = false;
+  }
+
+  /// Fetch new arrivals preview (10 items for horizontal section)
+  Future<void> fetchNewArrivalsPreview() async {
+    isLoadingNewArrivals.value = true;
+
+    final result = await _repo.fetchNewArrivals(page: 1, perPage: 10);
+
+    result.fold(
+      (failure) {
+        print('❌ Failed to fetch new arrivals: ${failure.message}');
+        newArrivals.clear();
+      },
+      (response) {
+        newArrivals.value = response.items;
+        print('✅ Loaded ${response.items.length} new arrivals');
+      },
+    );
+
+    isLoadingNewArrivals.value = false;
   }
 }
 

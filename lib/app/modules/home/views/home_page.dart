@@ -16,7 +16,7 @@ class HomePage extends GetView<HomeController> {
 
   final List<Widget> _pages = const [
     ProductPage(),
-    FavoritePage(),
+    // FavoritePage(),
     MyProfilePage(),
   ];
 
@@ -40,11 +40,11 @@ class HomePage extends GetView<HomeController> {
                 icon: hero.HeroIcon(hero.HeroIcons.home, style: hero.HeroIconStyle.outline, size: 24),
                 label: 'Home',
               ),
-              BottomNavigationBarItem(
-                activeIcon: hero.HeroIcon(hero.HeroIcons.heart, style: hero.HeroIconStyle.solid, size: 24),
-                icon: hero.HeroIcon(hero.HeroIcons.heart, style: hero.HeroIconStyle.outline, size: 24),
-                label: 'Favorites',
-              ),
+              // BottomNavigationBarItem(
+              //   activeIcon: hero.HeroIcon(hero.HeroIcons.heart, style: hero.HeroIconStyle.solid, size: 24),
+              //   icon: hero.HeroIcon(hero.HeroIcons.heart, style: hero.HeroIconStyle.outline, size: 24),
+              //   label: 'Favorites',
+              // ),
               
               BottomNavigationBarItem(
                 activeIcon: hero.HeroIcon(hero.HeroIcons.user, style: hero.HeroIconStyle.solid, size: 24),

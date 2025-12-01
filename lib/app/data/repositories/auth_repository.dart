@@ -192,4 +192,33 @@ class AuthRepository {
       return left(FailureModel.manual('Unexpected error: $e'));
     }
   }
+
+  /// Sign in with Google (OAuth)
+  /// Sends Google ID token to backend for authentication
+  /// Returns user and token if successful
+  EitherModel<UserModel> signInWithGoogle({
+    required String googleToken,
+  }) async {
+    try {
+      final response = await DioClient.public.post(
+        'sign-in-with-google',
+        data: {'token': googleToken},
+      );
+
+      final data = response.data['data'];
+      final user = UserModel.fromMap(data['user']);
+      final token = data['token'] as String;
+
+      // Save both token and user data
+      await SecureStorageService.saveToken(token);
+      await SecureStorageService.saveUser(user.toJson());
+
+      print('✅ Google Sign-In success for ${user.email}');
+      return right(user);
+    } on DioException catch (e) {
+      return left(FailureModel.fromDio(e));
+    } catch (e) {
+      return left(FailureModel.manual('Unexpected error: $e'));
+    }
+  }
 }

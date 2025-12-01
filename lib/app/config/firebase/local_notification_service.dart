@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:custom_mp_app/app/core/routes/routes.dart';
+import 'package:custom_mp_app/app/modules/orders/controllers/orders_controller.dart'
+    as custom_mp_app;
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:dio/dio.dart';
 
 import 'package:custom_mp_app/app/core/plugins/dio/dio_client.dart';
-import 'package:custom_mp_app/app/global/widgets/toasts/app_toast.dart';
+
 import 'package:get/get.dart';
 import 'firebase_logger.dart';
 
@@ -52,7 +54,7 @@ class LocalNotificationService {
 
   static Future<void> _createNotificationChannel() async {
     FirebaseLogger.log(
-      '🔊 Creating channel_id_10 with sound: $_notificationSound',
+      '🔊 Creating channel_id_11 with sound: $_notificationSound',
     );
 
     final androidPlugin =
@@ -63,7 +65,7 @@ class LocalNotificationService {
 
     if (androidPlugin != null) {
       final channel = AndroidNotificationChannel(
-        'channel_id_10',
+        'channel_id_11',
         'Avante Foods',
         description: 'All Avante Foods notifications',
         importance: Importance.max,
@@ -141,13 +143,37 @@ class LocalNotificationService {
   static void _handleOrderTap(Map<String, dynamic> data) {
     FirebaseLogger.log("📍 Navigate to Order: ${data['order_id']}");
 
+    // Refresh orders data before navigation (ensure fresh data)
+    _refreshOrdersOnTap();
+
     final orderId = data['order_id'];
     if (orderId != null) {
       final id = orderId is int ? orderId : int.tryParse(orderId.toString());
       if (id != null) {
-      
         Get.toNamed(Routes.orderDetailPage, arguments: id);
       }
+    }
+  }
+
+  /// Refresh orders when notification is tapped (Shopee-like UX)
+  static void _refreshOrdersOnTap() {
+    try {
+      // Check if OrdersController is registered (user is logged in)
+      if (!Get.isRegistered<
+          custom_mp_app.OrdersController>()) {
+        return;
+      }
+
+      final ordersController =
+          Get.find<custom_mp_app.OrdersController>();
+
+      // Invalidate cache and refresh counts
+      ordersController.invalidateAllCaches();
+      ordersController.refreshAllCounts();
+
+      FirebaseLogger.log("🔄 Orders refreshed on notification tap");
+    } catch (e) {
+      FirebaseLogger.log("⚠️ Failed to refresh orders: $e");
     }
   }
 
@@ -163,7 +189,7 @@ class LocalNotificationService {
     FirebaseLogger.log("Has Image: ${imageUrl != null}");
     FirebaseLogger.log("Has Messages: ${messages != null}");
 
-    const channelId = 'channel_id_10';
+    const channelId = 'channel_id_11';
     const channelName = 'Avante Foods';
     const channelDescription = 'All Avante Foods notifications';
 

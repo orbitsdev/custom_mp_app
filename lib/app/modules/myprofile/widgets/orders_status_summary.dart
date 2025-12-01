@@ -83,26 +83,26 @@ class OrdersStatusSummary extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        OrderSummaryButton(
-                          notificationCount: toPayCount,
-                          onPressed: () {
-                            // Navigate to "To Pay" tab (index 0)
-                            Get.toNamed(Routes.ordesrPage, arguments: {'initialTab': 0});
-                          },
-                          label: 'To Pay',
-                          icon: ShaderMask(
-                            blendMode: BlendMode.srcIn,
-                            shaderCallback: (Rect bounds) => LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [AppColors.orange, AppColors.brand],
-                            ).createShader(bounds),
-                            child: FaIcon(
-                              FontAwesomeIcons.wallet,
-                              color: AppColors.dimGray,
-                            ),
-                          ),
-                        ),
+                        // OrderSummaryButton(
+                        //   notificationCount: toPayCount,
+                        //   onPressed: () {
+                        //     // Navigate to "To Pay" tab (index 0)
+                        //     Get.toNamed(Routes.ordesrPage, arguments: {'initialTab': 0});
+                        //   },
+                        //   label: 'To Pay',
+                        //   icon: ShaderMask(
+                        //     blendMode: BlendMode.srcIn,
+                        //     shaderCallback: (Rect bounds) => LinearGradient(
+                        //       begin: Alignment.topLeft,
+                        //       end: Alignment.bottomRight,
+                        //       colors: [AppColors.orange, AppColors.brand],
+                        //     ).createShader(bounds),
+                        //     child: FaIcon(
+                        //       FontAwesomeIcons.wallet,
+                        //       color: AppColors.dimGray,
+                        //     ),
+                        //   ),
+                        // ),
                         OrderSummaryButton(
                           notificationCount: toShipCount,
                           onPressed: () {

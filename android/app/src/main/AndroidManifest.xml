@@ -13,7 +13,7 @@
         >
         <meta-data
         android:name="com.google.firebase.messaging.default_notification_channel_id"
-        android:value="channel_id_10" />
+        android:value="channel_id_11" />
         <receiver
     android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
     android:exported="false"/>

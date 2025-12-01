@@ -4,6 +4,8 @@ import 'package:custom_mp_app/app/global/widgets/spacing/sliver_v_gap.dart';
 import 'package:custom_mp_app/app/global/widgets/spacing/to_sliver.dart';
 import 'package:custom_mp_app/app/modules/category/controllers/category_controller.dart';
 import 'package:custom_mp_app/app/modules/home/widgets/all_products_section.dart';
+import 'package:custom_mp_app/app/modules/home/widgets/best_sellers_section.dart';
+import 'package:custom_mp_app/app/modules/home/widgets/new_arrivals_section.dart';
 import 'package:custom_mp_app/app/modules/home/widgets/home_drawer.dart';
 import 'package:custom_mp_app/app/modules/home/widgets/product_search_app_bar.dart';
 import 'package:custom_mp_app/app/modules/home/widgets/shop_by_category_section.dart';
@@ -29,6 +31,8 @@ class _ProductPageState extends State<ProductPage> {
     await Future.wait([
       categoryController.fetchCategories(),
       productController.fetchProducts(),
+      productController.fetchBestSellersPreview(),
+      productController.fetchNewArrivalsPreview(),
     ]);
   }
 
@@ -68,6 +72,10 @@ class _ProductPageState extends State<ProductPage> {
             ProductSearchAppBar(scaffoldKey: scaffoldKey),
             SliverVGap(16),
             ShopByCategorySection(),
+            SliverVGap(24),
+            BestSellersSection(),
+            SliverVGap(24),
+            NewArrivalsSection(),
             SliverVGap(24),
             AllProductsSection(),
         ],
