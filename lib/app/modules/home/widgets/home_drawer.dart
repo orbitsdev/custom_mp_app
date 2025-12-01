@@ -1,4 +1,5 @@
 
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/core/utils/path_helpers.dart';
 import 'package:custom_mp_app/app/global/widgets/image/local_image.dart';
@@ -51,39 +52,17 @@ class HomeDrawer extends StatelessWidget {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  _buildDrawerItem(
-                    Icons.star,
-                    'Featured',
-                    () {
-                     
-                        // Get.to(()=> FeaturedProductsScreen(), transition: Transition.cupertino);
+                  ListTile(
+                    leading: Icon(Icons.info_outline, color: Colors.orangeAccent),
+                    title: Text(
+                      'About Us',
+                      style: Get.textTheme.bodyLarge?.copyWith(color: Colors.black87),
+                    ),
+                    onTap: () {
+                      Get.back(); // Close drawer
+                      Get.toNamed(Routes.aboutPage);
                     },
                   ),
-                  _buildDrawerItem(
-                    Icons.trending_up,
-                    'Trending',
-                    () {
-                     
-                        // Get.to(()=> TrendingProductScreen(), transition: Transition.cupertino);
-                    },
-                  ),
-                  _buildDrawerItem(
-                    Icons.local_fire_department,
-                    'Best-Seller',
-                    () {
-                   
-                        // Get.to(()=> BestSellerProductScreen(), transition: Transition.cupertino);
-                    },
-                  ),
-                  _buildDrawerItem(
-                    Icons.new_releases,
-                    'New Arrivals',
-                    () {
-                    
-                        // Get.to(()=> NewProductScreen(), transition: Transition.cupertino);
-                    },
-                  ),
-                  Divider(color: AppColors.brandBackground),
                 ],
               ),
             ),
@@ -132,28 +111,4 @@ class HomeDrawer extends StatelessWidget {
     }
   }
 
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.orangeAccent),
-      title: Text(
-        title,
-        style: Get.textTheme.bodyLarge?.copyWith(color: Colors.black87),
-      ),
-      onTap: onTap,
-    );
-  }
-
-  void _logDrawerItemTap(String itemName) {
-    // Analytics.logEvent(
-    //   name: 'drawer_item_tap',
-    //   parameters: {
-    //     'item_name': itemName,
-    //   },
-    // );
-
-    // // Optionally log user activity for further tracking
-    // Analytics.logUserActivity(
-    //   activity: 'User tapped on $itemName in drawer',
-    // );
-  }
 }

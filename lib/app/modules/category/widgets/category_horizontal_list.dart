@@ -19,7 +19,7 @@ class CategoryHorizontalList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 📱 Fixed height for professional appearance (matches Shopee/Lazada)
-    const double listHeight = 110.0;
+    const double listHeight = 140.0;
 
     if (isLoading) {
       // 🔄 Beautiful shimmer loading state
@@ -50,7 +50,7 @@ class CategoryHorizontalList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           scrollDirection: Axis.horizontal,
           itemCount: categories.length,
-          separatorBuilder: (_, __) => const Gap(12),
+          separatorBuilder: (_, __) => const Gap(24),
           itemBuilder: (context, index) {
             final category = categories[index];
             final hasThumbnail =
@@ -65,7 +65,7 @@ class CategoryHorizontalList extends StatelessWidget {
                 );
               },
               child: Container(
-                width: 90,
+                width: Get.size.width /1.8,
                 decoration: BoxDecoration(
                   color: hasThumbnail
                       ? Colors.transparent

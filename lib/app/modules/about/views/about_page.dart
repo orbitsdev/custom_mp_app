@@ -1,5 +1,8 @@
 import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/core/utils/path_helpers.dart';
+import 'package:custom_mp_app/app/global/widgets/image/local_image.dart';
+import 'package:custom_mp_app/app/global/widgets/image/local_image_full_screen_display.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -98,6 +101,48 @@ class AboutPage extends StatelessWidget {
                       fontSize: 15,
                       color: Colors.grey[700],
                       height: 1.6,
+                    ),
+                  ),
+                  Gap(20),
+                  // Company Image - Tap to view full screen
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(
+                        () => LocalImageFullScreenDisplay(
+                          imageUrl: PathHelpers.imagePath('AVANTE-AGRI.jpg'),
+                        ),
+                        transition: Transition.fade,
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: LocalImage(
+                          imageUrl: PathHelpers.imagePath('AVANTE-AGRI.jpg'),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Gap(16),
+                  Center(
+                    child: Text(
+                      'Tap image to view full screen',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey[500],
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                   ),
                 ],

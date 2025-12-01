@@ -21,13 +21,7 @@ class BestSellersSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                // 🔥 Icon and title
-                Icon(
-                  Icons.local_fire_department,
-                  color: Colors.orange.shade700,
-                  size: 24,
-                ),
-                const SizedBox(width: 8),
+                // Section title - pure text
                 Text(
                   'Best Sellers',
                   style: TextStyle(

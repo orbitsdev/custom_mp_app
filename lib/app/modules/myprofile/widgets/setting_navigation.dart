@@ -56,51 +56,13 @@ class SettingNavigation extends StatelessWidget {
 
         ToSliver(child: const Gap(8)),
 
-        // Settings Section
-        SittingsListCard(
-          title: "Notifications",
-          content: "Manage notification preferences",
-          showIcon: true,
-          function: () {
-            // TODO: Navigate to notifications settings
-            Get.snackbar(
-              'Coming Soon',
-              'Notification settings will be available soon',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          },
-        ),
-
-        ToSliver(child: const Gap(1)),
-
-        SittingsListCard(
-          title: "Payment Methods",
-          content: "Manage your payment options",
-          showIcon: true,
-          function: () {
-            // TODO: Navigate to payment methods page
-            Get.snackbar(
-              'Coming Soon',
-              'Payment methods will be available soon',
-              snackPosition: SnackPosition.BOTTOM,
-            );
-          },
-        ),
-
-        ToSliver(child: const Gap(8)),
-
         // Support Section
         SittingsListCard(
           title: "Help & Support",
           content: "Get help and contact support",
           showIcon: true,
           function: () {
-            // TODO: Navigate to help page
-            Get.snackbar(
-              'Coming Soon',
-              'Help center will be available soon',
-              snackPosition: SnackPosition.BOTTOM,
-            );
+            Get.toNamed(Routes.helpSupportPage);
           },
         ),
 
