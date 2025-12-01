@@ -38,11 +38,15 @@ class DetailsTabContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (reviewSummary == null || !reviewSummary.hasReviews)
-                _buildEmptyReviews()
+                _buildEmptyReviews(product.id, product.name)
               else ...[
+                // Write Review Button (Top)
+                _buildWriteReviewButton(product.id, product.name),
+                const SizedBox(height: 16),
+
                 // Review Summary
                 ReviewSummaryWidget(summary: reviewSummary),
-                
+
 
                 // Reviews Grid
                 if (reviews.isNotEmpty) ...[
@@ -100,7 +104,7 @@ class DetailsTabContent extends StatelessWidget {
     });
   }
 
-  Widget _buildEmptyReviews() {
+  Widget _buildEmptyReviews(int productId, String productName) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -126,7 +130,66 @@ class DetailsTabContent extends StatelessWidget {
                 color: Colors.grey.shade500,
               ),
             ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+                Get.toNamed(
+                  Routes.submitReviewPage,
+                  arguments: {
+                    'productId': productId,
+                    'productName': productName,
+                  },
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.brand,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              icon: const Icon(FluentIcons.edit_16_regular, size: 18),
+              label: const Text(
+                'Write a Review',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWriteReviewButton(int productId, String productName) {
+    return OutlinedButton.icon(
+      onPressed: () {
+        Get.toNamed(
+          Routes.submitReviewPage,
+          arguments: {
+            'productId': productId,
+            'productName': productName,
+          },
+        );
+      },
+      style: OutlinedButton.styleFrom(
+        side: const BorderSide(color: AppColors.brand, width: 1.5),
+        foregroundColor: AppColors.brand,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        minimumSize: const Size(double.infinity, 44),
+      ),
+      icon: const Icon(FluentIcons.edit_16_regular, size: 18),
+      label: const Text(
+        'Write a Review',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );

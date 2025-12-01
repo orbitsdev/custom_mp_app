@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/modules/reviews/controllers/all_reviews_controller.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/details/reviews/reviews_masonry_grid.dart';
-import 'package:custom_mp_app/app/modules/products/widgets/details/reviews/reviews_list_skeleton.dart';
+import 'package:custom_mp_app/app/modules/products/widgets/details/reviews/review_card_skeleton.dart';
 
 /// All Reviews Page - Shows all product reviews in paginated masonry grid
 class AllReviewsPage extends StatelessWidget {
@@ -17,6 +19,31 @@ class AllReviewsPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: AppColors.brandBackground,
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final result = await Get.toNamed(
+            Routes.submitReviewPage,
+            arguments: {
+              'productId': controller.productId,
+              'productName': controller.productName,
+            },
+          );
+
+          // Refresh reviews if submitted successfully
+          if (result == true) {
+            controller.refreshReviews();
+          }
+        },
+        backgroundColor: AppColors.brand,
+        icon: const Icon(FluentIcons.edit_16_regular, color: Colors.white),
+        label: const Text(
+          'Write Review',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -47,7 +74,7 @@ class AllReviewsPage extends StatelessWidget {
       ),
       body: Obx(() {
         if (controller.isLoading.value && controller.reviews.isEmpty) {
-          return const ReviewsListSkeleton();
+          return _buildSkeletonLoader();
         }
 
         if (controller.reviews.isEmpty) {
@@ -114,7 +141,53 @@ class AllReviewsPage extends StatelessWidget {
     );
   }
 
+  Widget _buildSkeletonLoader() {
+    return CustomScrollView(
+      slivers: [
+        // Header skeleton
+        SliverToBoxAdapter(
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey.shade300,
+              highlightColor: Colors.grey.shade100,
+              child: Container(
+                height: 24,
+                width: 120,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        const SliverToBoxAdapter(child: SizedBox(height: 8)),
+
+        // Review cards skeleton
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: ReviewCardSkeleton(),
+              ),
+              childCount: 5,
+            ),
+          ),
+        ),
+
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+      ],
+    );
+  }
+
   Widget _buildEmptyState() {
+    final controller = Get.find<AllReviewsController>();
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -137,6 +210,38 @@ class AllReviewsPage extends StatelessWidget {
             'Be the first to review this product',
             style: Get.textTheme.bodyMedium?.copyWith(
               color: Colors.grey.shade500,
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () async {
+              final result = await Get.toNamed(
+                Routes.submitReviewPage,
+                arguments: {
+                  'productId': controller.productId,
+                  'productName': controller.productName,
+                },
+              );
+
+              if (result == true) {
+                controller.refreshReviews();
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.brand,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            icon: const Icon(FluentIcons.edit_16_regular, size: 18),
+            label: const Text(
+              'Write a Review',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],

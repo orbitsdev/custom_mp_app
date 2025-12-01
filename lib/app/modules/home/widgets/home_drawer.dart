@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class HomeDrawer extends StatelessWidget {
+  const HomeDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -33,7 +35,7 @@ class HomeDrawer extends StatelessWidget {
                     //   size: 50,
                     //   color: Colors.white,
                     // ),
-                    Container(
+                    SizedBox(
                       width: 90,
                       height: 90,
                       child: LocalImage(imageUrl: PathHelpers.imagePath('logo.png'))),
@@ -53,14 +55,81 @@ class HomeDrawer extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 children: [
                   ListTile(
+                    leading: Icon(Icons.search, color: Colors.orangeAccent),
+                    title: Text(
+                      'Search Products',
+                      style: Get.textTheme.bodyLarge?.copyWith(color: Colors.black87),
+                    ),
+                    onTap: () {
+                      Get.back(); // Close drawer
+                      Get.toNamed(Routes.searchPage);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.category, color: Colors.orangeAccent),
+                    title: Text(
+                      'Categories',
+                      style: Get.textTheme.bodyLarge?.copyWith(color: Colors.black87),
+                    ),
+                    onTap: () {
+                      Get.back();
+                      Get.toNamed(Routes.allCategoriesPage);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.favorite_border, color: Colors.orangeAccent),
+                    title: Text(
+                      'Favorites',
+                      style: Get.textTheme.bodyLarge?.copyWith(color: Colors.black87),
+                    ),
+                    trailing: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.orange[100],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Soon',
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: Colors.orange[900],
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      Get.back();
+                      Get.snackbar(
+                        'Coming Soon',
+                        'Favorites feature will be available soon!',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: AppColors.brand,
+                        colorText: Colors.white,
+                        margin: EdgeInsets.all(16),
+                      );
+                    },
+                  ),
+                  Divider(height: 1),
+                  ListTile(
                     leading: Icon(Icons.info_outline, color: Colors.orangeAccent),
                     title: Text(
                       'About Us',
                       style: Get.textTheme.bodyLarge?.copyWith(color: Colors.black87),
                     ),
                     onTap: () {
-                      Get.back(); // Close drawer
+                      Get.back();
                       Get.toNamed(Routes.aboutPage);
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.help_outline, color: Colors.orangeAccent),
+                    title: Text(
+                      'Help & Support',
+                      style: Get.textTheme.bodyLarge?.copyWith(color: Colors.black87),
+                    ),
+                    onTap: () {
+                      Get.back();
+                      Get.toNamed(Routes.helpSupportPage);
                     },
                   ),
                 ],
@@ -82,7 +151,7 @@ class HomeDrawer extends StatelessWidget {
                 onTap: () => _handleLogout(context),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: BorderSide(color: Colors.red.withOpacity(0.3)),
+                  side: BorderSide(color: Colors.red.withValues(alpha: 0.3)),
                 ),
               ),
             ),

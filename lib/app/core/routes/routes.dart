@@ -45,7 +45,9 @@ import 'package:custom_mp_app/app/modules/myprofile/views/update_password_page.d
 import 'package:custom_mp_app/app/modules/myprofile/views/update_account_info_page.dart';
 import 'package:custom_mp_app/app/modules/myprofile/views/upload_avatar_page.dart';
 import 'package:custom_mp_app/app/modules/reviews/bindings/all_reviews_binding.dart';
+import 'package:custom_mp_app/app/modules/reviews/bindings/submit_review_binding.dart';
 import 'package:custom_mp_app/app/modules/reviews/views/all_reviews_page.dart';
+import 'package:custom_mp_app/app/modules/reviews/views/submit_review_page.dart';
 import 'package:custom_mp_app/app/modules/testing/views/modal_page.dart';
 import 'package:custom_mp_app/app/modules/testing/bindings/testing_binding.dart';
 import 'package:custom_mp_app/app/modules/testing/views/testing_page.dart';
@@ -67,6 +69,7 @@ class Routes {
 
   //REVIEWS
   static const String allReviewsPage = '/all-reviews';
+  static const String submitReviewPage = '/submit-review';
 
   //CATEGORY
   static const String categoryProductsPage = '/category-products';
@@ -337,6 +340,14 @@ class Routes {
       middlewares: [AuthMiddleware()],
       page: () => const AllReviewsPage(),
       binding: AllReviewsBinding(),
+      transition: Transition.cupertino,
+    ),
+
+    GetPage(
+      name: Routes.submitReviewPage,
+      middlewares: [AuthMiddleware()],
+      page: () => const SubmitReviewPage(),
+      binding: SubmitReviewBinding(),
       transition: Transition.cupertino,
     ),
 
