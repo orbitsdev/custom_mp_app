@@ -2,6 +2,7 @@ import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
 import 'package:custom_mp_app/app/data/models/products/product_model.dart';
 import 'package:custom_mp_app/app/global/widgets/image/online_image.dart';
+import 'package:custom_mp_app/app/modules/products/controllers/select_product_controller.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_featured_badge.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -14,10 +15,10 @@ class ProductCard extends StatelessWidget {
   final double? borderRadius;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class ProductCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(br),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 6,
             offset: const Offset(0, 2),
           ),
@@ -104,24 +105,56 @@ class ProductCard extends StatelessWidget {
 
                 // 💰 Price section
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      '₱${product.price ?? 0}',
-                      style: Get.textTheme.bodyLarge!.copyWith(
-                        color: Colors.green.shade700,
-                        fontWeight: FontWeight.w700,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Current price
+                          Text(
+                            '₱${product.price?.toStringAsFixed(2) ?? '0.00'}',
+                            style: Get.textTheme.titleMedium!.copyWith(
+                              color: AppColors.brand,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          // Compare at price (slashed)
+                          if (product.compareAtPrice != null &&
+                              product.compareAtPrice! > (product.price ?? 0))
+                            Text(
+                              '₱${product.compareAtPrice!.toStringAsFixed(2)}',
+                              style: Get.textTheme.bodySmall!.copyWith(
+                                color: Colors.grey[500],
+                                decoration: TextDecoration.lineThrough,
+                                fontSize: 11,
+                              ),
+                            ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    if (product.compareAtPrice != null &&
-                        product.compareAtPrice! > (product.price ?? 0))
-                      Text(
-                        '₱${product.compareAtPrice}',
-                        style: Get.textTheme.bodySmall!.copyWith(
-                          color: AppColors.textLight,
-                          decoration: TextDecoration.lineThrough,
+
+                    // Add to Cart Button
+                    InkWell(
+                      onTap: () => _handleAddToCart(product),
+                      borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.brand,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.add_shopping_cart,
+                          color: Colors.white,
+                          size: 18,
                         ),
                       ),
+                    ),
                   ],
                 ),
               ],
@@ -131,5 +164,24 @@ class ProductCard extends StatelessWidget {
       ),
       ),
     ).animate().fadeIn(duration: 300.ms);
+  }
+
+  // Handle add to cart - opens product options sheet
+  void _handleAddToCart(ProductModel product) {
+    // First, navigate to product details to load product
+    Get.toNamed(
+      Routes.productDetailsPage,
+      arguments: product,
+    );
+
+    // Then open the options sheet after a short delay
+    Future.delayed(const Duration(milliseconds: 500), () {
+      try {
+        final controller = Get.find<SelectProductController>();
+        controller.showProductOptionsSheet();
+      } catch (e) {
+        // Controller not found, user probably left the page
+      }
+    });
   }
 }
