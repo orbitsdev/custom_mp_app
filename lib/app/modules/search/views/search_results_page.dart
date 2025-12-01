@@ -1,4 +1,5 @@
 import 'package:custom_mp_app/app/core/theme/app_colors.dart';
+import 'package:custom_mp_app/app/core/routes/routes.dart';
 import 'package:custom_mp_app/app/data/repositories/product_query_params.dart';
 import 'package:custom_mp_app/app/global/widgets/progress/shimmer_widget.dart';
 import 'package:custom_mp_app/app/modules/products/widgets/product_card.dart';
@@ -154,7 +155,15 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                   itemCount: controller.products.length,
                   itemBuilder: (context, index) {
                     final product = controller.products[index];
-                    return ProductCard(product: product);
+                    return GestureDetector(
+                      onTap: () {
+                        Get.toNamed(
+                          Routes.productDetailsPage,
+                          arguments: product,
+                        );
+                      },
+                      child: ProductCard(product: product),
+                    );
                   },
                 ),
               ),
