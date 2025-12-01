@@ -5,6 +5,8 @@ import 'package:custom_mp_app/app/modules/auth/middleware/guest_middleware.dart'
 import 'package:custom_mp_app/app/modules/auth/views/login_page.dart';
 import 'package:custom_mp_app/app/modules/auth/views/signup_page.dart';
 import 'package:custom_mp_app/app/modules/auth/views/splash_page.dart';
+import 'package:custom_mp_app/app/modules/onboarding/bindings/onboarding_binding.dart';
+import 'package:custom_mp_app/app/modules/onboarding/boarding_screen.dart';
 import 'package:custom_mp_app/app/modules/cart/views/cart_page.dart';
 import 'package:custom_mp_app/app/modules/home/bindings/home_binding.dart';
 import 'package:custom_mp_app/app/modules/home/views/home_page.dart';
@@ -52,6 +54,7 @@ class Routes {
   static const String signupPage = '/signup';
   static const String forgotPasswordPage = '/home';
   static const String splashPage = '/splash';
+  static const String onboardingPage = '/onboarding';
   static const String homePage = '/home';
 
   //PRODUCTS
@@ -110,7 +113,14 @@ class Routes {
   static List<GetPage> pages = [
     GetPage(name: Routes.splashPage, page: () => const SplashPage()),
     GetPage(name: modalPage, page: () => ModalPage()),
-  
+
+    GetPage(
+      name: Routes.onboardingPage,
+      page: () => const BoardingScreen(),
+      binding: OnboardingBinding(),
+      transition: Transition.fadeIn,
+    ),
+
     GetPage(
       name: Routes.loginPage,
       middlewares: [GuestMiddleware()],

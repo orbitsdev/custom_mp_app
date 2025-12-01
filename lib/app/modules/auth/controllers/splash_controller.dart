@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:custom_mp_app/app/modules/auth/controllers/auth_controller.dart';
 import 'package:custom_mp_app/app/global/widgets/modals/app_modal.dart';
+import 'package:custom_mp_app/app/core/plugins/storage/storage_service.dart';
 
 class SplashController extends GetxController {
   final AuthController _auth = AuthController.instance;
@@ -16,6 +17,15 @@ class SplashController extends GetxController {
 
     // Small UX delay (optional)
     await Future.delayed(const Duration(milliseconds: 800));
+
+    // 🎯 Check onboarding first
+    if (!StorageService.hasSeenOnboarding()) {
+      print('[SPLASH] First launch → showing onboarding');
+      Get.offAllNamed('/onboarding');
+      return;
+    }
+
+    print('[SPLASH] Onboarding already seen → checking authentication');
 
     // 🔑 Run auth check (will show loading only if token exists)
     await _auth.autoLogin();
